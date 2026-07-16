@@ -1,13 +1,14 @@
 name: Build e Deploy
 
 on:
-  permissions:
-  contents: write   # necessário para o robô conseguir publicar na branch "dist"
   push:
     branches: [main]
-  workflow_dispatch: {}          # permite rodar manualmente pelo botão no GitHub
+  workflow_dispatch: {}
   repository_dispatch:
-    types: [content-updated]     # disparado pelo Supabase quando um post é publicado
+    types: [content-updated]
+
+permissions:
+  contents: write
 
 jobs:
   build-and-deploy:
@@ -33,10 +34,3 @@ jobs:
 
       - name: Buildar site estático
         run: npm run build
-
-      - name: Publicar build na branch "dist"
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          branch: dist
-          folder: dist
-          clean: true
