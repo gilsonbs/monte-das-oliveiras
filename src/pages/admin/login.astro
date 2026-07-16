@@ -1,0 +1,87 @@
+---
+import '../../styles/tokens.css';
+---
+
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Entrar — Monte das Oliveiras</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="login-shell">
+    <form id="login-form">
+      <div class="brand">Monte das Oliveiras</div>
+      <p class="sub">Painel administrativo</p>
+
+      <label>
+        E-mail
+        <input type="email" id="email" required autocomplete="username" />
+      </label>
+      <label>
+        Senha
+        <input type="password" id="password" required autocomplete="current-password" />
+      </label>
+
+      <button type="submit" id="submit-btn">Entrar</button>
+      <p id="error-msg" class="error" hidden></p>
+    </form>
+  </div>
+
+  <script>
+    import { createSupabaseBrowserClient } from '../../lib/supabase-browser';
+
+    const supabase = createSupabaseBrowserClient();
+    const form = document.getElementById('login-form') as HTMLFormElement;
+    const errorMsg = document.getElementById('error-msg') as HTMLParagraphElement;
+    const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorMsg.hidden = true;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Entrando...';
+
+      const email = (document.getElementById('email') as HTMLInputElement).value;
+      const password = (document.getElementById('password') as HTMLInputElement).value;
+
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        errorMsg.textContent = 'E-mail ou senha incorretos.';
+        errorMsg.hidden = false;
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Entrar';
+        return;
+      }
+
+      window.location.href = '/admin';
+    });
+  </script>
+
+  <style>
+    body {
+      margin: 0; background: var(--dusk); min-height: 100vh;
+      display: flex; align-items: center; justify-content: center; font-family: var(--font-ui);
+    }
+    .login-shell { width: 100%; max-width: 340px; padding: 20px; }
+    .brand { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: #F3EEDD; text-align: center; }
+    .sub { text-align: center; color: #8D8975; font-size: 13px; margin: 6px 0 28px; }
+    label { display: block; font-size: 12px; color: #B9B4A0; margin-bottom: 14px; }
+    input {
+      width: 100%; margin-top: 6px; padding: 10px 12px; border-radius: 6px; border: 1px solid #3B4468;
+      background: #2E3555; color: #F3EEDD; font-family: var(--font-ui); font-size: 14px;
+    }
+    input:focus { outline: none; border-color: #E3B15C; }
+    button {
+      width: 100%; margin-top: 8px; padding: 11px; border-radius: 6px; border: none;
+      background: var(--olive); color: #fff; font-family: var(--font-ui); font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+    button:disabled { opacity: .6; cursor: default; }
+    .error { color: #D98C6B; font-size: 12px; text-align: center; margin-top: 14px; }
+  </style>
+</body>
+</html>

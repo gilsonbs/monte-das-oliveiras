@@ -1,0 +1,95 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Pré-visualização">
+  <div class="preview-banner" id="preview-banner">
+    <span id="banner-text">Carregando...</span>
+    <a id="edit-link" href="#">Editar este post →</a>
+  </div>
+
+  <article class="preview-article" id="preview-article" hidden>
+    <span class="eyebrow" id="p-category"></span>
+    <h1 id="p-title"></h1>
+    <p class="excerpt" id="p-excerpt" hidden></p>
+    <div class="cover" id="p-cover" hidden>
+      <img id="p-cover-img" src="" alt="" />
+    </div>
+    <div class="content" id="p-content"></div>
+  </article>
+</AdminLayout>
+
+<script>
+  import { createSupabaseBrowserClient } from '../../../lib/supabase-browser';
+  const supabase = createSupabaseBrowserClient();
+
+  const postId = new URLSearchParams(window.location.search).get('id');
+
+  async function load() {
+    if (!postId) {
+      window.location.href = '/admin/';
+      return;
+    }
+
+    const { data: post } = await supabase
+      .from('posts')
+      .select('*, categories(name), media(cover_url, alt_text)')
+      .eq('id', postId)
+      .maybeSingle();
+
+    if (!post) {
+      window.location.href = '/admin/';
+      return;
+    }
+
+    const statusLabel = post.status === 'published' ? 'Publicado' : post.status === 'scheduled' ? 'Agendado' : 'Rascunho';
+    document.getElementById('banner-text')!.innerHTML = `👁 Pré-visualização — status: <b>${statusLabel}</b>`;
+    (document.getElementById('edit-link') as HTMLAnchorElement).href = `/admin/posts/editor?id=${post.id}`;
+
+    if (post.categories?.name) document.getElementById('p-category')!.textContent = post.categories.name;
+    document.getElementById('p-title')!.textContent = post.title;
+
+    if (post.excerpt) {
+      const excerptEl = document.getElementById('p-excerpt')!;
+      excerptEl.textContent = post.excerpt;
+      excerptEl.hidden = false;
+    }
+
+    if (post.media?.cover_url) {
+      (document.getElementById('p-cover-img') as HTMLImageElement).src = post.media.cover_url;
+      (document.getElementById('p-cover-img') as HTMLImageElement).alt = post.media.alt_text || post.title;
+      document.getElementById('p-cover')!.hidden = false;
+    }
+
+    document.getElementById('p-content')!.innerHTML = post.content || '';
+    document.getElementById('preview-article')!.hidden = false;
+  }
+
+  load();
+</script>
+
+<style>
+  .preview-banner {
+    background: #FBF0DE; border: 1px solid #E3B15C; border-radius: 8px; padding: 12px 18px;
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;
+    font-family: var(--font-ui); font-size: 13px; color: #6B4A1A; max-width: 780px;
+  }
+  .preview-banner a { color: var(--olive-deep); font-weight: 500; }
+
+  .preview-article { max-width: 780px; background: #fff; border: 1px solid #E4E0D3; border-radius: 8px; padding: 40px; }
+  .preview-article .eyebrow {
+    font-family: var(--font-ui); font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--olive-deep); display: block; margin-bottom: 10px;
+  }
+  .preview-article h1 { font-family: var(--font-display); font-size: 30px; font-weight: 500; margin: 0 0 14px; }
+  .preview-article .excerpt { font-size: 16px; color: #5F5E5A; font-style: italic; margin-bottom: 24px; }
+  .cover { aspect-ratio: 16/9; border-radius: 6px; overflow: hidden; margin-bottom: 28px; background: #EEE; }
+  .cover img { width: 100%; height: 100%; object-fit: cover; }
+
+  .content { font-size: 16px; line-height: 1.7; color: #28241D; }
+  .content :global(p) { margin: 0 0 18px; }
+  .content :global(h2) { font-family: var(--font-display); font-size: 22px; font-weight: 500; margin: 30px 0 14px; }
+  .content :global(h3) { font-family: var(--font-display); font-size: 18px; font-weight: 500; margin: 24px 0 12px; }
+  .content :global(blockquote) { border-left: 3px solid var(--olive); padding-left: 14px; color: #5F5E5A; font-style: italic; margin: 18px 0; }
+  .content :global(img) { max-width: 100%; border-radius: 4px; }
+</style>

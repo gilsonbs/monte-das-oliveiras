@@ -1,0 +1,48 @@
+---
+import { getCategories } from '../lib/supabase';
+const categories = await getCategories().catch(() => []);
+const year = new Date().getFullYear();
+---
+
+<footer>
+  <div class="footer-inner wrap">
+    <div>
+      <div class="footer-brand">Monte das Oliveiras</div>
+      <div class="footer-tag">Estudos bíblicos, escatologia e vida cristã para o dia a dia.</div>
+    </div>
+    <div class="footer-cols">
+      <div class="footer-col">
+        <h5>Conteúdo</h5>
+        {categories.slice(0, 4).map((cat) => (
+          <a href={`/categoria/${cat.slug}`}>{cat.name}</a>
+        ))}
+      </div>
+      <div class="footer-col">
+        <h5>Site</h5>
+        <a href="/sobre">Sobre</a>
+        <a href="/politica-de-privacidade">Política de privacidade</a>
+        <a href="/contato">Contato</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">© {year} Monte das Oliveiras</div>
+</footer>
+
+<style>
+  footer { background: var(--dusk); color: #B9B4A0; margin-top: 60px; }
+  .footer-inner {
+    padding: 44px 32px 30px; display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap;
+  }
+  .footer-brand { font-family: var(--font-display); font-size: 19px; color: #F3EEDD; margin-bottom: 8px; }
+  .footer-tag { font-family: var(--font-ui); font-size: 12px; color: #8D8975; max-width: 32ch; }
+  .footer-cols { display: flex; gap: 56px; }
+  .footer-col h5 {
+    font-family: var(--font-ui); font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+    color: #8D8975; margin-bottom: 12px;
+  }
+  .footer-col a { display: block; font-family: var(--font-ui); font-size: 13px; color: #CFC9AE; margin-bottom: 9px; }
+  .footer-bottom {
+    border-top: 1px solid rgba(237,231,212,.12); padding: 16px 32px; text-align: center;
+    font-family: var(--font-ui); font-size: 11px; color: #71715F;
+  }
+</style>

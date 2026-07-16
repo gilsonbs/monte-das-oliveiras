@@ -1,0 +1,100 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Anúncios">
+  <div class="topbar">
+    <h1>Anúncios</h1>
+  </div>
+  <p class="intro">
+    Cole aqui o <b>Publisher ID</b> (ca-pub-...) e o <b>ID do bloco de anúncio</b> de cada posição,
+    pegos no painel do Google AdSense. Enquanto um slot não tiver os dois campos preenchidos e
+    ativo, o site mostra o placeholder no lugar dele — não quebra o layout.
+  </p>
+
+  <div class="panel" id="slots-panel">
+    <p class="muted">Carregando...</p>
+  </div>
+</AdminLayout>
+
+<script>
+  import { createSupabaseBrowserClient } from '../../lib/supabase-browser';
+  const supabase = createSupabaseBrowserClient();
+
+  const SLOT_LABELS: Record<string, string> = {
+    sidebar_300x600: 'Sidebar (300×600)',
+    in_article: 'In-article (300×250)',
+    feed_native: 'Nativo no feed (300×175)',
+  };
+
+  async function load() {
+    const { data: existing } = await supabase.from('ad_slots').select('*');
+    const existingByKey = new Map((existing ?? []).map((s: any) => [s.key, s]));
+
+    const slots = Object.entries(SLOT_LABELS).map(([key, label]) => ({
+      key,
+      label,
+      ...(existingByKey.get(key) || { ad_client: '', ad_slot_id: '', format: 'auto', active: false }),
+    }));
+
+    const panel = document.getElementById('slots-panel')!;
+    panel.innerHTML = slots
+      .map(
+        (slot: any) => `
+        <div class="slot-row" data-key="${slot.key}">
+          <div class="slot-label">${slot.label}</div>
+          <input type="text" class="ad-client" placeholder="ca-pub-XXXXXXXXXX" value="${slot.ad_client || ''}" />
+          <input type="text" class="ad-slot-id" placeholder="ID do bloco" value="${slot.ad_slot_id || ''}" />
+          <label class="switch-wrap">
+            <input type="checkbox" class="ad-active" ${slot.active ? 'checked' : ''} />
+            <span class="switch"></span>
+          </label>
+          <button class="btn-save-slot">Salvar</button>
+        </div>
+      `
+      )
+      .join('');
+
+    document.querySelectorAll('.btn-save-slot').forEach((btn) => {
+      btn.addEventListener('click', async (e) => {
+        const row = (e.target as HTMLElement).closest('.slot-row') as HTMLElement;
+        const key = row.dataset.key!;
+        const ad_client = (row.querySelector('.ad-client') as HTMLInputElement).value.trim();
+        const ad_slot_id = (row.querySelector('.ad-slot-id') as HTMLInputElement).value.trim();
+        const active = (row.querySelector('.ad-active') as HTMLInputElement).checked;
+
+        const { error } = await supabase
+          .from('ad_slots')
+          .upsert({ key, label: key, ad_client, ad_slot_id, format: 'auto', active }, { onConflict: 'key' });
+
+        if (error) alert(`Erro: ${error.message}`);
+        else {
+          (e.target as HTMLElement).textContent = 'Salvo!';
+          setTimeout(() => ((e.target as HTMLElement).textContent = 'Salvar'), 1500);
+        }
+      });
+    });
+  }
+
+  load();
+</script>
+
+<style>
+  .topbar { margin-bottom: 12px; }
+  .topbar h1 { font-family: var(--font-display); font-size: 22px; font-weight: 600; margin: 0; }
+  .intro { font-size: 13px; color: #5F5E5A; max-width: 640px; margin: 0 0 24px; line-height: 1.6; }
+  .panel { background: #fff; border: 1px solid #E4E0D3; border-radius: 8px; padding: 8px 22px; max-width: 720px; }
+  .muted { color: #8A8367; font-size: 13px; padding: 14px 0; }
+  .panel :global(.slot-row) { display: grid; grid-template-columns: 160px 1fr 140px 40px 70px; gap: 10px; align-items: center; padding: 14px 0; border-bottom: 1px solid #F1EFE8; }
+  .panel :global(.slot-row:last-child) { border-bottom: none; }
+  .panel :global(.slot-label) { font-size: 13px; font-weight: 500; }
+  .panel :global(.slot-row input[type=text]) { padding: 7px 10px; border: 1px solid #E4E0D3; border-radius: 6px; font-family: var(--font-ui); font-size: 12px; }
+  .panel :global(.btn-save-slot) { font-family: var(--font-ui); font-size: 12px; padding: 7px 12px; border-radius: 6px; border: 1px solid #E4E0D3; background: #fff; cursor: pointer; }
+
+  .panel :global(.switch-wrap) { position: relative; display: inline-block; width: 36px; height: 20px; }
+  .panel :global(.switch-wrap input) { opacity: 0; width: 0; height: 0; }
+  .panel :global(.switch) { position: absolute; inset: 0; background: #E4E0D3; border-radius: 20px; cursor: pointer; transition: .2s; }
+  .panel :global(.switch::after) { content: ""; position: absolute; width: 16px; height: 16px; border-radius: 50%; background: #fff; top: 2px; left: 2px; transition: .2s; }
+  .panel :global(.switch-wrap input:checked + .switch) { background: var(--olive); }
+  .panel :global(.switch-wrap input:checked + .switch::after) { left: 18px; }
+</style>

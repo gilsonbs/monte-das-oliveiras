@@ -1,0 +1,68 @@
+---
+import { getCategories } from '../lib/supabase';
+
+const categories = (await getCategories().catch(() => [])).filter(
+  (cat) => cat.slug !== 'webstories'
+);
+const currentPath = Astro.url.pathname;
+---
+
+<header>
+  <div class="header-inner wrap">
+    <a class="logo" href="/">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+        <path d="M2 18C6 14 9 20 13 15C17 10 20 17 24 13" stroke="#E3B15C" stroke-width="1.6" stroke-linecap="round"/>
+        <circle cx="19" cy="8" r="3.2" fill="#E3B15C"/>
+      </svg>
+      Monte das Oliveiras
+    </a>
+    <div class="nav-scroll">
+      <nav>
+        {categories.map((cat) => (
+          <a href={`/categoria/${cat.slug}`} class={currentPath.includes(cat.slug) ? 'active' : ''}>
+            {cat.name}
+          </a>
+        ))}
+      </nav>
+    </div>
+    <a class="search-icon" href="/buscar">Buscar</a>
+  </div>
+</header>
+
+<style>
+  header { background: var(--dusk); color: #EDE7D4; }
+  .header-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px 32px;
+    border-bottom: 1px solid rgba(237,231,212,0.15);
+  }
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--font-display); font-size: 21px; font-weight: 600; color: #F3EEDD;
+  }
+  .nav-scroll { display: contents; }
+  nav { display: flex; gap: 28px; font-family: var(--font-ui); font-size: 13px; font-weight: 500; flex-wrap: wrap; }
+  nav a { color: #CFC9AE; letter-spacing: .02em; transition: color .15s; }
+  nav a:hover { color: #F3EEDD; }
+  nav a.active { color: #E3B15C; }
+  .search-icon { color: #CFC9AE; font-family: var(--font-ui); font-size: 13px; }
+
+  @media (max-width: 860px) {
+    .header-inner { flex-wrap: wrap; padding: 16px 0 16px 20px; row-gap: 12px; }
+    .logo { font-size: 18px; }
+    .nav-scroll {
+      display: block; order: 3; flex-basis: 100%; overflow: hidden; position: relative;
+    }
+    .nav-scroll::after {
+      content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 36px;
+      background: linear-gradient(90deg, transparent, var(--dusk));
+      pointer-events: none;
+    }
+    nav {
+      flex-wrap: nowrap; gap: 20px; overflow-x: auto;
+      padding: 0 36px 6px 0; -ms-overflow-style: none; scrollbar-width: none;
+    }
+    nav::-webkit-scrollbar { display: none; }
+    nav a { white-space: nowrap; }
+  }
+</style>

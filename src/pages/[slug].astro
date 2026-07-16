@@ -1,0 +1,247 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AdSlot from '../components/AdSlot.astro';
+import { supabase, getPostBySlug, getRelatedPosts, getTagsByPostId, getApprovedComments } from '../lib/supabase';
+
+export async function getStaticPaths() {
+  const { data: posts } = await supabase.from('posts').select('slug').eq('status', 'published');
+  return (posts ?? []).map((p) => ({ params: { slug: p.slug } }));
+}
+
+const { slug } = Astro.params;
+const post = await getPostBySlug(slug!);
+
+if (!post) {
+  return Astro.redirect('/404');
+}
+
+const [related, tags, comments] = await Promise.all([
+  getRelatedPosts(post.category_slug || '', post.slug, 3),
+  getTagsByPostId(post.id),
+  getApprovedComments(post.id),
+]);
+
+// insere o slot de anúncio depois do 3º parágrafo do conteúdo,
+// funciona bem tanto em posts curtos quanto longos
+function splitAfterParagraphs(html: string, count: number) {
+  const closeTag = '</p>';
+  let idx = -1;
+  let cursor = 0;
+  for (let i = 0; i < count; i++) {
+    const next = html.indexOf(closeTag, cursor);
+    if (next === -1) return { before: html, after: '' };
+    cursor = next + closeTag.length;
+    idx = cursor;
+  }
+  return { before: html.slice(0, idx), after: html.slice(idx) };
+}
+
+const { before, after } = splitAfterParagraphs(post.content, 3);
+
+const publishedISO = new Date(post.published_at).toISOString();
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: post.title,
+  description: post.meta_description || post.excerpt,
+  image: post.share_url ? [post.share_url] : undefined,
+  datePublished: publishedISO,
+  dateModified: publishedISO,
+  author: { '@type': 'Organization', name: 'Monte das Oliveiras' },
+  publisher: {
+    '@type': 'Organization',
+    name: 'Monte das Oliveiras',
+    logo: { '@type': 'ImageObject', url: 'https://montedasoliveiras.com/logo.png' },
+  },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': `https://montedasoliveiras.com/${post.slug}` },
+};
+---
+
+<BaseLayout
+  title={post.seo_title || post.title}
+  description={post.meta_description || post.excerpt || undefined}
+  image={post.share_url || undefined}
+  canonical={post.canonical_url || undefined}
+  type="article"
+  jsonLd={jsonLd}
+>
+  <div class="wrap post-head">
+    {post.category_name && <a class="eyebrow cat" href={`/categoria/${post.category_slug}`}>{post.category_name}</a>}
+    <h1>{post.title}</h1>
+    <div class="post-meta">
+      <span>{new Date(post.published_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
+      {post.read_time_minutes && <><span>·</span><span>{post.read_time_minutes} min de leitura</span></>}
+    </div>
+  </div>
+
+  {post.cover_url && (
+    <div class="cover wrap">
+      <div class="cover-img">
+        <img src={post.cover_url} alt={post.alt_text || post.title} width="1200" height="675" />
+      </div>
+    </div>
+  )}
+
+  <div class="wrap">
+    <div class="article-layout">
+      <article>
+        <Fragment set:html={before} />
+        <AdSlot slotKey="in_article" />
+        <Fragment set:html={after} />
+
+        {tags.length > 0 && (
+          <div class="tags">
+            {tags.map((tag: any) => <a href={`/tag/${tag.slug}`}>{tag.name}</a>)}
+          </div>
+        )}
+      </article>
+
+      <aside>
+        <div class="side-block">
+          <AdSlot slotKey="sidebar_300x600" />
+        </div>
+        {related.length > 0 && (
+          <div class="side-block">
+            <h4>Leia também</h4>
+            {related.map((r) => (
+              <a class="related-item" href={`/${r.slug}`}>
+                <div class="related-thumb">
+                  {r.thumb_url && <img src={r.thumb_url} alt={r.alt_text || r.title} loading="lazy" width="64" height="64" />}
+                </div>
+                <h5>{r.title}</h5>
+              </a>
+            ))}
+          </div>
+        )}
+      </aside>
+    </div>
+
+    <div class="comments-section">
+      <h3>Comentários {comments.length > 0 && `(${comments.length})`}</h3>
+
+      <form id="comment-form" data-post-id={post.id}>
+        <div class="comment-fields">
+          <input type="text" id="c-name" placeholder="Seu nome" required />
+          <input type="email" id="c-email" placeholder="Seu e-mail (não é exibido)" required />
+        </div>
+        <textarea id="c-content" rows="3" placeholder="Escreva seu comentário..." required></textarea>
+        <button type="submit" id="c-submit">Comentar</button>
+        <p id="c-feedback" class="c-feedback" hidden></p>
+      </form>
+
+      {comments.length > 0 ? (
+        <ul class="comments-list">
+          {comments.map((c: any) => (
+            <li>
+              <div class="c-name">{c.name}</div>
+              <div class="c-date">{new Date(c.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</div>
+              <p>{c.content}</p>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="no-comments">Seja o primeiro a comentar.</p>
+      )}
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { createSupabaseBrowserClient } from '../lib/supabase-browser';
+  const supabase = createSupabaseBrowserClient();
+
+  const form = document.getElementById('comment-form') as HTMLFormElement | null;
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('c-submit') as HTMLButtonElement;
+    const feedback = document.getElementById('c-feedback') as HTMLParagraphElement;
+    btn.disabled = true;
+    btn.textContent = 'Enviando...';
+
+    const post_id = form.dataset.postId!;
+    const name = (document.getElementById('c-name') as HTMLInputElement).value;
+    const email = (document.getElementById('c-email') as HTMLInputElement).value;
+    const content = (document.getElementById('c-content') as HTMLTextAreaElement).value;
+
+    const { error } = await supabase.from('comments').insert({ post_id, name, email, content, approved: false });
+
+    if (error) {
+      feedback.textContent = 'Não foi possível enviar. Tenta de novo.';
+      feedback.hidden = false;
+      btn.disabled = false;
+      btn.textContent = 'Comentar';
+      return;
+    }
+
+    form.reset();
+    feedback.textContent = 'Comentário enviado! Ele aparece aqui depois de aprovado.';
+    feedback.hidden = false;
+    btn.textContent = 'Enviado ✓';
+  });
+</script>
+
+<style>
+  .post-head { padding: 44px 0 28px; max-width: 760px; margin: 0 auto; }
+  .post-head .cat { color: var(--olive-deep); margin-bottom: 14px; display: block; }
+  .post-head h1 { font-family: var(--font-display); font-weight: 500; font-size: 36px; line-height: 1.2; margin: 0 0 18px; }
+  .post-meta { font-family: var(--font-ui); font-size: 13px; color: var(--ink-soft); display: flex; gap: 14px; padding-bottom: 24px; border-bottom: 1px solid var(--clay-line); }
+
+  .cover { padding-bottom: 40px; }
+  .cover-img { aspect-ratio: 16/9; border-radius: var(--radius); overflow: hidden; background: linear-gradient(155deg,#8B9560,#59613A); }
+  .cover-img img { width: 100%; height: 100%; object-fit: cover; }
+
+  .article-layout { display: grid; grid-template-columns: 1fr 300px; gap: 56px; align-items: start; padding-bottom: 60px; }
+  article { max-width: 680px; font-size: 17px; }
+  article :global(p) { margin-bottom: 20px; }
+  article :global(h2) { font-family: var(--font-display); font-weight: 500; font-size: 24px; margin: 36px 0 16px; }
+  article :global(h3) { font-family: var(--font-display); font-weight: 500; font-size: 20px; margin: 28px 0 14px; }
+  article :global(img) { max-width: 100%; height: auto; border-radius: var(--radius); }
+  article :global(a) { color: var(--ember-deep); text-decoration: underline; }
+
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--clay-line); }
+  .tags a {
+    font-family: var(--font-ui); font-size: 12px; background: var(--card-bg); border: 1px solid var(--clay-line);
+    color: var(--olive-deep); padding: 6px 12px; border-radius: var(--radius);
+  }
+
+  .side-block { margin-bottom: 36px; }
+  .side-block h4 { font-family: var(--font-display); font-size: 16px; font-weight: 500; margin: 0 0 14px; padding-bottom: 10px; border-bottom: 1px solid var(--clay-line); }
+  .related-item { display: grid; grid-template-columns: 64px 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--clay-line); }
+  .related-item:first-child { padding-top: 0; }
+  .related-thumb { aspect-ratio: 1/1; border-radius: var(--radius); overflow: hidden; background: linear-gradient(150deg,#c9a862,#8A5E1C); }
+  .related-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .related-item h5 { font-family: var(--font-display); font-size: 13px; font-weight: 500; line-height: 1.35; margin: 0; }
+
+  @media (max-width: 860px) {
+    .article-layout { grid-template-columns: 1fr; }
+  }
+
+  .comments-section { max-width: 680px; margin: 0 auto 60px; padding-top: 20px; border-top: 1px solid var(--clay-line); }
+  .comments-section h3 { font-family: var(--font-display); font-weight: 500; font-size: 20px; margin: 0 0 20px; }
+
+  #comment-form { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+  .comment-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  #comment-form input, #comment-form textarea {
+    font-family: var(--font-ui); font-size: 13px; padding: 10px 12px; border: 1px solid var(--clay-line);
+    border-radius: 4px; background: var(--card-bg); color: var(--ink); resize: vertical;
+  }
+  #comment-form input:focus, #comment-form textarea:focus { outline: none; border-color: var(--olive); }
+  #comment-form button {
+    align-self: flex-start; font-family: var(--font-ui); font-size: 13px; font-weight: 600;
+    padding: 9px 20px; border-radius: 4px; border: none; background: var(--olive); color: #fff; cursor: pointer;
+  }
+  .c-feedback { font-family: var(--font-ui); font-size: 12px; color: var(--olive-deep); margin: 0; }
+
+  .comments-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 20px; }
+  .comments-list li { padding-bottom: 20px; border-bottom: 1px solid var(--clay-line); }
+  .comments-list li:last-child { border-bottom: none; padding-bottom: 0; }
+  .c-name { font-family: var(--font-ui); font-size: 13px; font-weight: 600; color: var(--ink); }
+  .c-date { font-family: var(--font-ui); font-size: 11px; color: #8A8367; margin-bottom: 8px; }
+  .comments-list p { margin: 0; font-size: 14px; color: var(--ink-soft); }
+  .no-comments { font-family: var(--font-ui); font-size: 13px; color: #8A8367; }
+
+  @media (max-width: 560px) {
+    .comment-fields { grid-template-columns: 1fr; }
+  }
+</style>

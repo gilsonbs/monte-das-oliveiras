@@ -1,0 +1,239 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Posts">
+  <div class="topbar">
+    <h1>Posts</h1>
+    <a class="btn btn-primary" href="/admin/posts/editor">Novo post</a>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card">
+      <div class="label">Posts publicados</div>
+      <div class="value" id="stat-published">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Rascunhos</div>
+      <div class="value" id="stat-draft">—</div>
+    </div>
+  </div>
+
+  <div class="toolbar-row">
+    <div class="filters" id="filters"></div>
+    <form id="search-form" class="search-form">
+      <input type="text" id="search-input" placeholder="Buscar por título..." />
+      <button type="submit">Buscar</button>
+      <a href="#" id="clear-search" class="clear-search" hidden>Limpar</a>
+    </form>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Post</th>
+        <th>Status</th>
+        <th>Destaque</th>
+        <th>Data</th>
+        <th>Visitas</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="posts-tbody">
+      <tr><td colspan="6" class="loading">Carregando...</td></tr>
+    </tbody>
+  </table>
+
+  <div class="pagination" id="pagination"></div>
+</AdminLayout>
+
+<script>
+  import { createSupabaseBrowserClient } from '../../lib/supabase-browser';
+  const supabase = createSupabaseBrowserClient();
+
+  const PER_PAGE = 50;
+  const params = new URLSearchParams(window.location.search);
+  const statusFilter = params.get('status') || 'all';
+  const searchQuery = params.get('q') || '';
+  const page = Math.max(1, Number(params.get('page') || '1'));
+
+  function buildUrl(overrides: Record<string, string | number>) {
+    const p = new URLSearchParams();
+    if (statusFilter !== 'all') p.set('status', statusFilter);
+    if (searchQuery) p.set('q', searchQuery);
+    if (page > 1) p.set('page', String(page));
+    Object.entries(overrides).forEach(([k, v]) => {
+      if (v === '' || v === 'all' || v === 1) p.delete(k);
+      else p.set(k, String(v));
+    });
+    const qs = p.toString();
+    return qs ? `/admin/?${qs}` : '/admin/';
+  }
+
+  // filtros de status
+  const filtersEl = document.getElementById('filters')!;
+  const filterOptions = [
+    { key: 'all', label: 'Todos' },
+    { key: 'published', label: 'Publicados' },
+    { key: 'draft', label: 'Rascunhos' },
+  ];
+  filtersEl.innerHTML = filterOptions
+    .map((f) => `<a href="${buildUrl({ status: f.key, page: 1 })}" class="${statusFilter === f.key ? 'active' : ''}">${f.label}</a>`)
+    .join('');
+
+  // busca
+  const searchInput = document.getElementById('search-input') as HTMLInputElement;
+  searchInput.value = searchQuery;
+  const clearSearch = document.getElementById('clear-search') as HTMLAnchorElement;
+  if (searchQuery) {
+    clearSearch.hidden = false;
+    clearSearch.href = buildUrl({ q: '', page: 1 });
+  }
+  document.getElementById('search-form')!.addEventListener('submit', (e) => {
+    e.preventDefault();
+    window.location.href = buildUrl({ q: searchInput.value, page: 1 });
+  });
+
+  function timeAgo(dateStr: string | null) {
+    if (!dateStr) return '—';
+    return new Date(dateStr).toLocaleDateString('pt-BR');
+  }
+
+  async function load() {
+    const [{ count: publishedCount }, { count: draftCount }] = await Promise.all([
+      supabase.from('posts').select('id', { count: 'exact', head: true }).eq('status', 'published'),
+      supabase.from('posts').select('id', { count: 'exact', head: true }).eq('status', 'draft'),
+    ]);
+    document.getElementById('stat-published')!.textContent = String(publishedCount ?? 0);
+    document.getElementById('stat-draft')!.textContent = String(draftCount ?? 0);
+
+    let query = supabase
+      .from('posts')
+      .select('id, title, slug, status, is_featured, published_at, view_count, categories(name)', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .range((page - 1) * PER_PAGE, page * PER_PAGE - 1);
+
+    if (statusFilter !== 'all') query = query.eq('status', statusFilter);
+    if (searchQuery) query = query.ilike('title', `%${searchQuery}%`);
+
+    const { data: posts, count: totalCount } = await query;
+    const totalPages = Math.max(1, Math.ceil((totalCount ?? 0) / PER_PAGE));
+
+    const tbody = document.getElementById('posts-tbody')!;
+    if (!posts || posts.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" class="loading">Nenhum post encontrado.</td></tr>`;
+    } else {
+      tbody.innerHTML = posts
+        .map((post: any) => `
+          <tr>
+            <td>
+              <div class="post-title">${post.title}</div>
+              <div class="post-cat">${post.categories?.name ?? ''}</div>
+            </td>
+            <td><span class="chip ${post.status === 'published' ? 'chip-published' : 'chip-draft'}">${post.status === 'published' ? 'Publicado' : 'Rascunho'}</span></td>
+            <td><span class="star ${post.is_featured ? '' : 'off'}">★</span></td>
+            <td>${timeAgo(post.published_at)}</td>
+            <td>${post.view_count ?? 0}</td>
+            <td>
+              <div class="row-actions">
+                <a href="/admin/posts/editor?id=${post.id}">Editar</a>
+                <a href="/admin/preview/?id=${post.id}" target="_blank">Pré-visualizar</a>
+                ${post.status === 'published' ? `<a href="/${post.slug}/" target="_blank">Ver no site</a>` : ''}
+                <a href="#" class="btn-delete" data-id="${post.id}" data-title="${post.title.replace(/"/g, '&quot;')}">Excluir</a>
+              </div>
+            </td>
+          </tr>
+        `)
+        .join('');
+
+      document.querySelectorAll('.btn-delete').forEach((btn) => {
+        btn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          const el = e.target as HTMLElement;
+          const id = el.dataset.id!;
+          const title = el.dataset.title!;
+          if (!confirm(`Excluir "${title}"? Essa ação não pode ser desfeita.`)) return;
+
+          const { error } = await supabase.from('posts').delete().eq('id', id);
+          if (error) {
+            alert(`Erro ao excluir: ${error.message}`);
+          } else {
+            load();
+          }
+        });
+      });
+    }
+
+    const paginationEl = document.getElementById('pagination')!;
+    if (totalPages > 1) {
+      paginationEl.innerHTML = `
+        ${page > 1 ? `<a href="${buildUrl({ page: page - 1 })}">&larr; Anterior</a>` : ''}
+        <span>Página ${page} de ${totalPages} (${totalCount} posts)</span>
+        ${page < totalPages ? `<a href="${buildUrl({ page: page + 1 })}">Próxima &rarr;</a>` : ''}
+      `;
+    }
+  }
+
+  load();
+</script>
+
+<style>
+  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+  .topbar h1 { font-family: var(--font-display); font-size: 22px; font-weight: 600; margin: 0; }
+  .btn {
+    font-family: var(--font-ui); font-size: 13px; font-weight: 500; padding: 9px 16px; border-radius: 6px;
+    border: 1px solid #E4E0D3; background: #fff; cursor: pointer; text-decoration: none; color: inherit;
+  }
+  .btn-primary { background: var(--olive); color: #fff; border-color: var(--olive); }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; max-width: 560px; }
+  .stat-card { background: #fff; border: 1px solid #E4E0D3; border-radius: 8px; padding: 16px 18px; }
+  .stat-card .label { font-size: 12px; color: #8A8367; margin-bottom: 6px; }
+  .stat-card .value { font-family: var(--font-display); font-size: 24px; font-weight: 600; }
+
+  .toolbar-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+  .filters { display: flex; gap: 8px; }
+  .filters :global(a) {
+    font-family: var(--font-ui); font-size: 12.5px; font-weight: 500; padding: 7px 14px; border-radius: 20px;
+    background: #fff; border: 1px solid #E4E0D3; color: #5F5E5A; text-decoration: none;
+  }
+  .filters :global(a.active) { background: var(--olive); color: #fff; border-color: var(--olive); }
+
+  .search-form { display: flex; gap: 8px; align-items: center; }
+  .search-form input[type=text] {
+    font-family: var(--font-ui); font-size: 13px; padding: 7px 12px; border: 1px solid #E4E0D3;
+    border-radius: 6px; background: #fff; width: 220px;
+  }
+  .search-form button {
+    font-family: var(--font-ui); font-size: 12.5px; font-weight: 500; padding: 7px 14px; border-radius: 6px;
+    border: 1px solid #E4E0D3; background: #fff; cursor: pointer;
+  }
+  .clear-search { font-family: var(--font-ui); font-size: 12px; color: #8A8367; }
+
+  .pagination {
+    display: flex; align-items: center; justify-content: center; gap: 20px; margin-top: 20px;
+    font-family: var(--font-ui); font-size: 13px; color: #5F5E5A;
+  }
+  .pagination :global(a) { color: var(--olive-deep); font-weight: 500; text-decoration: none; }
+
+  table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #E4E0D3; border-radius: 8px; overflow: hidden; }
+  thead th { text-align: left; font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: #8A8367; padding: 12px 16px; border-bottom: 1px solid #E4E0D3; }
+  tbody td { padding: 12px 16px; border-bottom: 1px solid #E4E0D3; vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #FAF8F0; }
+  .loading { text-align: center; color: #8A8367; padding: 30px 0 !important; }
+
+  :global(.post-title) { font-weight: 500; font-size: 13.5px; margin-bottom: 2px; }
+  :global(.post-cat) { font-size: 11px; color: #8A8367; }
+
+  :global(.chip) { font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 20px; display: inline-block; }
+  :global(.chip-published) { background: var(--olive-bg, #EEF1E4); color: var(--olive-deep); }
+  :global(.chip-draft) { background: #F1EFE8; color: #5F5E5A; }
+
+  :global(.star) { color: var(--ember); font-size: 15px; }
+  :global(.star.off) { color: #D9D4C2; }
+
+  :global(.row-actions) { display: flex; gap: 14px; font-size: 12px; color: #8A8367; }
+  :global(.row-actions a) { color: var(--olive-deep); text-decoration: none; }
+  :global(.row-actions .btn-delete) { color: #A6462A; }
+</style>

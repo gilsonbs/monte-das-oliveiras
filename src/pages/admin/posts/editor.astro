@@ -1,0 +1,473 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Editor de post">
+  <div class="topbar">
+    <div>
+      <a class="back" href="/admin">&larr; Voltar para posts</a>
+      <h1 id="page-title">Novo post</h1>
+    </div>
+    <div class="topbar-actions">
+      <span id="save-status" class="btn btn-ghost"></span>
+      <button type="button" class="btn btn-danger" id="btn-delete" hidden>Excluir post</button>
+      <button type="button" class="btn" id="btn-draft">Salvar rascunho</button>
+      <button type="button" class="btn btn-primary" id="btn-publish">Publicar</button>
+    </div>
+  </div>
+
+  <form id="post-form">
+    <div class="editor-layout">
+      <div>
+        <div class="panel">
+          <input class="title-input" type="text" id="title" placeholder="Título do post" required />
+          <div class="slug">montedasoliveiras.com/<b><span id="slug-preview"></span></b></div>
+          <input type="hidden" id="slug" />
+        </div>
+
+        <div class="panel">
+          <label>Conteúdo</label>
+          <div class="toolbar" id="toolbar">
+            <button type="button" data-cmd="bold" title="Negrito"><b>B</b></button>
+            <button type="button" data-cmd="italic" title="Itálico"><i>I</i></button>
+            <button type="button" data-cmd="h2" title="Título de seção">H2</button>
+            <button type="button" data-cmd="h3" title="Subtítulo">H3</button>
+            <button type="button" data-cmd="blockquote" title="Citação">"</button>
+            <button type="button" data-cmd="link" title="Link">🔗</button>
+            <button type="button" data-cmd="bulletList" title="Lista">≡</button>
+          </div>
+          <div id="editor" class="tiptap-editor"></div>
+          <input type="hidden" id="content" />
+        </div>
+
+        <div class="panel">
+          <div class="field">
+            <label>Resumo (excerpt)</label>
+            <textarea id="excerpt" rows="2"></textarea>
+          </div>
+          <div class="field">
+            <label>Título SEO</label>
+            <input type="text" id="seo_title" />
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label>Meta descrição</label>
+            <textarea id="meta_description" rows="2"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="panel">
+          <label>Imagem de capa</label>
+          <div class="upload-zone" id="upload-zone">
+            <div class="icon">↑</div>
+            <div class="title" id="upload-title">Arraste uma imagem ou clique para enviar</div>
+            <div class="hint">Qualquer tamanho — o recorte é automático</div>
+          </div>
+          <input type="file" id="file-input" accept="image/*" hidden />
+          <input type="hidden" id="cover_media_id" />
+
+          <div class="formats-generated" id="formats-generated" hidden>
+            <div class="formats-label"><span class="check">✓</span>4 formatos gerados</div>
+            <div class="formats-grid" id="formats-grid"></div>
+          </div>
+
+          <div class="formats-generated" id="existing-formats" hidden>
+            <div class="formats-label"><span class="check">✓</span>Capa atual</div>
+            <div class="formats-grid">
+              <div class="format-card"><img id="existing-cover-img" src="" alt="" /></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="field">
+            <label>Categoria</label>
+            <select id="category_id"></select>
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label>Tags (separadas por vírgula)</label>
+            <input type="text" id="tags" placeholder="fé, esperança, profecia" />
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="toggle-row">
+            <div>
+              <div class="lbl">Destacar na home</div>
+              <div class="sub">Aparece no bloco de abertura</div>
+            </div>
+            <label class="switch-wrap">
+              <input type="checkbox" id="is_featured" />
+              <span class="switch"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</AdminLayout>
+
+<script>
+  import { createSupabaseBrowserClient } from '../../../lib/supabase-browser';
+  import { Editor } from '@tiptap/core';
+  import StarterKit from '@tiptap/starter-kit';
+  import Link from '@tiptap/extension-link';
+  import ImageExt from '@tiptap/extension-image';
+
+  const supabase = createSupabaseBrowserClient();
+  const postId = new URLSearchParams(window.location.search).get('id');
+  const isNew = !postId;
+
+  // ---------- slug automático a partir do título ----------
+  function slugify(text: string) {
+    return text
+      .toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9\s-]/g, '')
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-');
+  }
+
+  const titleInput = document.getElementById('title') as HTMLInputElement;
+  const slugInput = document.getElementById('slug') as HTMLInputElement;
+  const slugPreview = document.getElementById('slug-preview') as HTMLElement;
+
+  if (isNew) {
+    titleInput.addEventListener('input', () => {
+      const slug = slugify(titleInput.value);
+      slugInput.value = slug;
+      slugPreview.textContent = slug;
+    });
+  }
+
+  // ---------- editor visual (Tiptap) ----------
+  const contentHidden = document.getElementById('content') as HTMLInputElement;
+  const editor = new Editor({
+    element: document.getElementById('editor')!,
+    extensions: [StarterKit, Link.configure({ openOnClick: false }), ImageExt],
+    content: '<p></p>',
+    onUpdate: ({ editor }) => {
+      contentHidden.value = editor.getHTML();
+    },
+  });
+
+  document.getElementById('toolbar')!.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('button[data-cmd]') as HTMLButtonElement | null;
+    if (!btn) return;
+    const cmd = btn.dataset.cmd;
+    const chain = editor.chain().focus();
+
+    if (cmd === 'bold') chain.toggleBold().run();
+    else if (cmd === 'italic') chain.toggleItalic().run();
+    else if (cmd === 'h2') chain.toggleHeading({ level: 2 }).run();
+    else if (cmd === 'h3') chain.toggleHeading({ level: 3 }).run();
+    else if (cmd === 'blockquote') chain.toggleBlockquote().run();
+    else if (cmd === 'bulletList') chain.toggleBulletList().run();
+    else if (cmd === 'link') {
+      const url = window.prompt('URL do link:');
+      if (url) chain.setLink({ href: url }).run();
+      else chain.run();
+    }
+  });
+
+  // ---------- pipeline de imagem (equivalente ao sharp, via Canvas) ----------
+  const VARIANTS: Record<string, { w: number; h: number }> = {
+    cover: { w: 1200, h: 675 },
+    card: { w: 800, h: 600 },
+    thumb: { w: 400, h: 400 },
+    share: { w: 1200, h: 630 },
+  };
+
+  function cropToCanvas(img: HTMLImageElement, w: number, h: number): HTMLCanvasElement {
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d')!;
+    const scale = Math.max(w / img.width, h / img.height);
+    const sw = w / scale;
+    const sh = h / scale;
+    const sx = (img.width - sw) / 2;
+    const sy = (img.height - sh) / 2;
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, w, h);
+    return canvas;
+  }
+
+  function canvasToWebpBlob(canvas: HTMLCanvasElement): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('Falha ao gerar imagem'))), 'image/webp', 0.82);
+    });
+  }
+
+  let pendingCoverFile: File | null = null;
+
+  const uploadZone = document.getElementById('upload-zone')!;
+  const fileInput = document.getElementById('file-input') as HTMLInputElement;
+  const formatsGenerated = document.getElementById('formats-generated')!;
+  const formatsGrid = document.getElementById('formats-grid')!;
+  const uploadTitle = document.getElementById('upload-title')!;
+
+  uploadZone.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', async () => {
+    const file = fileInput.files?.[0];
+    if (!file) return;
+    pendingCoverFile = file;
+    uploadTitle.textContent = 'Processando...';
+
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+    await img.decode();
+
+    formatsGrid.innerHTML = '';
+    for (const [name, { w, h }] of Object.entries(VARIANTS)) {
+      const canvas = cropToCanvas(img, w, h);
+      const card = document.createElement('div');
+      card.className = 'format-card';
+      card.appendChild(canvas);
+      canvas.style.width = '100%';
+      canvas.style.height = '100%';
+      canvas.style.display = 'block';
+      formatsGrid.appendChild(card);
+    }
+    formatsGenerated.hidden = false;
+    uploadTitle.textContent = 'Trocar imagem';
+  });
+
+  async function uploadCoverImage(slug: string): Promise<string | null> {
+    if (!pendingCoverFile) return (document.getElementById('cover_media_id') as HTMLInputElement).value || null;
+
+    const img = new Image();
+    img.src = URL.createObjectURL(pendingCoverFile);
+    await img.decode();
+
+    const urls: Record<string, string> = {};
+    for (const [name, { w, h }] of Object.entries(VARIANTS)) {
+      const canvas = cropToCanvas(img, w, h);
+      const blob = await canvasToWebpBlob(canvas);
+      const path = `${slug}/${name}-${Date.now()}.webp`;
+      const { error: upErr } = await supabase.storage.from('media').upload(path, blob, {
+        contentType: 'image/webp',
+        upsert: true,
+      });
+      if (upErr) throw upErr;
+      const { data } = supabase.storage.from('media').getPublicUrl(path);
+      urls[name] = data.publicUrl;
+    }
+
+    const { data: mediaRow, error: mediaErr } = await supabase
+      .from('media')
+      .insert({
+        original_url: urls.cover,
+        cover_url: urls.cover,
+        card_url: urls.card,
+        thumb_url: urls.thumb,
+        share_url: urls.share,
+        alt_text: titleInput.value,
+      })
+      .select('id')
+      .single();
+    if (mediaErr) throw mediaErr;
+    return mediaRow.id;
+  }
+
+  // ---------- categorias/tags ----------
+  async function upsertTagsAndLink(postId: string, tagsText: string) {
+    const names = tagsText.split(',').map((t) => t.trim()).filter(Boolean);
+    await supabase.from('post_tags').delete().eq('post_id', postId);
+
+    for (const name of names) {
+      const slug = slugify(name);
+      const { data: existing } = await supabase.from('tags').select('id').eq('slug', slug).maybeSingle();
+      let tagId = existing?.id;
+      if (!tagId) {
+        const { data: created, error } = await supabase.from('tags').insert({ name, slug }).select('id').single();
+        if (error) throw error;
+        tagId = created.id;
+      }
+      await supabase.from('post_tags').insert({ post_id: postId, tag_id: tagId });
+    }
+  }
+
+  // ---------- salvar (rascunho ou publicado) ----------
+  let currentPostId = postId;
+
+  async function savePost(status: 'draft' | 'published') {
+    const saveStatus = document.getElementById('save-status')!;
+    saveStatus.textContent = 'Salvando...';
+
+    const { data: sessionCheck, error: sessionErr } = await supabase.auth.getSession();
+    console.log(
+      '[diagnostico-sessao-editor] temSessao=' + !!sessionCheck.session +
+      ' | usuario=' + (sessionCheck.session?.user?.email || 'nenhum') +
+      ' | erro=' + (sessionErr?.message || 'nenhum')
+    );
+
+    try {
+      const slug = slugInput.value || slugify(titleInput.value);
+      const coverMediaId = await uploadCoverImage(slug);
+
+      const payload: Record<string, any> = {
+        title: titleInput.value,
+        slug,
+        content: contentHidden.value,
+        excerpt: (document.getElementById('excerpt') as HTMLTextAreaElement).value,
+        seo_title: (document.getElementById('seo_title') as HTMLInputElement).value || null,
+        meta_description: (document.getElementById('meta_description') as HTMLTextAreaElement).value || null,
+        category_id: (document.getElementById('category_id') as HTMLSelectElement).value,
+        is_featured: (document.getElementById('is_featured') as HTMLInputElement).checked,
+        cover_media_id: coverMediaId,
+        status,
+        published_at: status === 'published' ? new Date().toISOString() : null,
+      };
+
+      let savedId = currentPostId;
+
+      if (!savedId) {
+        const { data, error } = await supabase.from('posts').insert(payload).select('id').single();
+        if (error) throw error;
+        savedId = data.id;
+      } else {
+        const { error } = await supabase.from('posts').update(payload).eq('id', savedId);
+        if (error) throw error;
+      }
+
+      const tagsText = (document.getElementById('tags') as HTMLInputElement).value;
+      await upsertTagsAndLink(savedId!, tagsText);
+
+      saveStatus.textContent = 'Salvo!';
+      window.location.href = `/admin/posts/editor?id=${savedId}`;
+    } catch (err: any) {
+      saveStatus.textContent = '';
+      alert(`Erro ao salvar: ${err.message || err}`);
+    }
+  }
+
+  document.getElementById('btn-draft')?.addEventListener('click', () => savePost('draft'));
+  document.getElementById('btn-publish')?.addEventListener('click', () => savePost('published'));
+
+  document.getElementById('btn-delete')?.addEventListener('click', async () => {
+    if (!currentPostId) return;
+    if (!confirm(`Excluir "${titleInput.value}"? Essa ação não pode ser desfeita.`)) return;
+
+    const { error } = await supabase.from('posts').delete().eq('id', currentPostId);
+    if (error) {
+      alert(`Erro ao excluir: ${error.message}`);
+    } else {
+      window.location.href = '/admin/';
+    }
+  });
+
+  // ---------- carregamento inicial (categorias + post existente, se houver) ----------
+  async function init() {
+    const { data: categories } = await supabase.from('categories').select('id, name, slug').order('name');
+    const categorySelect = document.getElementById('category_id') as HTMLSelectElement;
+    categorySelect.innerHTML = (categories ?? [])
+      .map((c: any) => `<option value="${c.id}">${c.name}</option>`)
+      .join('');
+
+    if (!isNew) {
+      const { data: post } = await supabase
+        .from('posts')
+        .select('*, media(cover_url, card_url, thumb_url, share_url)')
+        .eq('id', postId)
+        .maybeSingle();
+
+      if (!post) {
+        window.location.href = '/admin/';
+        return;
+      }
+
+      document.getElementById('page-title')!.textContent = 'Editar post';
+      document.getElementById('btn-delete')!.hidden = false;
+      titleInput.value = post.title;
+      slugInput.value = post.slug;
+      slugPreview.textContent = post.slug;
+      editor.commands.setContent(post.content || '<p></p>');
+      contentHidden.value = post.content || '';
+      (document.getElementById('excerpt') as HTMLTextAreaElement).value = post.excerpt || '';
+      (document.getElementById('seo_title') as HTMLInputElement).value = post.seo_title || '';
+      (document.getElementById('meta_description') as HTMLTextAreaElement).value = post.meta_description || '';
+      (document.getElementById('is_featured') as HTMLInputElement).checked = !!post.is_featured;
+      (document.getElementById('cover_media_id') as HTMLInputElement).value = post.cover_media_id || '';
+      if (post.category_id) categorySelect.value = post.category_id;
+
+      if (post.media?.card_url) {
+        (document.getElementById('existing-cover-img') as HTMLImageElement).src = post.media.card_url;
+        document.getElementById('existing-formats')!.hidden = false;
+      }
+
+      const { data: tagRows } = await supabase.from('post_tags').select('tags(name)').eq('post_id', postId);
+      const tagNames = (tagRows ?? []).map((r: any) => r.tags?.name).filter(Boolean).join(', ');
+      (document.getElementById('tags') as HTMLInputElement).value = tagNames;
+    } else {
+      document.getElementById('page-title')!.textContent = 'Novo post';
+    }
+  }
+
+  init();
+</script>
+
+<style>
+  .topbar { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+  .topbar .back { font-size: 12px; color: #8A8367; margin-bottom: 6px; display: block; text-decoration: none; }
+  .topbar h1 { font-family: var(--font-display); font-size: 20px; font-weight: 600; margin: 0; }
+  .topbar-actions { display: flex; gap: 10px; align-items: center; }
+  .btn { font-family: var(--font-ui); font-size: 13px; font-weight: 500; padding: 9px 16px; border-radius: 6px; border: 1px solid #E4E0D3; background: #fff; cursor: pointer; }
+  .btn-primary { background: var(--olive); color: #fff; border-color: var(--olive); }
+  .btn-ghost { border-color: transparent; color: #8A8367; cursor: default; }
+  .btn-danger { color: #A6462A; border-color: #E8C4B8; }
+  .btn-danger:hover { background: #FBEEE9; }
+
+  .editor-layout { display: grid; grid-template-columns: 1fr 320px; gap: 28px; align-items: start; }
+  .panel { background: #fff; border: 1px solid #E4E0D3; border-radius: 8px; padding: 22px; margin-bottom: 20px; }
+  .field { margin-bottom: 18px; }
+  .field label, .panel > label { display: block; font-size: 12px; font-weight: 500; color: #8A8367; margin-bottom: 7px; }
+  input[type=text], input[type=email], textarea, select {
+    width: 100%; font-family: var(--font-ui); font-size: 14px; padding: 10px 12px; border: 1px solid #E4E0D3; border-radius: 6px; background: #fff; box-sizing: border-box;
+  }
+  .title-input { font-family: var(--font-display); font-size: 22px; font-weight: 600; border: none; padding: 0; width: 100%; }
+  .title-input:focus { outline: none; }
+  .slug { font-size: 12px; color: #8A8367; margin-top: 6px; }
+  .slug b { color: var(--olive-deep); font-weight: 500; }
+  .hint { font-size: 11px; color: #8A8367; margin: 8px 0 0; }
+
+  .toolbar { display: flex; gap: 4px; padding-bottom: 10px; margin-bottom: 12px; border-bottom: 1px solid #E4E0D3; flex-wrap: wrap; }
+  .toolbar button {
+    width: 32px; height: 32px; border: 1px solid transparent; background: transparent; border-radius: 5px;
+    font-family: var(--font-ui); font-size: 13px; font-weight: 600; color: #5F5E5A; cursor: pointer;
+  }
+  .toolbar button:hover { background: var(--olive-bg, #EEF1E4); border-color: #E4E0D3; }
+
+  .tiptap-editor { min-height: 320px; font-family: var(--font-ui); font-size: 14px; line-height: 1.7; color: #3A362E; }
+  .tiptap-editor :global(.ProseMirror) { min-height: 320px; outline: none; }
+  .tiptap-editor :global(p) { margin: 0 0 14px; }
+  .tiptap-editor :global(h2) { font-family: var(--font-display); font-size: 19px; font-weight: 500; margin: 22px 0 10px; }
+  .tiptap-editor :global(h3) { font-family: var(--font-display); font-size: 16px; font-weight: 500; margin: 18px 0 8px; }
+  .tiptap-editor :global(blockquote) { border-left: 3px solid var(--olive); padding-left: 14px; color: #5F5E5A; font-style: italic; margin: 14px 0; }
+  .tiptap-editor :global(ul) { padding-left: 22px; margin: 0 0 14px; }
+  .tiptap-editor :global(a) { color: var(--olive-deep); text-decoration: underline; }
+  .tiptap-editor :global(img) { max-width: 100%; border-radius: 4px; }
+
+  .upload-zone { border: 1.5px dashed #C9B98F; border-radius: 8px; background: #FAF6E9; padding: 24px; text-align: center; margin-bottom: 14px; cursor: pointer; }
+  .upload-zone .icon { font-size: 22px; margin-bottom: 8px; color: var(--ember); }
+  .upload-zone .title { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+  .upload-zone .hint { font-size: 12px; color: #8A8367; margin: 0; }
+
+  .formats-generated { margin-top: 16px; }
+  .formats-label { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--olive-deep); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .formats-label .check { width: 14px; height: 14px; border-radius: 50%; background: var(--olive); color: #fff; font-size: 9px; display: flex; align-items: center; justify-content: center; }
+  .formats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .format-card { border: 1px solid #E4E0D3; border-radius: 6px; overflow: hidden; background: #fff; aspect-ratio: 4/3; }
+  .format-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; }
+  .toggle-row .lbl { font-size: 13px; font-weight: 500; }
+  .toggle-row .sub { font-size: 11.5px; color: #8A8367; margin-top: 2px; }
+  .switch-wrap { position: relative; display: inline-block; width: 36px; height: 20px; }
+  .switch-wrap input { opacity: 0; width: 0; height: 0; }
+  .switch { position: absolute; inset: 0; background: #E4E0D3; border-radius: 20px; cursor: pointer; transition: .2s; }
+  .switch::after { content: ""; position: absolute; width: 16px; height: 16px; border-radius: 50%; background: #fff; top: 2px; left: 2px; transition: .2s; }
+  .switch-wrap input:checked + .switch { background: var(--olive); }
+  .switch-wrap input:checked + .switch::after { left: 18px; }
+</style>

@@ -1,0 +1,85 @@
+---
+import '../styles/tokens.css';
+
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+const path = Astro.url.pathname;
+
+function isActive(prefix: string) {
+  return path.startsWith(prefix) ? 'active' : '';
+}
+---
+
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <title>{title} — Painel Monte das Oliveiras</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="shell auth-pending" id="admin-shell">
+    <aside class="sidebar">
+      <div class="sidebar-logo">Monte das Oliveiras</div>
+      <nav>
+        <a href="/admin" class={isActive('/admin') && !path.includes('/admin/categorias') ? 'active' : ''}>Posts</a>
+        <a href="/admin/categorias" class={isActive('/admin/categorias')}>Categorias e tags</a>
+        <a href="/admin/anuncios" class={isActive('/admin/anuncios')}>Anúncios</a>
+        <a href="/admin/mensagens" class={isActive('/admin/mensagens')}>Mensagens</a>
+      </nav>
+      <div class="sidebar-section">Conta</div>
+      <nav>
+        <a href="/" target="_blank">Ver site</a>
+        <a href="#" id="logout-link">Sair <span id="user-email"></span></a>
+      </nav>
+    </aside>
+    <main>
+      <slot />
+    </main>
+  </div>
+
+  <script>
+    import { createSupabaseBrowserClient } from '../lib/supabase-browser';
+    const supabase = createSupabaseBrowserClient();
+
+    // guarda de autenticação: como o site é 100% estático (sem servidor),
+    // a checagem de login acontece aqui, no navegador. A segurança de
+    // verdade continua sendo garantida pelas políticas RLS do Supabase —
+    // isso aqui é só a experiência de "me manda pro login se eu não tiver logado".
+    const { data } = await supabase.auth.getSession();
+    if (!data.session) {
+      window.location.href = '/admin/login';
+    } else {
+      document.getElementById('admin-shell')?.classList.remove('auth-pending');
+      const emailEl = document.getElementById('user-email');
+      if (emailEl) emailEl.textContent = `(${data.session.user.email})`;
+    }
+
+    document.getElementById('logout-link')?.addEventListener('click', async (e) => {
+      e.preventDefault();
+      await supabase.auth.signOut();
+      window.location.href = '/admin/login';
+    });
+  </script>
+
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg, #FAF8F2); font-family: var(--font-ui); font-size: 14px; color: var(--ink); }
+    .shell { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+    .shell.auth-pending { visibility: hidden; }
+    .sidebar { background: var(--dusk); color: #CFC9AE; padding: 24px 18px; }
+    .sidebar-logo { font-family: var(--font-display); font-size: 17px; font-weight: 600; color: #F3EEDD; margin-bottom: 32px; padding: 0 6px; }
+    .sidebar nav { display: flex; flex-direction: column; margin-bottom: 8px; }
+    .sidebar nav a { padding: 10px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; margin-bottom: 2px; color: #CFC9AE; text-decoration: none; }
+    .sidebar nav a.active { background: #2E3555; color: #F3EEDD; }
+    .sidebar nav a:hover { color: #F3EEDD; }
+    .sidebar-section { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #71715F; margin: 24px 0 10px; padding: 0 6px; }
+    main { padding: 32px 40px 60px; }
+  </style>
+</body>
+</html>

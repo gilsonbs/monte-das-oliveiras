@@ -1,0 +1,87 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Categorias e tags">
+  <div class="topbar">
+    <h1>Categorias e tags</h1>
+  </div>
+
+  <div class="panel">
+    <h3>Categorias</h3>
+    <table>
+      <thead><tr><th>Nome</th><th>Slug</th><th>Posts</th><th></th></tr></thead>
+      <tbody id="cat-tbody">
+        <tr><td colspan="4" class="muted">Carregando...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h3>Tags <span class="muted" id="tags-count"></span></h3>
+    <div class="tag-cloud" id="tag-cloud"></div>
+  </div>
+</AdminLayout>
+
+<script>
+  import { createSupabaseBrowserClient } from '../../lib/supabase-browser';
+  const supabase = createSupabaseBrowserClient();
+
+  async function load() {
+    const { data: categories } = await supabase
+      .from('categories')
+      .select('id, name, slug, posts(count)')
+      .order('name');
+
+    const tbody = document.getElementById('cat-tbody')!;
+    tbody.innerHTML = (categories ?? [])
+      .map(
+        (cat: any) => `
+        <tr data-cat-id="${cat.id}">
+          <td><input type="text" class="cat-name" value="${cat.name}" /></td>
+          <td class="muted">${cat.slug}</td>
+          <td class="muted">${cat.posts?.[0]?.count ?? 0}</td>
+          <td><button class="btn-save-cat">Salvar</button></td>
+        </tr>
+      `
+      )
+      .join('');
+
+    document.querySelectorAll('.btn-save-cat').forEach((btn) => {
+      btn.addEventListener('click', async (e) => {
+        const row = (e.target as HTMLElement).closest('tr')!;
+        const id = (row as HTMLElement).dataset.catId!;
+        const name = (row.querySelector('.cat-name') as HTMLInputElement).value;
+        const { error } = await supabase.from('categories').update({ name }).eq('id', id);
+        if (error) alert(`Erro: ${error.message}`);
+        else {
+          (e.target as HTMLElement).textContent = 'Salvo!';
+          setTimeout(() => ((e.target as HTMLElement).textContent = 'Salvar'), 1500);
+        }
+      });
+    });
+
+    const { data: tags } = await supabase.from('tags').select('id, name, slug').order('name').limit(100);
+    document.getElementById('tags-count')!.textContent = `(mostrando as ${(tags ?? []).length} mais recentes)`;
+    document.getElementById('tag-cloud')!.innerHTML = (tags ?? [])
+      .map((tag: any) => `<span class="tag-pill">${tag.name}</span>`)
+      .join('');
+  }
+
+  load();
+</script>
+
+<style>
+  .topbar { margin-bottom: 24px; }
+  .topbar h1 { font-family: var(--font-display); font-size: 22px; font-weight: 600; margin: 0; }
+  .panel { background: #fff; border: 1px solid #E4E0D3; border-radius: 8px; padding: 22px; margin-bottom: 20px; max-width: 720px; }
+  .panel h3 { font-family: var(--font-display); font-size: 16px; margin: 0 0 16px; }
+  .muted { color: #8A8367; font-size: 12px; font-weight: 400; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { text-align: left; font-size: 11px; text-transform: uppercase; color: #8A8367; padding: 8px; border-bottom: 1px solid #E4E0D3; }
+  tbody :global(td) { padding: 8px; border-bottom: 1px solid #F1EFE8; }
+  :global(.cat-name) { width: 100%; padding: 6px 8px; border: 1px solid #E4E0D3; border-radius: 4px; font-family: var(--font-ui); font-size: 13px; }
+  :global(button.btn-save-cat) { font-family: var(--font-ui); font-size: 12px; padding: 6px 12px; border-radius: 6px; border: 1px solid #E4E0D3; background: #fff; cursor: pointer; }
+  .tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag-cloud :global(.tag-pill) { font-size: 12px; background: var(--olive-bg, #EEF1E4); color: var(--olive-deep); padding: 5px 12px; border-radius: 20px; }
+</style>

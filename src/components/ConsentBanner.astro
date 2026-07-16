@@ -1,0 +1,68 @@
+---
+// Banner de consentimento (LGPD) — controla se os anúncios (que usam
+// cookies de terceiros) podem carregar. Enquanto não há decisão, nenhum
+// anúncio carrega — abordagem simples e defensável para um site solo.
+---
+
+<div id="consent-banner" class="consent-banner" hidden>
+  <p>
+    Usamos cookies para personalizar anúncios e analisar o tráfego do site.
+    Ao aceitar, você concorda com nossa
+    <a href="/politica-de-privacidade">Política de Privacidade</a>.
+  </p>
+  <div class="consent-actions">
+    <button id="consent-reject" class="btn-reject">Rejeitar</button>
+    <button id="consent-accept" class="btn-accept">Aceitar</button>
+  </div>
+</div>
+
+<script>
+  const STORAGE_KEY = 'mdo_ad_consent';
+
+  const banner = document.getElementById('consent-banner') as HTMLElement;
+  const existing = localStorage.getItem(STORAGE_KEY);
+
+  if (!existing) {
+    banner.hidden = false;
+  } else if (existing === 'granted') {
+    // já tinha aceitado antes — libera os anúncios pra essa página também
+    window.dispatchEvent(new Event('mdo-consent-granted'));
+  }
+
+  document.getElementById('consent-accept')?.addEventListener('click', () => {
+    localStorage.setItem(STORAGE_KEY, 'granted');
+    banner.hidden = true;
+    window.dispatchEvent(new Event('mdo-consent-granted'));
+  });
+
+  document.getElementById('consent-reject')?.addEventListener('click', () => {
+    localStorage.setItem(STORAGE_KEY, 'denied');
+    banner.hidden = true;
+  });
+</script>
+
+<style>
+  .consent-banner[hidden] { display: none; }
+  .consent-banner {
+    position: fixed; left: 16px; right: 16px; bottom: 16px; z-index: 999;
+    max-width: 560px; margin: 0 auto;
+    background: var(--dusk); color: #EDE7D4; border-radius: 8px;
+    padding: 16px 18px; box-shadow: 0 8px 24px rgba(0,0,0,.25);
+    display: flex; flex-direction: column; gap: 12px;
+    font-family: var(--font-ui);
+  }
+  .consent-banner p { margin: 0; font-size: 12.5px; line-height: 1.6; color: #C9C4B0; }
+  .consent-banner a { color: #E3B15C; text-decoration: underline; }
+  .consent-actions { display: flex; gap: 10px; justify-content: flex-end; }
+  .consent-actions button {
+    font-family: var(--font-ui); font-size: 12.5px; font-weight: 500; padding: 8px 16px;
+    border-radius: 6px; cursor: pointer; border: 1px solid transparent;
+  }
+  .btn-reject { background: transparent; border-color: #4A5278; color: #C9C4B0; }
+  .btn-accept { background: var(--olive); color: #fff; }
+
+  @media (max-width: 480px) {
+    .consent-actions { justify-content: stretch; }
+    .consent-actions button { flex: 1; }
+  }
+</style>

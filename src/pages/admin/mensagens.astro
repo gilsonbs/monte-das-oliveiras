@@ -1,0 +1,135 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Mensagens">
+  <div class="topbar">
+    <h1>Mensagens</h1>
+  </div>
+
+  <section>
+    <h2 id="comments-heading">Comentários pendentes de aprovação</h2>
+    <div class="list" id="comments-list"><p class="empty">Carregando...</p></div>
+  </section>
+
+  <section>
+    <h2>Mensagens de contato</h2>
+    <div class="list" id="messages-list"><p class="empty">Carregando...</p></div>
+  </section>
+</AdminLayout>
+
+<script>
+  import { createSupabaseBrowserClient } from '../../lib/supabase-browser';
+  const supabase = createSupabaseBrowserClient();
+
+  async function loadComments() {
+    const { data: pendingComments } = await supabase
+      .from('comments')
+      .select('id, name, email, content, created_at, posts(title, slug)')
+      .eq('approved', false)
+      .order('created_at', { ascending: false });
+
+    document.getElementById('comments-heading')!.textContent =
+      `Comentários pendentes de aprovação${pendingComments?.length ? ` (${pendingComments.length})` : ''}`;
+
+    const list = document.getElementById('comments-list')!;
+    if (!pendingComments || pendingComments.length === 0) {
+      list.innerHTML = `<p class="empty">Nenhum comentário pendente.</p>`;
+      return;
+    }
+
+    list.innerHTML = pendingComments
+      .map(
+        (c: any) => `
+        <div class="card" data-comment-id="${c.id}">
+          <div class="card-head">
+            <div>
+              <b>${c.name}</b> <span class="muted">(${c.email})</span>
+              <div class="muted small">em "${c.posts?.title ?? ''}"</div>
+            </div>
+            <div class="card-actions">
+              <button class="btn-approve">Aprovar</button>
+              <button class="btn-reject">Rejeitar</button>
+            </div>
+          </div>
+          <p>${c.content}</p>
+        </div>
+      `
+      )
+      .join('');
+
+    list.querySelectorAll('.btn-approve').forEach((btn) => {
+      btn.addEventListener('click', async (e) => {
+        const card = (e.target as HTMLElement).closest('.card') as HTMLElement;
+        const id = card.dataset.commentId!;
+        const { error } = await supabase.from('comments').update({ approved: true }).eq('id', id);
+        if (error) alert(`Erro: ${error.message}`);
+        else card.remove();
+      });
+    });
+
+    list.querySelectorAll('.btn-reject').forEach((btn) => {
+      btn.addEventListener('click', async (e) => {
+        const card = (e.target as HTMLElement).closest('.card') as HTMLElement;
+        const id = card.dataset.commentId!;
+        if (!confirm('Excluir este comentário?')) return;
+        const { error } = await supabase.from('comments').delete().eq('id', id);
+        if (error) alert(`Erro: ${error.message}`);
+        else card.remove();
+      });
+    });
+  }
+
+  async function loadMessages() {
+    const { data: messages } = await supabase
+      .from('contact_messages')
+      .select('id, name, email, message, read, created_at')
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    const list = document.getElementById('messages-list')!;
+    if (!messages || messages.length === 0) {
+      list.innerHTML = `<p class="empty">Nenhuma mensagem ainda.</p>`;
+      return;
+    }
+
+    list.innerHTML = messages
+      .map(
+        (m: any) => `
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <b>${m.name}</b> <span class="muted">(${m.email})</span>
+              <div class="muted small">${new Date(m.created_at).toLocaleString('pt-BR')}</div>
+            </div>
+          </div>
+          <p>${m.message}</p>
+        </div>
+      `
+      )
+      .join('');
+  }
+
+  loadComments();
+  loadMessages();
+</script>
+
+<style>
+  .topbar { margin-bottom: 24px; }
+  .topbar h1 { font-family: var(--font-display); font-size: 22px; font-weight: 600; margin: 0; }
+  section { margin-bottom: 40px; max-width: 720px; }
+  section h2 { font-family: var(--font-display); font-size: 16px; font-weight: 500; margin: 0 0 14px; }
+  .list :global(.empty) { font-size: 13px; color: #8A8367; }
+  .list { display: flex; flex-direction: column; gap: 12px; }
+  .list :global(.card) { background: #fff; border: 1px solid #E4E0D3; border-radius: 8px; padding: 16px 18px; }
+  .list :global(.card-head) { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 12px; }
+  .list :global(.muted) { color: #8A8367; font-size: 12px; }
+  .list :global(.muted.small) { font-size: 11px; margin-top: 2px; }
+  .list :global(.card p) { margin: 0; font-size: 14px; color: #3A362E; line-height: 1.5; }
+  .list :global(.card-actions) { display: flex; gap: 8px; flex-shrink: 0; }
+  .list :global(.card-actions button) {
+    font-family: var(--font-ui); font-size: 12px; padding: 6px 12px; border-radius: 6px; border: 1px solid #E4E0D3;
+    background: #fff; cursor: pointer;
+  }
+  .list :global(.btn-approve) { background: var(--olive); color: #fff; border-color: var(--olive); }
+</style>

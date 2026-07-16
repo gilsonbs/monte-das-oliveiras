@@ -1,0 +1,54 @@
+:root {
+  /* cores — paleta "crepúsculo sobre os montes de Jerusalém" */
+  --stone: #EAE2CB;
+  --card-bg: #F4EEDD;
+  --ink: #28241D;
+  --ink-soft: #5B5648;
+  --dusk: #232B45;
+  --dusk-soft: #3B4468;
+  --olive: #59613A;
+  --olive-deep: #414A29;
+  --olive-bg: #EEF1E4;
+  --ember: #B07A29;
+  --ember-deep: #8A5E1C;
+  --clay-line: #C9B98F;
+
+  /* tipografia */
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Source Serif 4', serif;
+  --font-ui: 'Inter', sans-serif;
+
+  /* espaçamento base */
+  --radius: 2px;
+  --max-width: 1120px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--stone);
+  color: var(--ink);
+  font-family: var(--font-body);
+  line-height: 1.6;
+}
+
+a { color: inherit; text-decoration: none; }
+
+.wrap {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.eyebrow {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 860px) {
+  .wrap { padding: 0 20px; }
+}

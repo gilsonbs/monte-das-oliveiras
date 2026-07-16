@@ -1,0 +1,103 @@
+---
+// Busca a config do slot (ad_client, ad_slot_id, formato) na tabela ad_slots.
+// Se não achar configuração (ainda não cadastrada, ou AdSense não plugado),
+// mostra o placeholder — o mesmo visual usado nos mockups — em vez de quebrar.
+import { supabase } from '../lib/supabase';
+
+interface Props {
+  slotKey: 'sidebar_300x600' | 'in_article' | 'feed_native';
+  label?: string;
+}
+const { slotKey, label = 'Publicidade' } = Astro.props;
+
+const { data: slot } = await supabase
+  .from('ad_slots')
+  .select('ad_client, ad_slot_id, format, active')
+  .eq('key', slotKey)
+  .maybeSingle();
+
+const isConfigured = slot?.active && slot?.ad_client && slot?.ad_slot_id;
+
+const dims: Record<string, string> = {
+  sidebar_300x600: '300 × 600',
+  in_article: '300 × 250 (responsivo)',
+  feed_native: '300 × 175',
+};
+---
+
+{isConfigured ? (
+  <div class="ad-real" data-slot={slotKey}>
+    <span class="ad-label">{label}</span>
+    <ins
+      class="adsbygoogle"
+      style="display:block"
+      data-ad-client={slot!.ad_client}
+      data-ad-slot={slot!.ad_slot_id}
+      data-ad-format={slot!.format || 'auto'}
+      data-full-width-responsive="true"
+    ></ins>
+    <script>
+      // carrega o script do AdSense só quando: (1) o usuário já deu consentimento
+      // (banner de cookies) E (2) o slot está perto da viewport (lazy) —
+      // protege tanto a conformidade LGPD quanto o Core Web Vitals
+      const el = document.currentScript?.previousElementSibling as HTMLElement | null;
+      const CONSENT_KEY = 'mdo_ad_consent';
+      let isVisible = false;
+      let hasLoaded = false;
+
+      function tryLoadAd() {
+        if (hasLoaded || !isVisible) return;
+        if (localStorage.getItem(CONSENT_KEY) !== 'granted') return;
+
+        hasLoaded = true;
+        if (!(window as any).__adsenseLoaded) {
+          const s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
+          s.crossOrigin = 'anonymous';
+          document.head.appendChild(s);
+          (window as any).__adsenseLoaded = true;
+        }
+        ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+      }
+
+      if (el && 'IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              isVisible = true;
+              tryLoadAd();
+              io.disconnect();
+            }
+          });
+        }, { rootMargin: '200px' });
+        io.observe(el);
+      }
+
+      // se o consentimento chegar depois (usuário clicou "Aceitar" no banner
+      // enquanto o slot já estava visível), tenta carregar de novo
+      window.addEventListener('mdo-consent-granted', tryLoadAd);
+    </script>
+  </div>
+) : (
+  <div class="ad-placeholder" data-slot={slotKey}>
+    <span class="ad-label">{label}</span>
+    <div class="ad-box">{dims[slotKey]}</div>
+  </div>
+)}
+
+<style>
+  .ad-placeholder, .ad-real {
+    border: 1px dashed #B7A277; background: var(--card-bg); border-radius: var(--radius);
+    padding: 12px; text-align: center;
+  }
+  .ad-label {
+    font-family: var(--font-ui); font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+    color: #8A8367; display: block; margin-bottom: 8px;
+  }
+  .ad-box {
+    min-height: 90px; background: #DCD0AC; border-radius: var(--radius);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-ui); font-size: 11px; color: #8A8367;
+  }
+</style>

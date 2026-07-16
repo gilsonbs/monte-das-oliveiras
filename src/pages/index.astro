@@ -1,0 +1,172 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import AdSlot from '../components/AdSlot.astro';
+import { getFeaturedPosts, getRecentPosts, getCategories } from '../lib/supabase';
+
+const [featured, { posts: recent }, categories] = await Promise.all([
+  getFeaturedPosts(5),
+  getRecentPosts(1, 18),
+  getCategories(),
+]);
+
+const [heroPost, ...sidePosts] = featured;
+const featuredSlugs = new Set(featured.map((p) => p.slug));
+const maisLidas = recent.filter((p) => !featuredSlugs.has(p.slug)).slice(0, 6);
+const feedPosts = recent.filter((p) => !featuredSlugs.has(p.slug)).slice(6);
+---
+
+<BaseLayout title="Monte das Oliveiras" description="Estudos bíblicos, escatologia e vida cristã para o dia a dia.">
+
+  {heroPost && (
+    <section class="hero-section">
+      <div class="hero wrap">
+        <a href={`/${heroPost.slug}`} class="hero-main">
+          <div class="hero-main-img">
+            {heroPost.cover_url && <img src={heroPost.cover_url} alt={heroPost.alt_text || heroPost.title} width="1200" height="675" />}
+          </div>
+          <div class="hero-main-overlay">
+            {heroPost.category_name && <span class="eyebrow hero-eyebrow">{heroPost.category_name}</span>}
+            <h1>{heroPost.title}</h1>
+            {heroPost.excerpt && <p>{heroPost.excerpt}</p>}
+            <div class="hero-meta">
+              {heroPost.read_time_minutes && <span>{heroPost.read_time_minutes} min de leitura</span>}
+            </div>
+          </div>
+        </a>
+        <div class="hero-side">
+          {sidePosts.slice(0, 4).map((post) => (
+            <a class="hero-side-item" href={`/${post.slug}`}>
+              <div class="hero-side-thumb">
+                {post.thumb_url && <img src={post.thumb_url} alt={post.alt_text || post.title} width="88" height="88" loading="lazy" />}
+              </div>
+              <div>
+                {post.category_name && <span class="cat">{post.category_name}</span>}
+                <h4>{post.title}</h4>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <div class="wrap">
+    {maisLidas.length > 0 && (
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Selecionados pela redação</div>
+            <h2>Mais lidas</h2>
+          </div>
+        </div>
+        <div class="destaques-grid">
+          {maisLidas.map((post) => <PostCard post={post} />)}
+        </div>
+      </section>
+    )}
+
+    <section class="section" style="padding-top:0;">
+      <div class="layout">
+        <div class="feed-col">
+          <div class="section-head">
+            <div class="eyebrow">Publicações recentes</div>
+          </div>
+          {feedPosts.map((post, i) => (
+            <>
+              <a class="feed-item" href={`/${post.slug}`}>
+                <div class="feed-thumb">
+                  {post.card_url && <img src={post.card_url} alt={post.alt_text || post.title} loading="lazy" width="180" height="135" />}
+                </div>
+                <div>
+                  {post.category_name && <span class="cat">{post.category_name}</span>}
+                  <h3>{post.title}</h3>
+                  {post.excerpt && <p>{post.excerpt}</p>}
+                </div>
+              </a>
+              {i === 1 && <AdSlot slotKey="feed_native" />}
+            </>
+          ))}
+        </div>
+
+        <aside>
+          <div class="side-block">
+            <AdSlot slotKey="sidebar_300x600" />
+          </div>
+          <div class="side-block">
+            <h4>Categorias</h4>
+            <div class="cat-list">
+              {categories.map((cat) => <a href={`/categoria/${cat.slug}`}>{cat.name}</a>)}
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .hero-section { background: var(--dusk); }
+  .hero {
+    padding: 44px 32px 64px; display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; align-items: stretch;
+  }
+  .hero-eyebrow { color: #E3B15C; margin-bottom: 12px; display: block; }
+  .hero-main { position: relative; border-radius: var(--radius); overflow: hidden; display: flex; align-items: flex-end; min-height: 420px; }
+  .hero-main-img { position: absolute; inset: 0; background: linear-gradient(155deg,#3B4468,#232B45); }
+  .hero-main-img img { width: 100%; height: 100%; object-fit: cover; }
+  .hero-main-overlay {
+    position: relative; z-index: 1; padding: 28px 30px 30px; width: 100%;
+    background: linear-gradient(0deg, rgba(20,23,38,.92) 0%, rgba(20,23,38,.55) 60%, transparent 100%);
+  }
+  .hero-main h1 { font-family: var(--font-display); font-weight: 500; font-size: 32px; line-height: 1.16; color: #F6F1E1; margin: 0 0 12px; }
+  .hero-main p { color: #C5C0AA; font-size: 14px; max-width: 50ch; margin: 0 0 14px; }
+  .hero-meta { font-family: var(--font-ui); font-size: 12px; color: #B9B4A0; }
+
+  .hero-side { display: flex; flex-direction: column; }
+  .hero-side-item { display: grid; grid-template-columns: 60px 1fr; gap: 14px; padding: 13px 0; border-bottom: 1px solid rgba(237,231,212,0.14); }
+  .hero-side-item:first-child { padding-top: 0; }
+  .hero-side-item:last-child { border-bottom: none; }
+  .hero-side-thumb { aspect-ratio: 1/1; border-radius: var(--radius); overflow: hidden; background: linear-gradient(150deg,#8B9560,#59613A); }
+  .hero-side-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .hero-side-item .cat { font-family: var(--font-ui); font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #E3B15C; display: block; margin-bottom: 6px; }
+  .hero-side-item h4 { font-family: var(--font-display); font-weight: 500; font-size: 15px; line-height: 1.28; color: #F0EBDA; margin: 0; }
+
+  .section { padding: 54px 0; }
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 26px; }
+  .section-head h2 { font-family: var(--font-display); font-weight: 500; font-size: 22px; margin: 4px 0 0; }
+  .section-head .eyebrow { color: var(--olive); }
+
+  .destaques-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
+
+  .layout { display: grid; grid-template-columns: 1fr 300px; gap: 48px; align-items: start; }
+  .feed-item { display: grid; grid-template-columns: 180px 1fr; gap: 20px; padding: 22px 0; border-bottom: 1px solid var(--clay-line); }
+  .feed-item:first-child { padding-top: 0; }
+  .feed-thumb { aspect-ratio: 4/3; background: linear-gradient(150deg,#c9a862,#8A5E1C); border-radius: var(--radius); overflow: hidden; }
+  .feed-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .feed-item h3 { font-family: var(--font-display); font-weight: 500; font-size: 19px; margin: 0 0 6px; line-height: 1.3; }
+  .feed-item p { font-size: 14px; color: var(--ink-soft); margin: 0 0 8px; }
+  .feed-item .cat { font-family: var(--font-ui); font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--olive-deep); }
+
+  .side-block { margin-bottom: 36px; }
+  .side-block h4 { font-family: var(--font-display); font-size: 16px; font-weight: 500; margin: 0 0 14px; padding-bottom: 10px; border-bottom: 1px solid var(--clay-line); }
+  .cat-list { display: flex; flex-direction: column; }
+  .cat-list a { font-family: var(--font-ui); font-size: 13px; padding: 9px 0; border-bottom: 1px solid rgba(201,185,143,.4); }
+  .cat-list a:hover { color: var(--olive-deep); }
+
+  @media (max-width: 860px) {
+    .hero { grid-template-columns: 1fr; padding: 28px 20px 40px; }
+    .destaques-grid { grid-template-columns: 1fr 1fr; }
+    .layout { grid-template-columns: 1fr; }
+    .feed-item { grid-template-columns: 110px 1fr; gap: 14px; }
+    .hero-main h1 { font-size: 26px; }
+    .hero-main { min-height: 280px; }
+  }
+
+  @media (max-width: 560px) {
+    .destaques-grid { grid-template-columns: 1fr; }
+    .feed-item { grid-template-columns: 84px 1fr; }
+    .feed-item p { display: none; }
+    .hero-side-thumb { display: none; }
+    .hero-side-item { grid-template-columns: 1fr; }
+  }
+</style>

@@ -1,0 +1,106 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Política de Privacidade" description="Política de privacidade do Monte das Oliveiras" noindex={false}>
+  <div class="wrap">
+    <article class="policy">
+      <h1>Política de Privacidade</h1>
+      <p class="updated">Última atualização: [preencher data de publicação]</p>
+
+      <p><em>
+        Este texto foi redigido como referência estruturada, cobrindo as práticas de
+        dados do site. Recomendamos revisão por um advogado antes da publicação
+        definitiva, especialmente se o volume de tráfego ou receita crescer.
+      </em></p>
+
+      <h2>1. Quem somos</h2>
+      <p>
+        O Monte das Oliveiras (montedasoliveiras.com) é um site de estudos bíblicos,
+        escatologia e vida cristã. Esta política explica quais dados coletamos de quem
+        visita o site, para que servem e quais direitos você tem sobre eles, em
+        conformidade com a Lei Geral de Proteção de Dados (LGPD — Lei 13.709/2018).
+      </p>
+
+      <h2>2. Quais dados coletamos</h2>
+      <p>Coletamos diferentes dados dependendo de como você interage com o site:</p>
+      <ul>
+        <li><strong>Navegação:</strong> páginas visitadas, tempo de permanência, dispositivo e localização aproximada, coletados via Google Analytics.</li>
+        <li><strong>Cookies de publicidade:</strong> o Google AdSense pode usar cookies para exibir anúncios, inclusive personalizados, conforme sua escolha no banner de consentimento.</li>
+        <li><strong>Newsletter:</strong> se você se inscrever, coletamos seu e-mail para enviar novidades do site.</li>
+        <li><strong>Comentários:</strong> nome, e-mail e o conteúdo do comentário, se você comentar em um post.</li>
+        <li><strong>Formulário de contato:</strong> nome, e-mail e a mensagem enviada, se você usar a página de contato.</li>
+      </ul>
+
+      <h2>3. Como usamos cookies</h2>
+      <p>
+        Cookies essenciais (necessários pro funcionamento do site) são sempre ativos.
+        Cookies de análise (Google Analytics) e de publicidade (Google AdSense) só
+        carregam depois que você aceita no banner exibido na primeira visita. Você pode
+        rejeitar a qualquer momento; isso não impede o acesso ao conteúdo, apenas
+        remove a personalização de anúncios.
+      </p>
+
+      <h2>4. Compartilhamento de dados</h2>
+      <p>
+        Não vendemos seus dados. Compartilhamos informações apenas com prestadores de
+        serviço necessários para o funcionamento do site — Google (Analytics e
+        AdSense) e Supabase (infraestrutura de banco de dados) — cada um sujeito à
+        própria política de privacidade. Você pode consultar como o Google trata dados
+        de parceiros em <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener">policies.google.com/technologies/partner-sites</a>.
+      </p>
+
+      <h2>5. Por quanto tempo guardamos seus dados</h2>
+      <p>
+        E-mails de newsletter e comentários ficam armazenados até que você solicite a
+        exclusão. Dados de navegação seguem o período padrão de retenção do Google
+        Analytics (configurável, tipicamente 14 meses).
+      </p>
+
+      <h2>6. Seus direitos (LGPD)</h2>
+      <p>Você tem o direito de, a qualquer momento e mediante solicitação:</p>
+      <ul>
+        <li>Confirmar se tratamos dados seus, e acessá-los;</li>
+        <li>Corrigir dados incompletos, desatualizados ou incorretos;</li>
+        <li>Solicitar a exclusão dos seus dados (exceto quando a lei exigir retenção);</li>
+        <li>Revogar seu consentimento (por exemplo, cancelar a newsletter ou rejeitar cookies de anúncio);</li>
+        <li>Solicitar a portabilidade dos seus dados a outro fornecedor.</li>
+      </ul>
+      <p>
+        Para exercer qualquer um desses direitos, entre em contato pelo e-mail abaixo.
+        Você também pode registrar uma reclamação junto à Autoridade Nacional de
+        Proteção de Dados (ANPD) caso considere que seus direitos não foram atendidos.
+      </p>
+
+      <h2>7. Crianças e adolescentes</h2>
+      <p>
+        Este site não é direcionado a menores de 18 anos e não coletamos
+        intencionalmente dados de crianças ou adolescentes.
+      </p>
+
+      <h2>8. Alterações nesta política</h2>
+      <p>
+        Podemos atualizar este texto periodicamente. Mudanças relevantes serão
+        indicadas pela data de "última atualização" no topo desta página.
+      </p>
+
+      <h2>9. Contato</h2>
+      <p>
+        Dúvidas sobre esta política ou sobre o tratamento dos seus dados podem ser
+        enviadas para <a href="mailto:sitemontedasoliveiras@gmail.com">sitemontedasoliveiras@gmail.com</a>.
+      </p>
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .policy { max-width: 720px; margin: 0 auto; padding: 50px 0 70px; }
+  .policy h1 { font-family: var(--font-display); font-size: 32px; font-weight: 500; margin-bottom: 6px; }
+  .policy .updated { font-family: var(--font-ui); font-size: 12px; color: #8A8367; margin-bottom: 30px; }
+  .policy h2 { font-family: var(--font-display); font-size: 20px; font-weight: 500; margin: 32px 0 12px; }
+  .policy p { margin-bottom: 16px; }
+  .policy ul { margin: 0 0 16px; padding-left: 22px; }
+  .policy li { margin-bottom: 8px; }
+  .policy em { color: var(--ember-deep); }
+  .policy a { color: var(--olive-deep); text-decoration: underline; }
+</style>
