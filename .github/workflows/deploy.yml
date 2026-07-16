@@ -1,0 +1,40 @@
+name: Build e Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}          # permite rodar manualmente pelo botão no GitHub
+  repository_dispatch:
+    types: [content-updated]     # disparado pelo Supabase quando um post é publicado
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Criar .env de produção
+        run: |
+          echo "PUBLIC_SUPABASE_URL=${{ secrets.PUBLIC_SUPABASE_URL }}" >> .env
+          echo "PUBLIC_SUPABASE_ANON_KEY=${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}" >> .env
+          echo "PUBLIC_GA_MEASUREMENT_ID=${{ secrets.PUBLIC_GA_MEASUREMENT_ID }}" >> .env
+
+      - name: Buildar site estático
+        run: npm run build
+
+      - name: Publicar build na branch "dist"
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: dist
+          folder: dist
+          clean: true
