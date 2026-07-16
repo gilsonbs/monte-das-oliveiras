@@ -1,6 +1,8 @@
 name: Build e Deploy
 
 on:
+  permissions:
+  contents: write   # necessário para o robô conseguir publicar na branch "dist"
   push:
     branches: [main]
   workflow_dispatch: {}          # permite rodar manualmente pelo botão no GitHub
