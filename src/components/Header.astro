@@ -25,7 +25,6 @@ const currentPath = Astro.url.pathname;
         ))}
       </nav>
     </div>
-    <a class="search-icon" href="/buscar">Buscar</a>
   </div>
 </header>
 
@@ -45,8 +44,6 @@ const currentPath = Astro.url.pathname;
   nav a { color: #CFC9AE; letter-spacing: .02em; transition: color .15s; }
   nav a:hover { color: #F3EEDD; }
   nav a.active { color: #E3B15C; }
-  .search-icon { color: #CFC9AE; font-family: var(--font-ui); font-size: 13px; }
-
   @media (max-width: 860px) {
     .header-inner { flex-wrap: wrap; padding: 16px 0 16px 20px; row-gap: 12px; }
     .logo { font-size: 18px; }
