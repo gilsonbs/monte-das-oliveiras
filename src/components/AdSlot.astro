@@ -36,7 +36,7 @@ const dims: Record<string, string> = {
       data-ad-format={slot!.format || 'auto'}
       data-full-width-responsive="true"
     ></ins>
-    <script>
+    <script is:inline>
       // carrega o script do AdSense só quando: (1) o usuário já deu consentimento
       // (banner de cookies) E (2) o slot está perto da viewport (lazy) —
       // protege tanto a conformidade LGPD quanto o Core Web Vitals
