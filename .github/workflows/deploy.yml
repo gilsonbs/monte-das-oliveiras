@@ -34,3 +34,13 @@ jobs:
 
       - name: Buildar site estático
         run: npm run build
+
+      - name: Deploy via FTP para Hostgator
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/
+          server-dir: /public_html/
+          dangerous-clean-slate: true
