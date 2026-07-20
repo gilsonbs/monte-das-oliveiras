@@ -10,11 +10,29 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   <div class="panel">
     <h3>Categorias</h3>
     <table>
-      <thead><tr><th>Nome</th><th>Slug</th><th>Posts</th><th></th></tr></thead>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Slug</th>
+          <th>Posts</th>
+          <th title="Exibir títulos desta categoria no banner ticker do site">Ticker</th>
+          <th></th>
+        </tr>
+      </thead>
       <tbody id="cat-tbody">
-        <tr><td colspan="4" class="muted">Carregando...</td></tr>
+        <tr><td colspan="5" class="muted">Carregando...</td></tr>
       </tbody>
     </table>
+
+    <div class="new-cat-form">
+      <h4>Nova categoria</h4>
+      <div class="new-cat-row">
+        <input type="text" id="new-cat-name" placeholder="Nome da categoria" />
+        <input type="text" id="new-cat-slug" placeholder="slug-da-categoria" />
+        <button id="btn-create-cat" class="btn-create">Criar</button>
+      </div>
+      <p class="hint" id="new-cat-hint"></p>
+    </div>
   </div>
 
   <div class="panel">
@@ -28,39 +46,88 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   const supabase = createSupabaseBrowserClient();
 
   async function load() {
-    const { data: categories } = await supabase
+    const { data: categories, error } = await supabase
       .from('categories')
-      .select('id, name, slug, posts(count)')
+      .select('id, name, slug, show_in_ticker, posts(count)')
       .order('name');
+
+    const hasTickerCol = !error && categories && 'show_in_ticker' in (categories[0] ?? {});
 
     const tbody = document.getElementById('cat-tbody')!;
     tbody.innerHTML = (categories ?? [])
-      .map(
-        (cat: any) => `
-        <tr data-cat-id="${cat.id}">
-          <td><input type="text" class="cat-name" value="${cat.name}" /></td>
-          <td class="muted">${cat.slug}</td>
-          <td class="muted">${cat.posts?.[0]?.count ?? 0}</td>
-          <td><button class="btn-save-cat">Salvar</button></td>
-        </tr>
-      `
-      )
+      .map((cat: any) => {
+        const tickerOn = cat.show_in_ticker === true;
+        const tickerCell = hasTickerCol
+          ? `<td>
+               <button
+                 class="toggle ${tickerOn ? 'on' : 'off'}"
+                 data-cat-id="${cat.id}"
+                 data-ticker="${tickerOn}"
+                 title="${tickerOn ? 'Ticker ativo — clique para desativar' : 'Ticker inativo — clique para ativar'}"
+               >
+                 <span class="toggle-knob"></span>
+               </button>
+             </td>`
+          : `<td class="muted" title="Coluna show_in_ticker não existe ainda — rode a migration SQL">—</td>`;
+
+        return `
+          <tr data-cat-id="${cat.id}">
+            <td><input type="text" class="cat-name" value="${cat.name}" /></td>
+            <td class="muted slug-cell">${cat.slug}</td>
+            <td class="muted">${cat.posts?.[0]?.count ?? 0}</td>
+            ${tickerCell}
+            <td><button class="btn-save-cat">Salvar</button></td>
+          </tr>
+        `;
+      })
       .join('');
 
+    // salvar nome
     document.querySelectorAll('.btn-save-cat').forEach((btn) => {
       btn.addEventListener('click', async (e) => {
         const row = (e.target as HTMLElement).closest('tr')!;
         const id = (row as HTMLElement).dataset.catId!;
-        const name = (row.querySelector('.cat-name') as HTMLInputElement).value;
+        const name = (row.querySelector('.cat-name') as HTMLInputElement).value.trim();
+        if (!name) return;
         const { error } = await supabase.from('categories').update({ name }).eq('id', id);
-        if (error) alert(`Erro: ${error.message}`);
-        else {
-          (e.target as HTMLElement).textContent = 'Salvo!';
-          setTimeout(() => ((e.target as HTMLElement).textContent = 'Salvar'), 1500);
+        const label = e.target as HTMLElement;
+        if (error) {
+          label.textContent = 'Erro!';
+          label.style.color = '#A6462A';
+        } else {
+          label.textContent = 'Salvo!';
+          setTimeout(() => { label.textContent = 'Salvar'; label.style.color = ''; }, 1500);
         }
       });
     });
 
+    // toggle ticker
+    document.querySelectorAll('button.toggle').forEach((btn) => {
+      btn.addEventListener('click', async (e) => {
+        const el = e.currentTarget as HTMLButtonElement;
+        const id = el.dataset.catId!;
+        const current = el.dataset.ticker === 'true';
+        const next = !current;
+
+        el.disabled = true;
+        const { error } = await supabase
+          .from('categories')
+          .update({ show_in_ticker: next })
+          .eq('id', id);
+        el.disabled = false;
+
+        if (error) {
+          alert(`Erro ao atualizar ticker: ${error.message}`);
+        } else {
+          el.dataset.ticker = String(next);
+          el.classList.toggle('on', next);
+          el.classList.toggle('off', !next);
+          el.title = next ? 'Ticker ativo — clique para desativar' : 'Ticker inativo — clique para ativar';
+        }
+      });
+    });
+
+    // tags
     const { data: tags } = await supabase.from('tags').select('id, name, slug').order('name').limit(100);
     document.getElementById('tags-count')!.textContent = `(mostrando as ${(tags ?? []).length} mais recentes)`;
     document.getElementById('tag-cloud')!.innerHTML = (tags ?? [])
@@ -68,20 +135,121 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       .join('');
   }
 
+  // criar nova categoria
+  const nameInput = document.getElementById('new-cat-name') as HTMLInputElement;
+  const slugInput = document.getElementById('new-cat-slug') as HTMLInputElement;
+  const hint = document.getElementById('new-cat-hint')!;
+
+  nameInput.addEventListener('input', () => {
+    if (!slugInput.dataset.manual) {
+      slugInput.value = nameInput.value
+        .toLowerCase()
+        .normalize('NFD').replace(/[̀-ͯ]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '');
+    }
+  });
+  slugInput.addEventListener('input', () => { slugInput.dataset.manual = '1'; });
+
+  document.getElementById('btn-create-cat')!.addEventListener('click', async () => {
+    const name = nameInput.value.trim();
+    const slug = slugInput.value.trim();
+    if (!name || !slug) { hint.textContent = 'Preencha nome e slug.'; hint.className = 'hint error'; return; }
+
+    const btn = document.getElementById('btn-create-cat') as HTMLButtonElement;
+    btn.disabled = true;
+    hint.textContent = '';
+
+    const { error } = await supabase.from('categories').insert({ name, slug, show_in_ticker: false });
+    btn.disabled = false;
+
+    if (error) {
+      hint.textContent = `Erro: ${error.message}`;
+      hint.className = 'hint error';
+    } else {
+      hint.textContent = `Categoria "${name}" criada com sucesso.`;
+      hint.className = 'hint ok';
+      nameInput.value = '';
+      slugInput.value = '';
+      delete slugInput.dataset.manual;
+      load();
+    }
+  });
+
   load();
 </script>
 
 <style>
   .topbar { margin-bottom: 24px; }
   .topbar h1 { font-family: var(--font-display); font-size: 22px; font-weight: 600; margin: 0; }
-  .panel { background: #fff; border: 1px solid #E4E0D3; border-radius: 8px; padding: 22px; margin-bottom: 20px; max-width: 720px; }
+
+  .panel {
+    background: #fff; border: 1px solid #E4E0D3; border-radius: 8px;
+    padding: 22px; margin-bottom: 20px; max-width: 780px;
+  }
   .panel h3 { font-family: var(--font-display); font-size: 16px; margin: 0 0 16px; }
+
   .muted { color: #8A8367; font-size: 12px; font-weight: 400; }
+
   table { width: 100%; border-collapse: collapse; }
-  thead th { text-align: left; font-size: 11px; text-transform: uppercase; color: #8A8367; padding: 8px; border-bottom: 1px solid #E4E0D3; }
-  tbody :global(td) { padding: 8px; border-bottom: 1px solid #F1EFE8; }
-  :global(.cat-name) { width: 100%; padding: 6px 8px; border: 1px solid #E4E0D3; border-radius: 4px; font-family: var(--font-ui); font-size: 13px; }
-  :global(button.btn-save-cat) { font-family: var(--font-ui); font-size: 12px; padding: 6px 12px; border-radius: 6px; border: 1px solid #E4E0D3; background: #fff; cursor: pointer; }
+  thead th {
+    text-align: left; font-size: 11px; text-transform: uppercase;
+    color: #8A8367; padding: 8px; border-bottom: 1px solid #E4E0D3;
+    letter-spacing: .04em;
+  }
+  tbody :global(td) { padding: 9px 8px; border-bottom: 1px solid #F1EFE8; vertical-align: middle; }
+  tbody :global(tr:last-child td) { border-bottom: none; }
+
+  :global(.cat-name) {
+    width: 100%; padding: 6px 8px; border: 1px solid #E4E0D3;
+    border-radius: 4px; font-family: var(--font-ui); font-size: 13px;
+  }
+  :global(button.btn-save-cat) {
+    font-family: var(--font-ui); font-size: 12px; padding: 6px 12px;
+    border-radius: 6px; border: 1px solid #E4E0D3; background: #fff; cursor: pointer;
+    white-space: nowrap;
+  }
+
+  /* toggle switch */
+  :global(button.toggle) {
+    width: 40px; height: 22px; border-radius: 11px; border: none;
+    cursor: pointer; padding: 2px; position: relative;
+    transition: background 0.2s;
+    display: flex; align-items: center;
+  }
+  :global(button.toggle.on)  { background: var(--olive, #59613A); }
+  :global(button.toggle.off) { background: #D1CDB8; }
+  :global(button.toggle:disabled) { opacity: 0.5; cursor: wait; }
+  :global(.toggle-knob) {
+    width: 18px; height: 18px; background: #fff; border-radius: 50%;
+    display: block; transition: transform 0.2s; flex-shrink: 0;
+  }
+  :global(button.toggle.on .toggle-knob)  { transform: translateX(18px); }
+  :global(button.toggle.off .toggle-knob) { transform: translateX(0); }
+
+  /* nova categoria */
+  .new-cat-form { margin-top: 24px; padding-top: 20px; border-top: 1px solid #E4E0D3; }
+  .new-cat-form h4 { font-family: var(--font-display); font-size: 14px; font-weight: 500; margin: 0 0 12px; color: #4a4840; }
+  .new-cat-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .new-cat-row input {
+    flex: 1; min-width: 160px; padding: 7px 10px; border: 1px solid #E4E0D3;
+    border-radius: 6px; font-family: var(--font-ui); font-size: 13px;
+  }
+  .btn-create {
+    font-family: var(--font-ui); font-size: 13px; font-weight: 500;
+    padding: 7px 16px; border-radius: 6px; border: none;
+    background: var(--olive, #59613A); color: #fff; cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn-create:disabled { opacity: 0.6; cursor: wait; }
+  .hint { font-size: 12px; margin: 8px 0 0; min-height: 16px; }
+  .hint.error { color: #A6462A; }
+  .hint.ok    { color: var(--olive-deep, #414A29); }
+
+  /* tags */
   .tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
-  .tag-cloud :global(.tag-pill) { font-size: 12px; background: var(--olive-bg, #EEF1E4); color: var(--olive-deep); padding: 5px 12px; border-radius: 20px; }
+  .tag-cloud :global(.tag-pill) {
+    font-size: 12px; background: var(--olive-bg, #EEF1E4);
+    color: var(--olive-deep); padding: 5px 12px; border-radius: 20px;
+  }
 </style>

@@ -117,6 +117,16 @@ export async function getCategories() {
   return data;
 }
 
+export async function isTickerEnabled(): Promise<boolean> {
+  const { data, error } = await supabase
+    .from('categories')
+    .select('show_in_ticker')
+    .eq('slug', 'igreja-perseguida')
+    .maybeSingle();
+  if (error || !data) return false;
+  return data.show_in_ticker === true;
+}
+
 export async function getTagsByPostId(postId: string) {
   const { data, error } = await supabase
     .from('post_tags')
