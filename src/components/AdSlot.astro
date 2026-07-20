@@ -37,46 +37,42 @@ const dims: Record<string, string> = {
       data-full-width-responsive="true"
     ></ins>
     <script is:inline>
-      // carrega o script do AdSense só quando: (1) o usuário já deu consentimento
-      // (banner de cookies) E (2) o slot está perto da viewport (lazy) —
-      // protege tanto a conformidade LGPD quanto o Core Web Vitals
-      const el = document.currentScript?.previousElementSibling as HTMLElement | null;
-      const CONSENT_KEY = 'mdo_ad_consent';
-      let isVisible = false;
-      let hasLoaded = false;
+      (function () {
+        var el = document.currentScript ? document.currentScript.previousElementSibling : null;
+        var CONSENT_KEY = 'mdo_ad_consent';
+        var isVisible = false;
+        var hasLoaded = false;
 
-      function tryLoadAd() {
-        if (hasLoaded || !isVisible) return;
-        if (localStorage.getItem(CONSENT_KEY) !== 'granted') return;
-
-        hasLoaded = true;
-        if (!(window as any).__adsenseLoaded) {
-          const s = document.createElement('script');
-          s.async = true;
-          s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
-          s.crossOrigin = 'anonymous';
-          document.head.appendChild(s);
-          (window as any).__adsenseLoaded = true;
+        function tryLoadAd() {
+          if (hasLoaded || !isVisible) return;
+          if (localStorage.getItem(CONSENT_KEY) !== 'granted') return;
+          hasLoaded = true;
+          if (!window.__adsenseLoaded) {
+            var s = document.createElement('script');
+            s.async = true;
+            s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
+            s.crossOrigin = 'anonymous';
+            document.head.appendChild(s);
+            window.__adsenseLoaded = true;
+          }
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
         }
-        ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
-      }
 
-      if (el && 'IntersectionObserver' in window) {
-        const io = new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              isVisible = true;
-              tryLoadAd();
-              io.disconnect();
-            }
-          });
-        }, { rootMargin: '200px' });
-        io.observe(el);
-      }
+        if (el && 'IntersectionObserver' in window) {
+          var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) {
+                isVisible = true;
+                tryLoadAd();
+                io.disconnect();
+              }
+            });
+          }, { rootMargin: '200px' });
+          io.observe(el);
+        }
 
-      // se o consentimento chegar depois (usuário clicou "Aceitar" no banner
-      // enquanto o slot já estava visível), tenta carregar de novo
-      window.addEventListener('mdo-consent-granted', tryLoadAd);
+        window.addEventListener('mdo-consent-granted', tryLoadAd);
+      })();
     </script>
   </div>
 ) : (
