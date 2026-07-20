@@ -37,6 +37,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     3: { name: 'Lado 2', desc: 'Sidebar direito — posição 2' },
     4: { name: 'Lado 3', desc: 'Sidebar direito — posição 3' },
     5: { name: 'Lado 4', desc: 'Sidebar direito — posição 4' },
+    6: { name: 'Lado 5', desc: 'Sidebar direito — posição 5' },
   };
 
   type SlotPost = { id: string; title: string; slug: string; featured_order: number | null };
@@ -51,11 +52,11 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       .not('featured_order', 'is', null)
       .order('featured_order', { ascending: true });
 
-    const slots: Record<number, SlotPost | null> = { 1: null, 2: null, 3: null, 4: null, 5: null };
+    const slots: Record<number, SlotPost | null> = { 1: null, 2: null, 3: null, 4: null, 5: null, 6: null };
     if (!error && data) {
       for (const post of data as SlotPost[]) {
         const pos = post.featured_order;
-        if (pos && pos >= 1 && pos <= 5) slots[pos] = post;
+        if (pos && pos >= 1 && pos <= 6) slots[pos] = post;
       }
     }
 
@@ -68,7 +69,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       <div class="slots-layout">
         ${renderSlot(1, slots[1], 'hero-slot')}
         <div class="side-slots">
-          ${[2, 3, 4, 5].map((pos) => renderSlot(pos, slots[pos], 'side-slot')).join('')}
+          ${[2, 3, 4, 5, 6].map((pos) => renderSlot(pos, slots[pos], 'side-slot')).join('')}
         </div>
       </div>
     `;

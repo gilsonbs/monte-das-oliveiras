@@ -5,7 +5,7 @@ import AdSlot from '../components/AdSlot.astro';
 import { getFeaturedPosts, getRecentPosts, getCategories } from '../lib/supabase';
 
 const [featured, { posts: recent }, categories] = await Promise.all([
-  getFeaturedPosts(5),
+  getFeaturedPosts(6),
   getRecentPosts(1, 18),
   getCategories(),
 ]);
@@ -35,7 +35,7 @@ const feedPosts = recent.filter((p) => !featuredSlugs.has(p.slug)).slice(6);
           </div>
         </a>
         <div class="hero-side">
-          {sidePosts.slice(0, 4).map((post) => (
+          {sidePosts.slice(0, 5).map((post) => (
             <a class="hero-side-item" href={`/${post.slug}`}>
               <div class="hero-side-thumb">
                 {post.thumb_url && <img src={post.thumb_url} alt={post.alt_text || post.title} width="88" height="88" loading="lazy" />}
