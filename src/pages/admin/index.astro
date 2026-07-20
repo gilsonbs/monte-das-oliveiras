@@ -32,6 +32,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     </form>
   </div>
 
+  <div class="cat-filter-row" id="cat-filters"></div>
+
   <table>
     <thead>
       <tr>
@@ -58,12 +60,14 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   const PER_PAGE = 50;
   const params = new URLSearchParams(window.location.search);
   const statusFilter = params.get('status') || 'all';
+  const catFilter = params.get('cat') || '';
   const searchQuery = params.get('q') || '';
   const page = Math.max(1, Number(params.get('page') || '1'));
 
   function buildUrl(overrides: Record<string, string | number>) {
     const p = new URLSearchParams();
     if (statusFilter !== 'all') p.set('status', statusFilter);
+    if (catFilter) p.set('cat', catFilter);
     if (searchQuery) p.set('q', searchQuery);
     if (page > 1) p.set('page', String(page));
     Object.entries(overrides).forEach(([k, v]) => {
@@ -104,6 +108,21 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     return new Date(dateStr).toLocaleDateString('pt-BR');
   }
 
+  // filtro de categorias
+  const { data: allCategories } = await supabase
+    .from('categories')
+    .select('id, name, slug')
+    .order('name');
+
+  const catFiltersEl = document.getElementById('cat-filters')!;
+  if (allCategories && allCategories.length > 0) {
+    const allLink = `<a href="${buildUrl({ cat: '', page: 1 })}" class="${!catFilter ? 'active' : ''}">Todas as categorias</a>`;
+    const catLinks = allCategories
+      .map((c: any) => `<a href="${buildUrl({ cat: c.slug, page: 1 })}" class="${catFilter === c.slug ? 'active' : ''}">${c.name}</a>`)
+      .join('');
+    catFiltersEl.innerHTML = allLink + catLinks;
+  }
+
   async function load() {
     const [{ count: publishedCount }, { count: draftCount }, { count: featuredCount }] = await Promise.all([
       supabase.from('posts').select('id', { count: 'exact', head: true }).eq('status', 'published'),
@@ -122,6 +141,10 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
     if (statusFilter === 'featured') query = query.eq('is_featured', true);
     else if (statusFilter !== 'all') query = query.eq('status', statusFilter);
+    if (catFilter) {
+      const cat = (allCategories ?? []).find((c: any) => c.slug === catFilter);
+      if (cat) query = query.eq('category_id', cat.id);
+    }
     if (searchQuery) query = query.ilike('title', `%${searchQuery}%`);
 
     const { data: posts, count: totalCount } = await query;
@@ -199,7 +222,13 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   .stat-card .label { font-size: 12px; color: #8A8367; margin-bottom: 6px; }
   .stat-card .value { font-family: var(--font-display); font-size: 24px; font-weight: 600; }
 
-  .toolbar-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+  .toolbar-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 10px; flex-wrap: wrap; }
+  .cat-filter-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+  .cat-filter-row :global(a) {
+    font-family: var(--font-ui); font-size: 12px; font-weight: 500; padding: 5px 12px; border-radius: 20px;
+    background: #fff; border: 1px solid #E4E0D3; color: #5F5E5A; text-decoration: none;
+  }
+  .cat-filter-row :global(a.active) { background: var(--dusk); color: #F3EEDD; border-color: var(--dusk); }
   .filters { display: flex; gap: 8px; }
   .filters :global(a) {
     font-family: var(--font-ui); font-size: 12.5px; font-weight: 500; padding: 7px 14px; border-radius: 20px;
