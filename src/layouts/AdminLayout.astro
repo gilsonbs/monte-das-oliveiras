@@ -27,7 +27,8 @@ function isActive(prefix: string) {
     <aside class="sidebar">
       <div class="sidebar-logo">Monte das Oliveiras</div>
       <nav>
-        <a href="/admin" class={isActive('/admin') && !path.includes('/admin/categorias') ? 'active' : ''}>Posts</a>
+        <a href="/admin" class={isActive('/admin') && !path.includes('/admin/categorias') && !path.includes('/admin/destaques') ? 'active' : ''}>Posts</a>
+        <a href="/admin/destaques" class={isActive('/admin/destaques')}>Destaques</a>
         <a href="/admin/categorias" class={isActive('/admin/categorias')}>Categorias e tags</a>
         <a href="/admin/anuncios" class={isActive('/admin/anuncios')}>Anúncios</a>
         <a href="/admin/mensagens" class={isActive('/admin/mensagens')}>Mensagens</a>

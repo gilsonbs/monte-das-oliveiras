@@ -1,0 +1,281 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Destaques">
+  <div class="topbar">
+    <div>
+      <h1>Destaques da homepage</h1>
+      <p class="subtitle">Defina qual post ocupa cada posição. As mudanças entram no ar no próximo deploy.</p>
+    </div>
+  </div>
+
+  <div id="slots-wrap">
+    <div class="loading-msg">Carregando...</div>
+  </div>
+
+  <!-- busca de posts -->
+  <div class="search-modal" id="search-modal" hidden>
+    <div class="search-modal-box">
+      <div class="search-modal-head">
+        <span id="modal-slot-label"></span>
+        <button class="modal-close" id="modal-close">✕</button>
+      </div>
+      <input type="text" id="modal-search" placeholder="Buscar post por título..." autocomplete="off" />
+      <div id="modal-results" class="modal-results"></div>
+    </div>
+  </div>
+</AdminLayout>
+
+<script>
+  import { createSupabaseBrowserClient } from '../../lib/supabase-browser';
+  const supabase = createSupabaseBrowserClient();
+
+  const SLOT_LABELS: Record<number, { name: string; desc: string }> = {
+    1: { name: 'Hero',   desc: 'Destaque principal — grande, com imagem de fundo' },
+    2: { name: 'Lado 1', desc: 'Sidebar direito — posição 1' },
+    3: { name: 'Lado 2', desc: 'Sidebar direito — posição 2' },
+    4: { name: 'Lado 3', desc: 'Sidebar direito — posição 3' },
+    5: { name: 'Lado 4', desc: 'Sidebar direito — posição 4' },
+  };
+
+  type SlotPost = { id: string; title: string; slug: string; featured_order: number | null };
+
+  let currentSlotPos = 0;
+
+  async function loadSlots() {
+    const { data, error } = await supabase
+      .from('posts')
+      .select('id, title, slug, featured_order')
+      .eq('is_featured', true)
+      .not('featured_order', 'is', null)
+      .order('featured_order', { ascending: true });
+
+    const slots: Record<number, SlotPost | null> = { 1: null, 2: null, 3: null, 4: null, 5: null };
+    if (!error && data) {
+      for (const post of data as SlotPost[]) {
+        const pos = post.featured_order;
+        if (pos && pos >= 1 && pos <= 5) slots[pos] = post;
+      }
+    }
+
+    renderSlots(slots);
+  }
+
+  function renderSlots(slots: Record<number, SlotPost | null>) {
+    const wrap = document.getElementById('slots-wrap')!;
+    wrap.innerHTML = `
+      <div class="slots-layout">
+        ${renderSlot(1, slots[1], 'hero-slot')}
+        <div class="side-slots">
+          ${[2, 3, 4, 5].map((pos) => renderSlot(pos, slots[pos], 'side-slot')).join('')}
+        </div>
+      </div>
+    `;
+
+    wrap.querySelectorAll('[data-pos]').forEach((el) => {
+      el.addEventListener('click', (e) => {
+        const btn = (e.target as HTMLElement).closest('[data-action]') as HTMLElement | null;
+        if (!btn) return;
+        const action = btn.dataset.action!;
+        const pos = Number((el as HTMLElement).dataset.pos);
+
+        if (action === 'assign') openModal(pos);
+        if (action === 'remove') removeFromSlot(pos);
+      });
+    });
+  }
+
+  function renderSlot(pos: number, post: SlotPost | null, cls: string) {
+    const { name, desc } = SLOT_LABELS[pos];
+    const filled = post != null;
+    return `
+      <div class="slot ${cls} ${filled ? 'filled' : 'empty'}" data-pos="${pos}">
+        <div class="slot-header">
+          <span class="slot-pos">Posição ${pos}</span>
+          <span class="slot-name">${name}</span>
+        </div>
+        <div class="slot-desc">${desc}</div>
+        ${filled
+          ? `<div class="slot-post">
+               <div class="slot-post-title">${post!.title}</div>
+               <div class="slot-post-slug">/${post!.slug}</div>
+               <div class="slot-actions">
+                 <button class="btn-slot btn-change" data-action="assign">Trocar</button>
+                 <button class="btn-slot btn-remove" data-action="remove">Remover</button>
+               </div>
+             </div>`
+          : `<div class="slot-empty-msg">Nenhum post atribuído</div>
+             <button class="btn-slot btn-assign" data-action="assign">Escolher post</button>`
+        }
+      </div>
+    `;
+  }
+
+  async function removeFromSlot(pos: number) {
+    if (!confirm(`Remover o post da posição ${pos} (${SLOT_LABELS[pos].name})?`)) return;
+    const { error } = await supabase
+      .from('posts')
+      .update({ featured_order: null, is_featured: false })
+      .eq('featured_order', pos);
+    if (error) { alert(`Erro: ${error.message}`); return; }
+    loadSlots();
+  }
+
+  // modal de busca
+  function openModal(pos: number) {
+    currentSlotPos = pos;
+    const modal = document.getElementById('search-modal')!;
+    document.getElementById('modal-slot-label')!.textContent =
+      `Posição ${pos} — ${SLOT_LABELS[pos].name}`;
+    const input = document.getElementById('modal-search') as HTMLInputElement;
+    input.value = '';
+    document.getElementById('modal-results')!.innerHTML = '';
+    modal.hidden = false;
+    input.focus();
+  }
+
+  document.getElementById('modal-close')!.addEventListener('click', () => {
+    document.getElementById('search-modal')!.hidden = true;
+  });
+
+  document.getElementById('search-modal')!.addEventListener('click', (e) => {
+    if (e.target === document.getElementById('search-modal')) {
+      (document.getElementById('search-modal') as HTMLElement).hidden = true;
+    }
+  });
+
+  let searchTimer: ReturnType<typeof setTimeout>;
+  document.getElementById('modal-search')!.addEventListener('input', (e) => {
+    clearTimeout(searchTimer);
+    const q = (e.target as HTMLInputElement).value.trim();
+    if (q.length < 2) { document.getElementById('modal-results')!.innerHTML = ''; return; }
+    searchTimer = setTimeout(() => searchPosts(q), 300);
+  });
+
+  async function searchPosts(q: string) {
+    const { data } = await supabase
+      .from('posts')
+      .select('id, title, slug, status, categories(name)')
+      .eq('status', 'published')
+      .ilike('title', `%${q}%`)
+      .limit(10);
+
+    const resultsEl = document.getElementById('modal-results')!;
+    if (!data || data.length === 0) {
+      resultsEl.innerHTML = '<div class="no-results">Nenhum post encontrado.</div>';
+      return;
+    }
+    resultsEl.innerHTML = data
+      .map((p: any) => `
+        <div class="result-item" data-id="${p.id}" data-title="${p.title.replace(/"/g, '&quot;')}">
+          <div class="result-title">${p.title}</div>
+          <div class="result-cat">${p.categories?.name ?? ''} · /${p.slug}</div>
+        </div>
+      `)
+      .join('');
+
+    resultsEl.querySelectorAll('.result-item').forEach((el) => {
+      el.addEventListener('click', () => assignToSlot(
+        currentSlotPos,
+        (el as HTMLElement).dataset.id!,
+      ));
+    });
+  }
+
+  async function assignToSlot(pos: number, postId: string) {
+    // limpa quem estava nessa posição antes
+    await supabase
+      .from('posts')
+      .update({ featured_order: null, is_featured: false })
+      .eq('featured_order', pos);
+
+    // limpa a posição anterior desse post (se tinha outra)
+    await supabase
+      .from('posts')
+      .update({ featured_order: null })
+      .eq('id', postId);
+
+    // atribui
+    const { error } = await supabase
+      .from('posts')
+      .update({ featured_order: pos, is_featured: true })
+      .eq('id', postId);
+
+    document.getElementById('search-modal')!.hidden = true;
+
+    if (error) { alert(`Erro: ${error.message}`); return; }
+    loadSlots();
+  }
+
+  loadSlots();
+</script>
+
+<style>
+  .topbar { margin-bottom: 28px; }
+  .topbar h1 { font-family: var(--font-display); font-size: 22px; font-weight: 600; margin: 0 0 4px; }
+  .subtitle { font-size: 13px; color: #8A8367; margin: 0; }
+
+  /* layout dos slots */
+  .slots-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; max-width: 900px; }
+  .side-slots { display: flex; flex-direction: column; gap: 12px; }
+  .loading-msg { color: #8A8367; font-size: 13px; }
+
+  /* slot base */
+  .slot {
+    background: #fff; border: 2px solid #E4E0D3; border-radius: 8px; padding: 18px 20px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .slot.filled { border-color: var(--olive, #59613A); }
+  .slot.empty  { border-style: dashed; }
+
+  .slot-header { display: flex; align-items: baseline; gap: 10px; }
+  .slot-pos { font-family: var(--font-ui); font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #8A8367; }
+  .slot-name { font-family: var(--font-display); font-size: 15px; font-weight: 600; color: var(--ink); }
+  .slot-desc { font-size: 12px; color: #8A8367; margin-bottom: 4px; }
+
+  .hero-slot .slot-name { font-size: 18px; }
+
+  .slot-post-title { font-size: 13.5px; font-weight: 500; line-height: 1.4; margin-bottom: 3px; }
+  .slot-post-slug  { font-size: 11px; color: #8A8367; font-family: var(--font-ui); margin-bottom: 10px; }
+
+  .slot-empty-msg { font-size: 12.5px; color: #B0AB96; font-style: italic; }
+
+  .slot-actions { display: flex; gap: 8px; }
+  .btn-slot {
+    font-family: var(--font-ui); font-size: 12px; font-weight: 500; padding: 6px 14px;
+    border-radius: 6px; cursor: pointer; border: 1px solid #E4E0D3; background: #fff;
+  }
+  .btn-assign { background: var(--olive, #59613A); color: #fff; border-color: var(--olive, #59613A); align-self: flex-start; }
+  .btn-change { color: var(--olive-deep, #414A29); }
+  .btn-remove { color: #A6462A; }
+
+  /* modal */
+  .search-modal {
+    position: fixed; inset: 0; background: rgba(28,32,48,.55); z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .search-modal[hidden] { display: none; }
+  .search-modal-box {
+    background: #fff; border-radius: 10px; width: 560px; max-width: 95vw;
+    padding: 24px; box-shadow: 0 16px 48px rgba(0,0,0,.18);
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .search-modal-head { display: flex; justify-content: space-between; align-items: center; }
+  .search-modal-head span { font-family: var(--font-display); font-size: 15px; font-weight: 600; }
+  .modal-close { background: none; border: none; font-size: 16px; cursor: pointer; color: #8A8367; padding: 4px 8px; }
+  #modal-search {
+    width: 100%; padding: 9px 12px; border: 1px solid #E4E0D3; border-radius: 6px;
+    font-family: var(--font-ui); font-size: 13px;
+  }
+  .modal-results { display: flex; flex-direction: column; gap: 2px; max-height: 320px; overflow-y: auto; }
+  .result-item { padding: 10px 12px; border-radius: 6px; cursor: pointer; }
+  .result-item:hover { background: var(--olive-bg, #EEF1E4); }
+  .result-title { font-size: 13.5px; font-weight: 500; margin-bottom: 2px; }
+  .result-cat { font-size: 11px; color: #8A8367; }
+  .no-results { font-size: 13px; color: #8A8367; padding: 12px; text-align: center; }
+
+  @media (max-width: 700px) {
+    .slots-layout { grid-template-columns: 1fr; }
+  }
+</style>

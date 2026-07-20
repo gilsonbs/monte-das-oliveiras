@@ -44,7 +44,8 @@ export async function getFeaturedPosts(limit = 4) {
     .from('posts_public')
     .select('*')
     .eq('is_featured', true)
-    .order('published_at', { ascending: false })
+    .not('featured_order', 'is', null)
+    .order('featured_order', { ascending: true })
     .limit(limit);
   if (error) throw error;
   return data as PostSummary[];
