@@ -40,12 +40,23 @@ export interface PostFull extends PostSummary {
 // ---------- queries ----------
 
 export async function getFeaturedPosts(limit = 4) {
-  const { data, error } = await supabase
+  // tenta buscar posts com posição explícita definida
+  const { data: ordered, error: e1 } = await supabase
     .from('posts_public')
     .select('*')
     .eq('is_featured', true)
     .not('featured_order', 'is', null)
     .order('featured_order', { ascending: true })
+    .limit(limit);
+
+  if (!e1 && ordered && ordered.length > 0) return ordered as PostSummary[];
+
+  // fallback: ordem por data (comportamento anterior)
+  const { data, error } = await supabase
+    .from('posts_public')
+    .select('*')
+    .eq('is_featured', true)
+    .order('published_at', { ascending: false })
     .limit(limit);
   if (error) throw error;
   return data as PostSummary[];
