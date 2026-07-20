@@ -33,6 +33,12 @@ function isActive(prefix: string) {
         <a href="/admin/anuncios" class={isActive('/admin/anuncios')}>Anúncios</a>
         <a href="/admin/mensagens" class={isActive('/admin/mensagens')}>Mensagens</a>
       </nav>
+      <div class="sidebar-section">Publicação</div>
+      <div class="deploy-box">
+        <button id="btn-deploy" class="btn-deploy">Publicar site</button>
+        <div id="deploy-status" class="deploy-status"></div>
+      </div>
+
       <div class="sidebar-section">Conta</div>
       <nav>
         <a href="/" target="_blank">Ver site</a>
@@ -66,6 +72,38 @@ function isActive(prefix: string) {
       await supabase.auth.signOut();
       window.location.href = '/admin/login';
     });
+
+    // botão publicar
+    const btnDeploy  = document.getElementById('btn-deploy') as HTMLButtonElement;
+    const deployStatus = document.getElementById('deploy-status')!;
+    const FN_URL = `${import.meta.env.PUBLIC_SUPABASE_URL}/functions/v1/trigger-deploy`;
+
+    btnDeploy?.addEventListener('click', async () => {
+      btnDeploy.disabled = true;
+      btnDeploy.textContent = 'Publicando…';
+      deployStatus.textContent = '';
+
+      const { data: { session } } = await supabase.auth.getSession();
+      try {
+        const res = await fetch(FN_URL, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${session?.access_token}` },
+        });
+        if (res.ok) {
+          deployStatus.textContent = 'Deploy iniciado — leva ~4 min';
+          deployStatus.className = 'deploy-status ok';
+          btnDeploy.textContent = 'Publicar site';
+          setTimeout(() => { deployStatus.textContent = ''; }, 8000);
+        } else {
+          throw new Error(`status ${res.status}`);
+        }
+      } catch (err: any) {
+        deployStatus.textContent = `Erro: ${err.message}`;
+        deployStatus.className = 'deploy-status err';
+        btnDeploy.textContent = 'Publicar site';
+      }
+      btnDeploy.disabled = false;
+    });
   </script>
 
   <style>
@@ -80,6 +118,18 @@ function isActive(prefix: string) {
     .sidebar nav a.active { background: #2E3555; color: #F3EEDD; }
     .sidebar nav a:hover { color: #F3EEDD; }
     .sidebar-section { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #71715F; margin: 24px 0 10px; padding: 0 6px; }
+    .deploy-box { padding: 0 6px; margin-bottom: 8px; }
+    .btn-deploy {
+      width: 100%; padding: 9px 12px; border-radius: 6px; border: none; cursor: pointer;
+      background: var(--ember, #B07A29); color: #fff;
+      font-family: var(--font-ui); font-size: 13px; font-weight: 600;
+      transition: opacity .15s;
+    }
+    .btn-deploy:hover { opacity: .88; }
+    .btn-deploy:disabled { opacity: .5; cursor: wait; }
+    .deploy-status { font-size: 11px; margin-top: 6px; line-height: 1.4; }
+    .deploy-status.ok  { color: #7aad72; }
+    .deploy-status.err { color: #d97070; }
     main { padding: 32px 40px 60px; }
   </style>
 </body>
