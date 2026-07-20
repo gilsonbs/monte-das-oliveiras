@@ -17,6 +17,10 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       <div class="label">Rascunhos</div>
       <div class="value" id="stat-draft">—</div>
     </div>
+    <div class="stat-card">
+      <div class="label">Em destaque</div>
+      <div class="value" id="stat-featured">—</div>
+    </div>
   </div>
 
   <div class="toolbar-row">
@@ -76,6 +80,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     { key: 'all', label: 'Todos' },
     { key: 'published', label: 'Publicados' },
     { key: 'draft', label: 'Rascunhos' },
+    { key: 'featured', label: '★ Destaques' },
   ];
   filtersEl.innerHTML = filterOptions
     .map((f) => `<a href="${buildUrl({ status: f.key, page: 1 })}" class="${statusFilter === f.key ? 'active' : ''}">${f.label}</a>`)
@@ -100,12 +105,14 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   }
 
   async function load() {
-    const [{ count: publishedCount }, { count: draftCount }] = await Promise.all([
+    const [{ count: publishedCount }, { count: draftCount }, { count: featuredCount }] = await Promise.all([
       supabase.from('posts').select('id', { count: 'exact', head: true }).eq('status', 'published'),
       supabase.from('posts').select('id', { count: 'exact', head: true }).eq('status', 'draft'),
+      supabase.from('posts').select('id', { count: 'exact', head: true }).eq('is_featured', true),
     ]);
     document.getElementById('stat-published')!.textContent = String(publishedCount ?? 0);
     document.getElementById('stat-draft')!.textContent = String(draftCount ?? 0);
+    document.getElementById('stat-featured')!.textContent = String(featuredCount ?? 0);
 
     let query = supabase
       .from('posts')
@@ -113,7 +120,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       .order('created_at', { ascending: false })
       .range((page - 1) * PER_PAGE, page * PER_PAGE - 1);
 
-    if (statusFilter !== 'all') query = query.eq('status', statusFilter);
+    if (statusFilter === 'featured') query = query.eq('is_featured', true);
+    else if (statusFilter !== 'all') query = query.eq('status', statusFilter);
     if (searchQuery) query = query.ilike('title', `%${searchQuery}%`);
 
     const { data: posts, count: totalCount } = await query;
@@ -186,7 +194,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   }
   .btn-primary { background: var(--olive); color: #fff; border-color: var(--olive); }
 
-  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; max-width: 560px; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; max-width: 560px; }
   .stat-card { background: #fff; border: 1px solid #E4E0D3; border-radius: 8px; padding: 16px 18px; }
   .stat-card .label { font-size: 12px; color: #8A8367; margin-bottom: 6px; }
   .stat-card .value { font-family: var(--font-display); font-size: 24px; font-weight: 600; }
