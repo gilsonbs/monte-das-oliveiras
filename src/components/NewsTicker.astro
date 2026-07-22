@@ -9,15 +9,17 @@ const posts = enabled
 
 {enabled && posts.length > 0 && (
   <div class="ticker-bar">
-    <span class="ticker-label">ÚLTIMAS NOTÍCIAS DA IGREJA PERSEGUIDA:</span>
-    <div class="ticker-track-wrap">
-      <div class="ticker-track">
-        {[...posts, ...posts].map((post) => (
-          <a href={`/${post.slug}`} class="ticker-item">
-            {post.title}
-            <span class="ticker-sep" aria-hidden="true"> • </span>
-          </a>
-        ))}
+    <div class="ticker-inner">
+      <span class="ticker-label">ÚLTIMAS NOTÍCIAS DA IGREJA PERSEGUIDA:</span>
+      <div class="ticker-track-wrap">
+        <div class="ticker-track">
+          {[...posts, ...posts].map((post) => (
+            <a href={`/${post.slug}`} class="ticker-item">
+              {post.title}
+              <span class="ticker-sep" aria-hidden="true"> • </span>
+            </a>
+          ))}
+        </div>
       </div>
     </div>
   </div>
@@ -27,14 +29,21 @@ const posts = enabled
   .ticker-bar {
     background: var(--dusk);
     border-top: 1px solid rgba(237, 231, 212, 0.12);
-    display: flex;
-    align-items: center;
     height: 36px;
     overflow: hidden;
     font-family: var(--font-ui);
     font-size: 12px;
     font-weight: 500;
     letter-spacing: 0.03em;
+  }
+
+  .ticker-inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    height: 100%;
   }
 
   .ticker-label {
@@ -56,6 +65,10 @@ const posts = enabled
     flex: 1;
     overflow: hidden;
     position: relative;
+  }
+
+  @media (max-width: 860px) {
+    .ticker-inner { padding: 0 20px; }
   }
 
   .ticker-track {
