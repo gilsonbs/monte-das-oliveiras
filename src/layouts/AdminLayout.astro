@@ -74,29 +74,44 @@ function isActive(prefix: string) {
     });
 
     // botão publicar
-    const btnDeploy  = document.getElementById('btn-deploy') as HTMLButtonElement;
-    const deployStatus = document.getElementById('deploy-status')!;
-    const FN_URL = `${import.meta.env.PUBLIC_SUPABASE_URL}/functions/v1/trigger-deploy`;
+    const btnDeploy = document.getElementById('btn-deploy') as HTMLButtonElement;
+    const deployStatus = document.getElementById('deploy-status') as HTMLElement;
 
     btnDeploy?.addEventListener('click', async () => {
       btnDeploy.disabled = true;
       btnDeploy.textContent = 'Publicando…';
       deployStatus.textContent = '';
+      deployStatus.className = 'deploy-status';
 
-      const { data: { session } } = await supabase.auth.getSession();
       try {
-        const res = await fetch(FN_URL, {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${session?.access_token}` },
-        });
-        if (res.ok) {
-          deployStatus.textContent = 'Deploy iniciado — leva ~4 min';
-          deployStatus.className = 'deploy-status ok';
-          btnDeploy.textContent = 'Publicar site';
-          setTimeout(() => { deployStatus.textContent = ''; }, 8000);
-        } else {
-          throw new Error(`status ${res.status}`);
+        // busca o token do GitHub salvo na tabela site_settings
+        const { data: setting, error } = await supabase
+          .from('site_settings')
+          .select('value')
+          .eq('key', 'github_deploy_token')
+          .maybeSingle();
+
+        if (error || !setting?.value) {
+          throw new Error('Token do GitHub não configurado. Adicione a linha github_deploy_token na tabela site_settings.');
         }
+
+        const res = await fetch('https://api.github.com/repos/gilsonbs/monte-das-oliveiras/dispatches', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${setting.value}`,
+            Accept: 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ event_type: 'content-updated' }),
+        });
+
+        if (!res.ok) throw new Error(`GitHub retornou ${res.status}`);
+
+        deployStatus.textContent = 'Deploy iniciado — leva ~4 min';
+        deployStatus.className = 'deploy-status ok';
+        btnDeploy.textContent = 'Publicar site';
+        setTimeout(() => { deployStatus.textContent = ''; }, 10000);
       } catch (err: any) {
         deployStatus.textContent = `Erro: ${err.message}`;
         deployStatus.className = 'deploy-status err';
