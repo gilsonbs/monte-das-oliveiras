@@ -1,0 +1,32 @@
+name: Gerar Artigos do Dia
+
+on:
+  schedule:
+    - cron: '0 10 * * *'   # 07h BRT (UTC-3)
+    - cron: '0 17 * * *'   # 14h BRT (UTC-3)
+  workflow_dispatch: {}    # permite disparo manual pelo painel do GitHub
+
+jobs:
+  gerar:
+    name: Gerar e salvar rascunhos
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Instalar dependências
+        run: pip install anthropic supabase feedparser
+
+      - name: Executar agente de artigos
+        env:
+          PUBLIC_SUPABASE_URL:  ${{ secrets.PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          ANTHROPIC_API_KEY:    ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python scripts/gerar_artigos.py
