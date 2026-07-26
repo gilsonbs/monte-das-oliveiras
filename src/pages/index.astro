@@ -16,7 +16,23 @@ const maisLidas = recent.filter((p) => !featuredSlugs.has(p.slug)).slice(0, 6);
 const feedPosts = recent.filter((p) => !featuredSlugs.has(p.slug)).slice(6);
 ---
 
-<BaseLayout title="Monte das Oliveiras" description="Estudos bíblicos, escatologia e vida cristã para o dia a dia.">
+<BaseLayout
+  title="Monte das Oliveiras"
+  description="Estudos bíblicos, escatologia e vida cristã para o dia a dia."
+  jsonLd={{
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Monte das Oliveiras',
+    url: 'https://montedasoliveiras.com',
+    description: 'Estudos bíblicos, escatologia e vida cristã para o dia a dia.',
+    inLanguage: 'pt-BR',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: { '@type': 'EntryPoint', urlTemplate: 'https://montedasoliveiras.com/?s={search_term_string}' },
+      'query-input': 'required name=search_term_string',
+    },
+  }}
+>
 
   {heroPost && (
     <section class="hero-section">

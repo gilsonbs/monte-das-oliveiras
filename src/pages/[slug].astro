@@ -40,31 +40,50 @@ const { before, after } = splitAfterParagraphs(post.content, 3);
 
 const publishedISO = new Date(post.published_at).toISOString();
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Article',
-  headline: post.title,
-  description: post.meta_description || post.excerpt,
-  image: post.share_url ? [post.share_url] : undefined,
-  datePublished: publishedISO,
-  dateModified: publishedISO,
-  author: { '@type': 'Organization', name: 'Monte das Oliveiras' },
-  publisher: {
-    '@type': 'Organization',
-    name: 'Monte das Oliveiras',
-    logo: { '@type': 'ImageObject', url: 'https://montedasoliveiras.com/logo.png' },
+const postURL = `https://montedasoliveiras.com/${post.slug}`;
+const absImage = post.share_url
+  ? (post.share_url.startsWith('http') ? post.share_url : `https://montedasoliveiras.com${post.share_url}`)
+  : undefined;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    description: post.meta_description || post.excerpt,
+    image: absImage ? [absImage] : undefined,
+    datePublished: publishedISO,
+    dateModified: publishedISO,
+    author: { '@type': 'Organization', name: 'Monte das Oliveiras', url: 'https://montedasoliveiras.com' },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Monte das Oliveiras',
+      logo: { '@type': 'ImageObject', url: 'https://montedasoliveiras.com/apple-touch-icon.png' },
+    },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': postURL },
+    inLanguage: 'pt-BR',
   },
-  mainEntityOfPage: { '@type': 'WebPage', '@id': `https://montedasoliveiras.com/${post.slug}` },
-};
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://montedasoliveiras.com' },
+      ...(post.category_name && post.category_slug ? [{ '@type': 'ListItem', position: 2, name: post.category_name, item: `https://montedasoliveiras.com/categoria/${post.category_slug}` }] : []),
+      { '@type': 'ListItem', position: post.category_name ? 3 : 2, name: post.title, item: postURL },
+    ],
+  },
+];
 ---
 
 <BaseLayout
   title={post.seo_title || post.title}
   description={post.meta_description || post.excerpt || undefined}
-  image={post.share_url || undefined}
+  image={absImage || undefined}
   canonical={post.canonical_url || undefined}
   type="article"
   jsonLd={jsonLd}
+  publishedTime={publishedISO}
+  section={post.category_name || undefined}
 >
   <div class="wrap post-head">
     {post.category_name && <a class="eyebrow cat" href={`/categoria/${post.category_slug}`}>{post.category_name}</a>}
