@@ -35,7 +35,9 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
             <button type="button" data-cmd="blockquote" title="Citação">"</button>
             <button type="button" data-cmd="link" title="Link">🔗</button>
             <button type="button" data-cmd="bulletList" title="Lista">≡</button>
+            <button type="button" data-cmd="image" title="Inserir imagem">🖼</button>
           </div>
+          <input type="file" id="inline-img-input" accept="image/*" hidden />
           <div id="editor" class="tiptap-editor"></div>
           <input type="hidden" id="content" />
         </div>
@@ -170,6 +172,44 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       if (url) chain.setLink({ href: url }).run();
       else chain.run();
     }
+    else if (cmd === 'image') {
+      (document.getElementById('inline-img-input') as HTMLInputElement).click();
+    }
+  });
+
+  // upload de imagem inline no conteúdo
+  const inlineImgInput = document.getElementById('inline-img-input') as HTMLInputElement;
+  inlineImgInput.addEventListener('change', async () => {
+    const file = inlineImgInput.files?.[0];
+    if (!file) return;
+    inlineImgInput.value = '';
+
+    const slug = slugInput.value || slugify(titleInput.value) || 'inline';
+    const path = `${slug}/inline-${Date.now()}.webp`;
+
+    // converte para webp via canvas (max 1200px de largura)
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+    await img.decode();
+
+    const maxW = 1200;
+    const scale = img.width > maxW ? maxW / img.width : 1;
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(img.width * scale);
+    canvas.height = Math.round(img.height * scale);
+    canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height);
+    const blob: Blob = await new Promise((res, rej) =>
+      canvas.toBlob((b) => (b ? res(b) : rej(new Error('Erro ao gerar imagem'))), 'image/webp', 0.85)
+    );
+
+    const { error } = await supabase.storage.from('media').upload(path, blob, {
+      contentType: 'image/webp',
+      upsert: true,
+    });
+    if (error) { alert(`Erro ao enviar imagem: ${error.message}`); return; }
+
+    const { data } = supabase.storage.from('media').getPublicUrl(path);
+    editor.chain().focus().setImage({ src: data.publicUrl }).run();
   });
 
   // ---------- pipeline de imagem (equivalente ao sharp, via Canvas) ----------
