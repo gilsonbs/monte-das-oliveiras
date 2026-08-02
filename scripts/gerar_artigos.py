@@ -470,10 +470,10 @@ def generate_article(noticia: dict, palavra_chave: str, internal_posts: list[dic
         links_internos=links_str,
     )
 
-    # Modelos Groq em ordem de preferência — tenta o próximo se atingir rate limit
+    # Modelos Groq em ordem de preferência — tenta o próximo se atingir rate limit ou modelo inválido
     GROQ_MODELS = [
         "llama-3.3-70b-versatile",
-        "llama3-70b-8192",
+        "llama-3.1-70b-versatile",
         "llama-3.1-8b-instant",
     ]
     raw = None
@@ -490,8 +490,9 @@ def generate_article(noticia: dict, palavra_chave: str, internal_posts: list[dic
             raw = resp.choices[0].message.content
             break
         except Exception as e:
-            if "rate_limit" in str(e).lower() or "429" in str(e):
-                print(f"      ⚠ Rate limit em {model}, tentando próximo...", file=sys.stderr)
+            err = str(e).lower()
+            if "rate_limit" in err or "429" in err or "decommissioned" in err or "400" in err:
+                print(f"      ⚠ {model} indisponível, tentando próximo...", file=sys.stderr)
                 continue
             raise
 
