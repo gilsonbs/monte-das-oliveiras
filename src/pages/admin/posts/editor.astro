@@ -400,9 +400,14 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 
   // ---------- carregamento inicial (categorias + post existente, se houver) ----------
   async function init() {
-    const { data: categories } = await supabase.from('categories').select('id, name, slug').order('name');
+    const [{ data: categories }, { data: publishedPosts }] = await Promise.all([
+      supabase.from('categories').select('id, name, slug').order('name'),
+      supabase.from('posts').select('category_id').eq('status', 'published'),
+    ]);
+    const withPosts = new Set((publishedPosts ?? []).map((p: any) => p.category_id));
+    const filteredCats = (categories ?? []).filter((c: any) => withPosts.has(c.id));
     const categorySelect = document.getElementById('category_id') as HTMLSelectElement;
-    categorySelect.innerHTML = (categories ?? [])
+    categorySelect.innerHTML = filteredCats
       .map((c: any) => `<option value="${c.id}">${c.name}</option>`)
       .join('');
 
