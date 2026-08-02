@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Monte das Oliveiras — Agente de geração de artigos
-Executa 2x/dia via GitHub Actions, salva rascunhos no Supabase.
+Monte das Oliveiras — Gerador automático de artigos
+Gemini 2.0 Flash (gratuito) + Pexels API (gratuita) + Supabase
 """
 
 import json
@@ -9,265 +9,393 @@ import os
 import re
 import sys
 import time
+import requests
 from datetime import datetime, timezone, timedelta
 
-import anthropic
 import feedparser
 from supabase import create_client
+import google.generativeai as genai
 
-# ── Configuração ──────────────────────────────────────────────────────────────
+# ── Configuração por categoria ────────────────────────────────────────────────
 
-FEEDS = [
-    ("cristao", "https://gospelprime.com.br/feed/"),
-    ("cristao", "https://noticiasgospel.com.br/feed/"),
-    ("cristao", "https://jornalcristao.com.br/feed/"),
-    ("geral",   "https://g1.globo.com/rss/g1/"),
-    ("geral",   "https://feeds.bbci.co.uk/portuguese/rss.xml"),
-]
+CATEGORY_CONFIG = {
+    "fim-dos-tempos": {
+        "feeds": [
+            "https://gospelprime.com.br/feed/",
+            "https://noticiasgospel.com.br/feed/",
+            "https://jornalcristao.com.br/feed/",
+            "https://feeds.bbci.co.uk/portuguese/rss.xml",
+        ],
+        "filtros": [
+            "israel", "profecia", "apocalipse", "fim dos tempos", "arrebatamento",
+            "segunda vinda", "anticristo", "escatologia", "guerra", "oriente médio",
+        ],
+        "estilo": "profético e escatológico, conectando eventos atuais às profecias bíblicas",
+        "palavra_chave_base": "fim dos tempos",
+    },
+    "estudos-biblicos": {
+        "feeds": [
+            "https://gospelprime.com.br/feed/",
+            "https://noticiasgospel.com.br/feed/",
+            "https://jornalcristao.com.br/feed/",
+        ],
+        "filtros": [
+            "bíblia", "estudo", "palavra de deus", "versículo", "oração",
+            "fé", "graça", "salvação", "discipulado", "teologia", "sermão",
+        ],
+        "estilo": "didático e aprofundado, como um pastor ensinando a congregação",
+        "palavra_chave_base": "estudo bíblico",
+    },
+    "igreja-perseguida": {
+        "feeds": [
+            "https://jornalcristao.com.br/feed/",
+            "https://gospelprime.com.br/feed/",
+            "https://feeds.bbci.co.uk/portuguese/rss.xml",
+            "https://g1.globo.com/rss/g1/",
+        ],
+        "filtros": [
+            "perseguição", "cristãos perseguidos", "mártires", "missões",
+            "liberdade religiosa", "china", "coreia do norte", "oriente médio",
+        ],
+        "estilo": "jornalístico e comovente, que mobiliza intercessão e consciência missionária",
+        "palavra_chave_base": "perseguição de cristãos",
+    },
+    "vida-crista": {
+        "feeds": [
+            "https://gospelprime.com.br/feed/",
+            "https://noticiasgospel.com.br/feed/",
+        ],
+        "filtros": [
+            "família", "casamento", "filhos", "relacionamento", "trabalho",
+            "ansiedade", "depressão", "cura", "milagre", "testemunho",
+        ],
+        "estilo": "prático e acolhedor, aplicando a Bíblia ao cotidiano do crente brasileiro",
+        "palavra_chave_base": "vida cristã",
+    },
+}
+
+CATEGORY_SLUG = os.environ.get("CATEGORY_SLUG", "fim-dos-tempos")
+config = CATEGORY_CONFIG.get(CATEGORY_SLUG, CATEGORY_CONFIG["fim-dos-tempos"])
+
+# ── Clientes ──────────────────────────────────────────────────────────────────
 
 supabase = create_client(
     os.environ["PUBLIC_SUPABASE_URL"],
     os.environ["SUPABASE_SERVICE_KEY"],
 )
-claude = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 
-MANUAL_EDITORIAL = """
-IDENTIDADE DO SITE: Monte das Oliveiras — portal cristão evangélico brasileiro.
-PÚBLICO: Cristãos que buscam respostas bíblicas para o cotidiano, notícias vistas
-         sob perspectiva bíblica e conteúdo de edificação espiritual.
+genai.configure(api_key=os.environ["GEMINI_API_KEY"])
+gemini = genai.GenerativeModel(
+    "gemini-2.0-flash",
+    generation_config=genai.GenerationConfig(
+        response_mime_type="application/json",
+        max_output_tokens=8192,
+        temperature=0.8,
+    ),
+)
 
-ESTRUTURA DO ARTIGO (obrigatória):
-- Mínimo 1.200 palavras
-- Tom: pastoral, acolhedor, bíblico, sem julgamento excessivo
-- Parágrafos curtos (máx 4 linhas)
-- Subtítulos H2 a cada 3–4 parágrafos
-- Inclua 2–4 versículos bíblicos com referência completa (ex: João 3:16)
-- Conecte o tema com a realidade espiritual do crente brasileiro
-- Termine com chamada à reflexão ou oração relacionada ao tema
-
-FORMATOS QUE FUNCIONAM PARA O PÚBLICO CRISTÃO:
-- "O que a Bíblia diz sobre [tema da notícia]"
-- "Como um cristão deve agir diante de [situação]"
-- "[Acontecimento] e a perspectiva profética"
-- "5 lições que [evento] nos ensina sobre fé"
-- "Crente pode [fazer X]? A resposta bíblica"
-
-REGRAS DE SEO:
-- seo_title: exatamente 50–60 caracteres; deve conter a palavra-chave principal;
-  diferente do título editorial; responde a uma pergunta ou curiosidade do leitor
-- meta_description: exatamente 130–155 caracteres; verbo de ação; convida ao clique;
-  responde à pergunta principal do artigo
-- slug: 3–6 palavras, sem acento, sem maiúsculas, separadas por hífen
-- excerpt: 1–2 frases resumindo o valor do artigo (máx 200 caracteres)
-- read_time_minutes: calcule corretamente (200 palavras por minuto)
-"""
+PEXELS_KEY = os.environ.get("PEXELS_API_KEY", "")
 
 
-# ── Buscar notícias dos feeds RSS ─────────────────────────────────────────────
+# ── RSS: buscar notícias ───────────────────────────────────────────────────────
 
-def fetch_news(max_per_feed: int = 7) -> list[dict]:
+def fetch_news() -> list[dict]:
     items = []
-    for tipo, url in FEEDS:
+    for url in config["feeds"]:
         try:
             feed = feedparser.parse(url)
-            for entry in feed.entries[:max_per_feed]:
+            for entry in feed.entries[:8]:
                 title = entry.get("title", "").strip()
-                summary = re.sub(r"<[^>]+>", "", entry.get("summary", "")).strip()[:400]
+                summary = re.sub(r"<[^>]+>", "", entry.get("summary", "")).strip()[:500]
                 link = entry.get("link", "")
                 if title and link:
-                    items.append({
-                        "tipo": tipo,
-                        "titulo": title,
-                        "resumo": summary,
-                        "link": link,
-                    })
-        except Exception as exc:
-            print(f"[AVISO] Feed {url} falhou: {exc}", file=sys.stderr)
-    print(f"[INFO] {len(items)} notícias coletadas de {len(FEEDS)} feeds")
+                    items.append({"titulo": title, "resumo": summary, "link": link})
+        except Exception as e:
+            print(f"[AVISO] Feed {url}: {e}", file=sys.stderr)
+    print(f"[INFO] {len(items)} notícias coletadas de {len(config['feeds'])} feeds")
     return items
 
 
-# ── Buscar posts recentes para evitar repetição ───────────────────────────────
+# ── Supabase: dados auxiliares ────────────────────────────────────────────────
 
-def fetch_recent_titles(hours: int = 36) -> list[str]:
+def fetch_recent_titles(hours: int = 48) -> list[str]:
     cutoff = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
     try:
-        resp = supabase.table("posts") \
-            .select("title") \
-            .gte("created_at", cutoff) \
-            .execute()
-        return [row["title"] for row in (resp.data or [])]
-    except Exception as exc:
-        print(f"[AVISO] Não foi possível buscar posts recentes: {exc}", file=sys.stderr)
+        resp = supabase.table("posts").select("title").gte("created_at", cutoff).execute()
+        return [r["title"] for r in (resp.data or [])]
+    except Exception as e:
+        print(f"[AVISO] Títulos recentes: {e}", file=sys.stderr)
         return []
 
 
-# ── Buscar categorias ─────────────────────────────────────────────────────────
-
-def fetch_categories() -> list[dict]:
-    resp = supabase.table("categories").select("id, name, slug").execute()
-    return resp.data or []
-
-
-# ── Selecionar as 2 melhores notícias via Claude ─────────────────────────────
-
-def select_news(
-    items: list[dict],
-    categories: list[dict],
-    recent_titles: list[str],
-) -> list[dict]:
-    cats_str = ", ".join(f'{c["name"]} ({c["slug"]})' for c in categories)
-    recent_str = "; ".join(recent_titles[:10]) if recent_titles else "nenhum"
-
-    numbered = [
-        {"indice": i, "tipo": n["tipo"], "titulo": n["titulo"], "resumo": n["resumo"]}
-        for i, n in enumerate(items)
-    ]
-
-    prompt = f"""Você é o editor-chefe do Monte das Oliveiras, portal cristão evangélico brasileiro.
-
-Analise as notícias abaixo e selecione as 2 que têm maior potencial para se tornarem
-artigos originais com ângulo bíblico para nosso público.
-
-Critérios (em ordem de importância):
-1. Relevância espiritual ou impacto na vida cristã
-2. Volume de busca potencial (o leitor vai procurar isso no Google?)
-3. Possibilidade de criar conteúdo original com perspectiva bíblica genuína
-4. Preferência por notícias de portais cristãos (tipo="cristao") para assuntos de fé
-5. NÃO selecione notícias similares a artigos já publicados recentemente
-
-Artigos já publicados recentemente (evite repetir temas): {recent_str}
-
-Categorias disponíveis no site: {cats_str}
-
-Notícias disponíveis:
-{json.dumps(numbered, ensure_ascii=False, indent=2)}
-
-Responda APENAS com JSON válido, sem markdown, neste formato exato:
-[
-  {{"indice": 0, "categoria_slug": "slug-da-categoria", "motivo_escolha": "explicação breve"}},
-  {{"indice": 5, "categoria_slug": "slug-da-categoria", "motivo_escolha": "explicação breve"}}
-]"""
-
-    msg = claude.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=400,
-        messages=[{"role": "user", "content": prompt}],
-    )
-    raw = msg.content[0].text.strip()
-    raw = re.sub(r"^```[a-z]*\n?", "", raw)
-    raw = re.sub(r"\n?```$", "", raw)
-    return json.loads(raw)
+def fetch_category_id() -> str | None:
+    try:
+        resp = supabase.table("categories").select("id").eq("slug", CATEGORY_SLUG).execute()
+        return resp.data[0]["id"] if resp.data else None
+    except Exception as e:
+        print(f"[ERRO] Categoria: {e}", file=sys.stderr)
+        return None
 
 
-# ── Gerar artigo completo via Claude ─────────────────────────────────────────
+def fetch_internal_posts(limit: int = 6) -> list[dict]:
+    try:
+        resp = (
+            supabase.table("posts")
+            .select("title, slug")
+            .eq("status", "published")
+            .order("published_at", desc=True)
+            .limit(limit)
+            .execute()
+        )
+        return resp.data or []
+    except Exception as e:
+        print(f"[AVISO] Posts internos: {e}", file=sys.stderr)
+        return []
 
-def generate_article(noticia: dict, categoria: dict) -> dict:
-    prompt = f"""{MANUAL_EDITORIAL}
 
-Com base nesta notícia, crie um artigo completo para o Monte das Oliveiras.
-Categoria escolhida: {categoria["name"]}
+# ── Pexels: imagem de alta qualidade ─────────────────────────────────────────
 
-NOTÍCIA:
-Título: {noticia["titulo"]}
-Resumo: {noticia["resumo"]}
-Fonte original: {noticia["link"]}
+def fetch_and_save_image(query: str, slug: str) -> str | None:
+    if not PEXELS_KEY:
+        print("[AVISO] PEXELS_API_KEY não definida, artigo ficará sem capa.", file=sys.stderr)
+        return None
+    try:
+        resp = requests.get(
+            "https://api.pexels.com/v1/search",
+            headers={"Authorization": PEXELS_KEY},
+            params={"query": query, "per_page": 5, "orientation": "landscape", "size": "large"},
+            timeout=15,
+        )
+        photos = resp.json().get("photos", [])
+        if not photos:
+            print(f"[AVISO] Pexels sem resultados para '{query}'", file=sys.stderr)
+            return None
 
-IMPORTANTE:
-- O artigo deve ter ângulo e voz próprios — não é uma republição da notícia
-- Mencione a notícia como contexto, mas desenvolva o tema bíblico com profundidade
-- O conteúdo HTML deve usar tags <p>, <h2>, <blockquote> — nada mais
-- Calcule read_time_minutes com base no texto gerado (200 palavras/minuto)
+        photo = photos[0]
+        src = photo["src"]
+        alt = photo.get("alt") or query
+        photographer = photo.get("photographer", "Pexels")
 
-Responda APENAS com JSON válido (sem markdown), exatamente neste formato:
+        # Download da versão original (máxima qualidade)
+        img_bytes = requests.get(src["original"], timeout=30).content
+
+        # Upload para Supabase Storage
+        storage_path = f"{slug}/cover.jpg"
+        supabase.storage.from_("media").upload(
+            storage_path,
+            img_bytes,
+            {"content-type": "image/jpeg", "upsert": "true"},
+        )
+        cover_url = supabase.storage.from_("media").get_public_url(storage_path)
+
+        # Salvar registro na tabela media
+        media_resp = supabase.table("media").insert({
+            "original_url": cover_url,
+            "cover_url": cover_url,
+            "card_url": src["large2x"],   # 1920px (Pexels CDN)
+            "thumb_url": src["large"],    # 940px  (Pexels CDN)
+            "share_url": cover_url,
+            "alt_text": f"{alt} — Foto: {photographer} / Pexels",
+        }).execute()
+
+        media_id = media_resp.data[0]["id"] if media_resp.data else None
+        print(f"      Foto: {alt[:60]} | Fotógrafo: {photographer}")
+        return media_id
+
+    except Exception as e:
+        print(f"[AVISO] Erro no Pexels/Storage: {e}", file=sys.stderr)
+        return None
+
+
+# ── Gemini: selecionar a melhor notícia ──────────────────────────────────────
+
+def select_news(items: list[dict], recent: list[str]) -> dict:
+    recent_str = "; ".join(recent[:10]) or "nenhum"
+    filtros_str = ", ".join(config["filtros"])
+
+    prompt = f"""Você é editor-chefe do Monte das Oliveiras, portal cristão evangélico brasileiro.
+Categoria ativa: "{CATEGORY_SLUG}" | Estilo: {config['estilo']}
+Palavras-chave da categoria: {filtros_str}
+
+Selecione A MELHOR notícia das disponíveis para virar artigo com ângulo bíblico.
+Evite temas similares aos publicados recentemente: {recent_str}
+
+Notícias:
+{json.dumps([{"i": i, "titulo": n["titulo"], "resumo": n["resumo"][:200]} for i, n in enumerate(items)], ensure_ascii=False)}
+
+Retorne JSON: {{"indice": 0, "palavra_chave": "palavra-chave principal para SEO", "motivo": "breve justificativa"}}"""
+
+    resp = gemini.generate_content(prompt)
+    return json.loads(resp.text)
+
+
+# ── Gemini: gerar artigo completo (~2800 palavras) ────────────────────────────
+
+GEM_PROMPT = """Você é um redator especializado em conteúdo cristão evangélico para montedasoliveiras.com.
+Escreva um artigo COMPLETO, ORIGINAL e PROFUNDO com as especificações abaixo.
+
+TEMA DA NOTÍCIA: {tema}
+ESTILO DA CATEGORIA: {estilo}
+PALAVRA-CHAVE PRINCIPAL: "{palavra_chave}"
+
+LINKS INTERNOS (inclua 2 com chamadas criativas no corpo do texto):
+{links_internos}
+
+REGRAS OBRIGATÓRIAS:
+- Mínimo de 2.800 palavras de conteúdo real (não conte tags HTML)
+- Tom conversacional, pastoral e informativo — jamais frio ou acadêmico
+- A palavra-chave deve aparecer nos primeiros 2 parágrafos e em pelo menos 1 título H2 ou H3
+- Densidade da palavra-chave: ~1% (mínimo de 12 ocorrências naturais, nunca forçadas)
+- Além da palavra-chave principal, use variações e termos relacionados ao longo do texto
+- Parágrafos de 100 a 150 palavras — bem desenvolvidos, nunca rasos
+- No mínimo 5 títulos H2 informativos e descritivos (SEM numeração nos títulos)
+- No mínimo 4 referências bíblicas com versículo completo em blockquote
+- Pelo menos 1 lista <ul> ou tabela comparativa quando relevante
+- Conecte o tema com a realidade espiritual do crente brasileiro
+- Inclua 2 links internos com chamadas criativas para os artigos listados acima
+- Termine com 3 perguntas que incentivem comentários dos leitores
+- Seção de FAQ ao final com 5 perguntas e respostas detalhadas
+
+ESTRUTURA DO ARTIGO:
+1. Introdução impactante (apresenta o tema + palavra-chave)
+2. Desenvolvimento: mínimo 5 seções com H2
+3. Referências bíblicas integradas ao texto
+4. Lista ou tabela quando aplicável
+5. Links internos com chamadas criativas
+6. Conclusão com chamada à reflexão ou oração
+7. Perguntas para comentários
+8. FAQ (H2 "Perguntas Frequentes" + H3 para cada pergunta)
+
+FORMATO HTML (use APENAS estas tags):
+<p>, <h2>, <h3>, <blockquote>, <ul>, <ol>, <li>, <strong>, <em>, <a href="URL">texto</a>
+NÃO use: <h1>, <div>, <section>, <html>, <body>, <br>
+
+RETORNE APENAS JSON VÁLIDO com esta estrutura:
 {{
-  "title": "Título editorial do artigo (até 80 chars)",
-  "seo_title": "Título SEO de 50 a 60 caracteres exatos",
+  "title": "Título editorial chamativo (até 80 chars, pode ter número: '7 sinais que...')",
+  "seo_title": "Título SEO 50-60 chars exatos com a palavra-chave",
   "slug": "slug-sem-acento-3-a-6-palavras",
-  "excerpt": "Resumo do valor do artigo em até 200 caracteres.",
-  "meta_description": "Meta description de 130 a 155 caracteres com verbo de ação.",
-  "read_time_minutes": 7,
-  "content": "<p>Conteúdo HTML completo com no mínimo 1.200 palavras...</p>"
+  "excerpt": "Resumo do valor do artigo em até 200 chars",
+  "meta_description": "Meta description 130-155 chars, verbo de ação, convida ao clique",
+  "read_time_minutes": 14,
+  "tags": "tag1, tag2, tag3, tag4, tag5, tag6, tag7, tag8",
+  "pexels_query": "3 to 5 english words for cover photo search on Pexels",
+  "faq_schema": {{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {{"@type": "Question", "name": "Pergunta?", "acceptedAnswer": {{"@type": "Answer", "text": "Resposta detalhada."}}}}
+    ]
+  }},
+  "content": "<p>Conteúdo HTML completo com no mínimo 2.800 palavras...</p>"
 }}"""
 
-    msg = claude.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=5000,
-        messages=[{"role": "user", "content": prompt}],
+
+def generate_article(noticia: dict, palavra_chave: str, internal_posts: list[dict]) -> dict:
+    links_str = "\n".join(
+        f'- "{p["title"]}" → https://montedasoliveiras.com/{p["slug"]}'
+        for p in internal_posts
+    ) or "Nenhum disponível ainda."
+
+    prompt = GEM_PROMPT.format(
+        tema=f"{noticia['titulo']}\n{noticia['resumo'][:400]}\nFonte: {noticia['link']}",
+        estilo=config["estilo"],
+        palavra_chave=palavra_chave,
+        links_internos=links_str,
     )
-    raw = msg.content[0].text.strip()
-    raw = re.sub(r"^```[a-z]*\n?", "", raw)
-    raw = re.sub(r"\n?```$", "", raw)
-    return json.loads(raw)
+
+    resp = gemini.generate_content(prompt)
+    data = json.loads(resp.text)
+
+    # Embute FAQ JSON-LD no final do conteúdo (Google lê em qualquer posição da página)
+    if "faq_schema" in data:
+        faq_json = json.dumps(data["faq_schema"], ensure_ascii=False)
+        data["content"] += f'\n<script type="application/ld+json">{faq_json}</script>'
+
+    return data
 
 
 # ── Salvar rascunho no Supabase ───────────────────────────────────────────────
 
-def save_draft(article: dict, category_id: str) -> str:
+def save_draft(article: dict, category_id: str, cover_media_id: str | None) -> str:
     payload = {
-        "title":             article["title"],
-        "slug":              article["slug"],
-        "content":           article["content"],
-        "excerpt":           article.get("excerpt") or None,
-        "seo_title":         article.get("seo_title") or None,
-        "meta_description":  article.get("meta_description") or None,
+        "title": article["title"],
+        "slug": article["slug"],
+        "content": article["content"],
+        "excerpt": article.get("excerpt") or None,
+        "seo_title": article.get("seo_title") or None,
+        "meta_description": article.get("meta_description") or None,
         "read_time_minutes": article.get("read_time_minutes") or None,
-        "category_id":       category_id,
-        "status":            "draft",
-        "is_featured":       False,
-        "cover_media_id":    None,
-        "published_at":      None,
+        "category_id": category_id,
+        "cover_media_id": cover_media_id,
+        "status": "draft",
+        "is_featured": False,
+        "published_at": None,
     }
     resp = supabase.table("posts").insert(payload).execute()
     if resp.data:
         return resp.data[0].get("id", "?")
-    raise RuntimeError(f"Erro ao inserir post: {resp}")
+    raise RuntimeError(f"Falha ao inserir post: {resp}")
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
-def main() -> None:
+def main():
     print("=" * 60)
-    print(f"Monte das Oliveiras — Agente de Artigos")
-    print(f"Horário: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}")
+    print(f"Monte das Oliveiras — Gerador de Artigos (Gemini + Pexels)")
+    print(f"Categoria: {CATEGORY_SLUG}")
+    print(f"Horário:   {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}")
     print("=" * 60)
 
-    items      = fetch_news()
-    categories = fetch_categories()
-    recent     = fetch_recent_titles()
-
-    if len(items) < 2:
-        print("[ERRO] Menos de 2 notícias disponíveis. Abortando.", file=sys.stderr)
+    # 1. Categoria
+    category_id = fetch_category_id()
+    if not category_id:
+        print(f"[ERRO] Categoria '{CATEGORY_SLUG}' não encontrada no Supabase.", file=sys.stderr)
         sys.exit(1)
 
-    print(f"\n[INFO] Selecionando as 2 melhores entre {len(items)} notícias...")
-    selected = select_news(items, categories, recent)
+    # 2. Notícias
+    items = fetch_news()
+    if not items:
+        print("[ERRO] Nenhuma notícia coletada.", file=sys.stderr)
+        sys.exit(1)
 
-    for i, sel in enumerate(selected[:2], 1):
-        noticia = items[sel["indice"]]
-        cat = next(
-            (c for c in categories if c["slug"] == sel["categoria_slug"]),
-            categories[0],
-        )
+    recent = fetch_recent_titles()
+    internal_posts = fetch_internal_posts()
 
-        print(f"\n[{i}/2] Notícia selecionada: {noticia['titulo'][:70]}")
-        print(f"      Categoria: {cat['name']} | Motivo: {sel.get('motivo_escolha', '')}")
+    # 3. Selecionar notícia
+    print(f"\n[1/4] Selecionando melhor notícia entre {len(items)} disponíveis...")
+    selected = select_news(items, recent)
+    noticia = items[selected["indice"]]
+    palavra_chave = selected.get("palavra_chave") or config["palavra_chave_base"]
+    print(f"      ✓ Notícia: {noticia['titulo'][:70]}")
+    print(f"      ✓ Palavra-chave: {palavra_chave}")
+    print(f"      ✓ Motivo: {selected.get('motivo', '')[:80]}")
 
-        try:
-            print(f"      Gerando artigo com Claude...")
-            article = generate_article(noticia, cat)
-            post_id = save_draft(article, cat["id"])
-            print(f"      Rascunho salvo! Título: {article['title'][:60]}")
-            print(f"      Slug: {article['slug']} | ID: {post_id}")
-        except json.JSONDecodeError as exc:
-            print(f"      [ERRO] Claude retornou JSON inválido: {exc}", file=sys.stderr)
-        except Exception as exc:
-            print(f"      [ERRO] Falha ao gerar/salvar artigo: {exc}", file=sys.stderr)
+    # 4. Gerar artigo
+    print(f"\n[2/4] Gerando artigo com Gemini 2.0 Flash (mín. 2.800 palavras)...")
+    article = generate_article(noticia, palavra_chave, internal_posts)
+    word_count = len(re.findall(r"\w+", re.sub(r"<[^>]+>", "", article.get("content", ""))))
+    print(f"      ✓ Título: {article['title'][:70]}")
+    print(f"      ✓ Slug:   {article['slug']}")
+    print(f"      ✓ Palavras: ~{word_count} | Leitura: {article.get('read_time_minutes', '?')} min")
+    print(f"      ✓ Tags: {article.get('tags', '')[:70]}")
 
-        if i < 2:
-            time.sleep(3)
+    # 5. Imagem
+    pexels_query = article.get("pexels_query") or palavra_chave
+    print(f"\n[3/4] Buscando foto no Pexels: '{pexels_query}'...")
+    cover_media_id = fetch_and_save_image(pexels_query, article["slug"])
+    if not cover_media_id:
+        print("      Artigo ficará sem capa — adicione uma manualmente no admin.")
 
-    print("\n[OK] Agente concluído. Verifique os rascunhos no painel admin.")
+    # 6. Salvar
+    print(f"\n[4/4] Salvando rascunho no Supabase...")
+    post_id = save_draft(article, category_id, cover_media_id)
+    print(f"      ✓ Rascunho salvo! ID: {post_id}")
+
+    print(f"\n{'=' * 60}")
+    print(f"✓ Concluído! Revise e publique em:")
+    print(f"  https://montedasoliveiras.com/admin/posts/editor?id={post_id}")
+    print("=" * 60)
 
 
 if __name__ == "__main__":
