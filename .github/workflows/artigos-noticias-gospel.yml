@@ -1,13 +1,13 @@
-name: Artigos — Estudos Bíblicos (Ter/Qui/Sáb)
+name: Artigos — Notícias Gospel (Seg/Qua/Sex)
 
 on:
   schedule:
-    - cron: '0 13 * * 2,4,6'   # 10h BRT (UTC-3) — Terça, Quinta, Sábado
+    - cron: '0 15 * * 1,3,5'   # 12h BRT (UTC-3) — Segunda, Quarta, Sexta
   workflow_dispatch: {}
 
 jobs:
   gerar:
-    name: Gerar rascunho — Estudos Bíblicos
+    name: Gerar rascunho — Notícias Gospel
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -28,5 +28,5 @@ jobs:
           GROQ_API_KEY:         ${{ secrets.GROQ_API_KEY }}
           GEMINI_API_KEY:       ${{ secrets.GEMINI_API_KEY }}
           PEXELS_API_KEY:       ${{ secrets.PEXELS_API_KEY }}
-          CATEGORY_SLUG:        estudos-biblicos
+          CATEGORY_SLUG:        noticias-gospel
         run: python scripts/gerar_artigos.py

@@ -9,10 +9,13 @@ on:
         default: 'fim-dos-tempos'
         type: choice
         options:
+          - crente-pode
+          - devocional-diario
+          - igreja-perseguida
+          - lideranca-e-igreja
+          - noticias-gospel
           - fim-dos-tempos
           - estudos-biblicos
-          - igreja-perseguida
-          - vida-crista
 
 jobs:
   gerar:

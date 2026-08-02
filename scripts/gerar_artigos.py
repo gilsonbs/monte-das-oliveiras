@@ -74,6 +74,59 @@ CATEGORY_CONFIG = {
         "estilo": "prático e acolhedor, aplicando a Bíblia ao cotidiano do crente brasileiro",
         "palavra_chave_base": "vida cristã",
     },
+    "crente-pode": {
+        "feeds": [
+            "https://gospelprime.com.br/feed/",
+            "https://noticiasgospel.com.br/feed/",
+            "https://jornalcristao.com.br/feed/",
+        ],
+        "filtros": [
+            "crente pode", "cristão pode", "bíblia responde", "comportamento cristão",
+            "dúvidas bíblicas", "vida cristã", "pecado", "santidade", "mundo", "cultura",
+        ],
+        "estilo": "didático e direto, respondendo dúvidas práticas do crente com base bíblica sólida",
+        "palavra_chave_base": "crente pode",
+    },
+    "devocional-diario": {
+        "feeds": [
+            "https://gospelprime.com.br/feed/",
+            "https://noticiasgospel.com.br/feed/",
+            "https://jornalcristao.com.br/feed/",
+        ],
+        "filtros": [
+            "devocional", "meditação", "oração", "versículo do dia", "palavra",
+            "fé", "esperança", "graça", "presença de Deus", "promessa bíblica",
+        ],
+        "estilo": "meditativo e edificante, como um devocional matinal que inspira e fortalece a fé",
+        "palavra_chave_base": "devocional diário",
+    },
+    "lideranca-e-igreja": {
+        "feeds": [
+            "https://gospelprime.com.br/feed/",
+            "https://jornalcristao.com.br/feed/",
+            "https://noticiasgospel.com.br/feed/",
+        ],
+        "filtros": [
+            "liderança", "pastor", "pregação", "igreja", "ministério", "discipulado",
+            "gestão eclesiástica", "plantação de igrejas", "teologia pastoral", "serviço",
+        ],
+        "estilo": "formativo e prático, voltado para líderes e pastores que buscam aprofundamento ministerial",
+        "palavra_chave_base": "liderança cristã",
+    },
+    "noticias-gospel": {
+        "feeds": [
+            "https://gospelprime.com.br/feed/",
+            "https://noticiasgospel.com.br/feed/",
+            "https://jornalcristao.com.br/feed/",
+            "https://g1.globo.com/rss/g1/",
+        ],
+        "filtros": [
+            "evangélico", "gospel", "cristão", "missões", "movimento cristão",
+            "renovação", "avivamento", "igrejas", "ministério", "notícias religiosas",
+        ],
+        "estilo": "jornalístico e informativo, analisando notícias do mundo evangélico com perspectiva bíblica",
+        "palavra_chave_base": "notícias gospel",
+    },
 }
 
 CATEGORY_SLUG = os.environ.get("CATEGORY_SLUG", "fim-dos-tempos")
