@@ -40,8 +40,8 @@ export interface PostFull extends PostSummary {
 // ---------- queries ----------
 
 export async function getFeaturedPosts(limit = 4) {
-  // tenta buscar posts com posição explícita definida
-  const { data: ordered, error: e1 } = await supabase
+  // 1. Posts marcados manualmente como destaque, com ordem definida
+  const { data: ordered } = await supabase
     .from('posts_public')
     .select('*')
     .eq('is_featured', true)
@@ -49,17 +49,39 @@ export async function getFeaturedPosts(limit = 4) {
     .order('featured_order', { ascending: true })
     .limit(limit);
 
-  if (!e1 && ordered && ordered.length > 0) return ordered as PostSummary[];
+  const featured: PostSummary[] = (ordered ?? []) as PostSummary[];
 
-  // fallback: ordem por data (comportamento anterior)
-  const { data, error } = await supabase
-    .from('posts_public')
-    .select('*')
-    .eq('is_featured', true)
-    .order('published_at', { ascending: false })
-    .limit(limit);
-  if (error) throw error;
-  return data as PostSummary[];
+  // 2. Se ainda faltam slots, preenche com posts marcados sem ordem
+  if (featured.length < limit) {
+    const usedIds = new Set(featured.map((p) => p.id));
+    const { data: byDate } = await supabase
+      .from('posts_public')
+      .select('*')
+      .eq('is_featured', true)
+      .is('featured_order', null)
+      .order('published_at', { ascending: false })
+      .limit(limit);
+    for (const p of (byDate ?? []) as PostSummary[]) {
+      if (!usedIds.has(p.id)) { featured.push(p); usedIds.add(p.id); }
+      if (featured.length >= limit) break;
+    }
+  }
+
+  // 3. Se ainda faltam slots, completa com os artigos mais recentes
+  if (featured.length < limit) {
+    const usedIds = new Set(featured.map((p) => p.id));
+    const { data: recent } = await supabase
+      .from('posts_public')
+      .select('*')
+      .order('published_at', { ascending: false })
+      .limit(limit * 2);
+    for (const p of (recent ?? []) as PostSummary[]) {
+      if (!usedIds.has(p.id)) { featured.push(p); usedIds.add(p.id); }
+      if (featured.length >= limit) break;
+    }
+  }
+
+  return featured;
 }
 
 export async function getRecentPosts(page = 1, perPage = 12) {
