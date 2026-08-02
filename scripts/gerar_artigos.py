@@ -502,18 +502,24 @@ def generate_article(noticia: dict, palavra_chave: str, internal_posts: list[dic
         cerebras_key = os.environ.get("CEREBRAS_API_KEY", "")
         if cerebras_key:
             try:
-                print("      → Modelo: llama-3.3-70b (Cerebras — fallback)")
+                print("      → Modelo: llama3.3-70b (Cerebras — fallback)")
                 cerebras_client = Cerebras(api_key=cerebras_key)
                 cb_resp = cerebras_client.chat.completions.create(
                     model="llama3.3-70b",
-                    messages=[{"role": "user", "content": prompt}],
-                    response_format={"type": "json_object"},
+                    messages=[
+                        {"role": "system", "content": "Você retorna APENAS JSON válido, sem texto adicional antes ou depois."},
+                        {"role": "user", "content": prompt},
+                    ],
                     max_tokens=8192,
                     temperature=0.8,
                 )
-                raw = cb_resp.choices[0].message.content
+                cb_text = cb_resp.choices[0].message.content
+                # Extrai bloco JSON caso venha com markdown
+                match = re.search(r'```(?:json)?\s*([\s\S]+?)\s*```', cb_text)
+                raw = match.group(1) if match else cb_text
+                print("      ✓ Cerebras respondeu com sucesso")
             except Exception as e:
-                print(f"      ⚠ Cerebras falhou: {e}", file=sys.stderr)
+                print(f"      ⚠ Cerebras falhou: {type(e).__name__}: {e}")
 
     if raw is None:
         raise RuntimeError("Todos os modelos atingiram o rate limit. Tente novamente mais tarde.")
