@@ -204,12 +204,13 @@ export async function getApprovedComments(postId: string) {
 }
 
 export async function getCategories() {
-  const { data, error } = await supabase
-    .from('categories')
-    .select('id, name, slug')
-    .order('name');
-  if (error) throw error;
-  return data;
+  const [catsResp, postsResp] = await Promise.all([
+    supabase.from('categories').select('id, name, slug').order('name'),
+    supabase.from('posts').select('category_id').eq('status', 'published'),
+  ]);
+  if (catsResp.error) throw catsResp.error;
+  const withPosts = new Set((postsResp.data ?? []).map((p: any) => p.category_id));
+  return (catsResp.data ?? []).filter((c: any) => withPosts.has(c.id)) as { id: string; name: string; slug: string }[];
 }
 
 export async function isTickerEnabled(): Promise<boolean> {
