@@ -407,9 +407,22 @@ FORMATO HTML (use APENAS estas tags):
 <p>, <h2>, <h3>, <blockquote>, <ul>, <ol>, <li>, <strong>, <em>, <a href="URL">texto</a>
 NÃO use: <h1>, <div>, <section>, <html>, <body>, <br>
 
+TÍTULO — REGRAS DE OURO (leia com atenção):
+O título é o elemento mais importante. Ele precisa parar o leitor no meio do scroll.
+Use UM dos estilos abaixo (escolha o que melhor se encaixa no tema):
+  • POLÊMICO/CONTROVERSO: "A Verdade que Ninguém Quer Ouvir Sobre [tema]"
+  • REVELAÇÃO: "O Que a Bíblia Realmente Diz Sobre [tema] (e a maioria ignora)"
+  • URGÊNCIA: "[Evento atual] Confirma o Que a Bíblia Já Avisou Há Séculos"
+  • NÚMERO + PROMESSA: "7 Sinais de Que [tema] Está Mais Perto do Que Você Pensa"
+  • DESAFIO: "Você Está Pronto Para o Que Está por Vir? A Bíblia Responde"
+  • EMOÇÃO: "Por Que Deus Permite a Dor? A Resposta Que Vai Mudar Sua Perspectiva"
+  • CURIOSIDADE: "O Segredo Escondido em [passagem/personagem] Que Vai Te Surpreender"
+Evite títulos genéricos, neutros ou acadêmicos. O título deve gerar curiosidade ou leve polêmica.
+(Para a categoria crente-pode, mantenha o formato "Crente pode [pergunta]?" — escolha um tema polêmico.)
+
 RETORNE APENAS JSON VÁLIDO com esta estrutura:
 {{
-  "title": "Título editorial chamativo (até 80 chars)",
+  "title": "Título criativo, impactante ou polêmico (até 80 chars)",
   "seo_title": "Título SEO 50-60 chars exatos com a palavra-chave",
   "slug": "slug-sem-acento-3-a-6-palavras",
   "excerpt": "Resumo do valor do artigo em até 200 chars",
