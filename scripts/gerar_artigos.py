@@ -369,7 +369,7 @@ RETORNE APENAS JSON VÁLIDO com esta estrutura:
     "versiculo": "Versículo bíblico mais relevante para o tema (até 120 chars) — Referência Bíblica"
   }},
 ATENÇÃO — campo "icone": use SEMPRE o caractere emoji literal (ex: 📖 ✝️ 🕊️ 🙏 🔥 ⚡ 💡 🌿 🛡️ 🎯 ❤️ 🌟).
-NUNCA use sequências de escape unicode como \u{{1F4D6}} ou \\u{{}} — isso gera JSON inválido.
+NUNCA use sequências de escape unicode — isso gera JSON inválido.
   "faq_schema": {{
     "@context": "https://schema.org",
     "@type": "FAQPage",
