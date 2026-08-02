@@ -470,16 +470,16 @@ def generate_article(noticia: dict, palavra_chave: str, internal_posts: list[dic
         links_internos=links_str,
     )
 
-    # Modelos em ordem de preferência — tenta o próximo se o anterior atingir rate limit
-    ARTICLE_MODELS = [
+    # Modelos Groq em ordem de preferência — tenta o próximo se atingir rate limit
+    GROQ_MODELS = [
         "llama-3.3-70b-versatile",
         "llama3-70b-8192",
         "llama-3.1-8b-instant",
     ]
     raw = None
-    for model in ARTICLE_MODELS:
+    for model in GROQ_MODELS:
         try:
-            print(f"      → Modelo: {model}")
+            print(f"      → Modelo: {model} (Groq)")
             resp = groq.chat.completions.create(
                 model=model,
                 messages=[{"role": "user", "content": prompt}],
@@ -491,11 +491,32 @@ def generate_article(noticia: dict, palavra_chave: str, internal_posts: list[dic
             break
         except Exception as e:
             if "rate_limit" in str(e).lower() or "429" in str(e):
-                print(f"      ⚠ Rate limit em {model}, tentando próximo modelo...", file=sys.stderr)
+                print(f"      ⚠ Rate limit em {model}, tentando próximo...", file=sys.stderr)
                 continue
             raise
+
+    # Fallback: Gemini 2.0 Flash (1.500 req/dia gratuitos, qualidade equivalente ao 70b)
     if raw is None:
-        raise RuntimeError("Todos os modelos Groq atingiram o rate limit. Tente novamente amanhã.")
+        gemini_key = os.environ.get("GEMINI_API_KEY", "")
+        if gemini_key:
+            try:
+                print("      → Modelo: gemini-2.0-flash (Google — fallback)")
+                gemini_client = google_genai.Client(api_key=gemini_key)
+                gemini_resp = gemini_client.models.generate_content(
+                    model="gemini-2.0-flash",
+                    contents=prompt,
+                    config=google_types.GenerateContentConfig(
+                        response_mime_type="application/json",
+                        max_output_tokens=8192,
+                        temperature=0.8,
+                    ),
+                )
+                raw = gemini_resp.text
+            except Exception as e:
+                print(f"      ⚠ Gemini Flash falhou: {e}", file=sys.stderr)
+
+    if raw is None:
+        raise RuntimeError("Todos os modelos atingiram o rate limit. Tente novamente mais tarde.")
     # Converte escapes JS \u{XXXXX} (inválidos em JSON) para caracteres reais
     raw = re.sub(r'\\u\{([0-9a-fA-F]+)\}', lambda m: chr(int(m.group(1), 16)), raw)
     data = json.loads(raw)
