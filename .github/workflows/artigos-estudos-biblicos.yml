@@ -19,7 +19,7 @@ jobs:
           python-version: '3.12'
 
       - name: Instalar dependências
-        run: pip install groq supabase feedparser requests
+        run: pip install groq google-genai supabase feedparser requests
 
       - name: Gerar artigo
         env:

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Monte das Oliveiras — Gerador automático de artigos
-Gemini 2.0 Flash (gratuito) + Pexels API (gratuita) + Supabase
+Groq Llama 3.3 70B + Imagen 3 (infográfico) + Pexels (fallback) + Supabase
 """
 
 import json
@@ -15,6 +15,8 @@ from datetime import datetime, timezone, timedelta
 import feedparser
 from supabase import create_client
 from groq import Groq
+from google import genai as google_genai
+from google.genai import types as google_types
 
 # ── Configuração por categoria ────────────────────────────────────────────────
 
@@ -146,6 +148,29 @@ def fetch_internal_posts(limit: int = 6) -> list[dict]:
 
 
 # ── Pexels: imagem de alta qualidade ─────────────────────────────────────────
+
+def _download_pexels_image(query: str, storage_path: str) -> str | None:
+    """Baixa uma foto do Pexels e faz upload para o Storage. Retorna URL pública."""
+    try:
+        resp = requests.get(
+            "https://api.pexels.com/v1/search",
+            headers={"Authorization": PEXELS_KEY},
+            params={"query": query, "per_page": 3, "orientation": "landscape", "size": "large"},
+            timeout=15,
+        )
+        photos = resp.json().get("photos", [])
+        if not photos:
+            return None
+        img_bytes = requests.get(photos[0]["src"]["large2x"], timeout=30).content
+        supabase.storage.from_("media").upload(
+            storage_path, img_bytes,
+            {"content-type": "image/jpeg", "upsert": "true"},
+        )
+        return supabase.storage.from_("media").get_public_url(storage_path)
+    except Exception as e:
+        print(f"[AVISO] Pexels fallback: {e}", file=sys.stderr)
+        return None
+
 
 def fetch_and_save_image(query: str, slug: str) -> str | None:
     if not PEXELS_KEY:
@@ -323,27 +348,33 @@ def generate_article(noticia: dict, palavra_chave: str, internal_posts: list[dic
     )
     data = json.loads(resp.choices[0].message.content)
 
-    # Gera e embute o infográfico SVG no início do conteúdo
+    # Gera infográfico com Imagen 3 (fallback: Pexels com query do infográfico)
     if "infographic" in data:
-        svg_content = build_infographic_svg(data["infographic"])
-        infog_url = save_infographic(svg_content, data.get("slug", "post"))
+        slug = data.get("slug", "post")
+        titulo_infog = data["infographic"].get("titulo", data["title"])
+
+        infog_url = generate_imagen_infographic(data["infographic"], data["title"], slug)
+
+        if not infog_url and PEXELS_KEY:
+            pexels_q = data["infographic"].get("pontos", [{}])[0].get("texto", data.get("pexels_query", "christian faith"))
+            pexels_q = pexels_q[:60]
+            infog_url = _download_pexels_image(pexels_q, f"{slug}/infografico-pexels.jpg")
+
         if infog_url:
             infog_html = (
                 f'<figure style="margin:32px 0;text-align:center">'
-                f'<img src="{infog_url}" alt="{xml(data["infographic"].get("titulo","Infográfico"))}" '
+                f'<img src="{infog_url}" alt="Infográfico: {titulo_infog}" '
                 f'style="max-width:100%;border-radius:8px" loading="lazy"/>'
                 f'<figcaption style="font-size:12px;color:#8A8367;margin-top:8px">'
-                f'Infográfico: {xml(data["infographic"].get("titulo",""))}'
+                f'Infográfico: {titulo_infog}'
                 f'</figcaption></figure>'
             )
-            # Insere após o 1º parágrafo
             first_p_end = data["content"].find("</p>")
             if first_p_end != -1:
                 pos = first_p_end + 4
                 data["content"] = data["content"][:pos] + "\n" + infog_html + data["content"][pos:]
             else:
                 data["content"] = infog_html + data["content"]
-            print(f"      ✓ Infográfico gerado e incorporado ao artigo")
 
     # Embute FAQ JSON-LD no final do conteúdo
     if "faq_schema" in data:
@@ -353,111 +384,52 @@ def generate_article(noticia: dict, palavra_chave: str, internal_posts: list[dic
     return data
 
 
-# ── Infográfico SVG ──────────────────────────────────────────────────────────
+# ── Infográfico via Imagen 3 (com fallback para Pexels) ──────────────────────
 
-def wrap_text(text: str, max_chars: int) -> list[str]:
-    words = text.split()
-    lines, line = [], ""
-    for word in words:
-        if len(line) + len(word) + 1 <= max_chars:
-            line = (line + " " + word).strip()
-        else:
-            if line:
-                lines.append(line)
-            line = word
-    if line:
-        lines.append(line)
-    return lines or [""]
-
-
-def xml(text: str) -> str:
-    return (text.replace("&", "&amp;").replace("<", "&lt;")
-                .replace(">", "&gt;").replace('"', "&quot;"))
-
-
-def build_infographic_svg(data: dict) -> str:
-    titulo    = xml(data.get("titulo", "Infográfico"))
-    subtitulo = xml(data.get("subtitulo", ""))
-    pontos    = data.get("pontos", [])[:6]
-    versiculo = xml(data.get("versiculo", ""))
-
-    W, H = 800, 540
-    col_w = W // 3
-    row_h = 110
-    grid_top = 130
-
-    # Cabeçalho
-    svg = [
-        f'<svg width="{W}" height="{H}" xmlns="http://www.w3.org/2000/svg">',
-        f'<rect width="{W}" height="{H}" fill="#1a2035"/>',
-        f'<rect width="{W}" height="110" fill="#2E3555"/>',
-        f'<rect y="107" width="{W}" height="4" fill="#B07A29"/>',
-        # Título
-        f'<text x="{W//2}" y="52" text-anchor="middle" font-family="Georgia,serif" '
-        f'font-size="22" font-weight="bold" fill="#F3EEDD">{titulo}</text>',
-        # Subtítulo
-        f'<text x="{W//2}" y="80" text-anchor="middle" font-family="Arial,sans-serif" '
-        f'font-size="13" fill="#CFC9AE">{subtitulo}</text>',
-        # Linha decorativa
-        f'<line x1="60" y1="95" x2="{W-60}" y2="95" stroke="#B07A29" stroke-width="1" opacity="0.5"/>',
-    ]
-
-    # 6 pontos em grade 3×2
-    for i, ponto in enumerate(pontos):
-        col = i % 3
-        row = i // 3
-        cx = col * col_w + col_w // 2
-        cy = grid_top + row * row_h
-
-        icone = xml(ponto.get("icone", "•"))
-        texto = xml(ponto.get("texto", ""))
-        linhas = wrap_text(texto, 22)
-
-        # Caixa de fundo
-        svg.append(
-            f'<rect x="{col * col_w + 12}" y="{cy - 18}" '
-            f'width="{col_w - 24}" height="{row_h - 14}" '
-            f'rx="8" fill="#243050" stroke="#3a4a70" stroke-width="1"/>'
-        )
-        # Ícone
-        svg.append(
-            f'<text x="{cx}" y="{cy + 18}" text-anchor="middle" '
-            f'font-size="28">{icone}</text>'
-        )
-        # Texto (até 2 linhas)
-        for j, linha in enumerate(linhas[:2]):
-            svg.append(
-                f'<text x="{cx}" y="{cy + 52 + j * 18}" text-anchor="middle" '
-                f'font-family="Arial,sans-serif" font-size="12" fill="#CFC9AE">{linha}</text>'
-            )
-
-    # Rodapé com versículo
-    footer_y = grid_top + 2 * row_h + 10
-    svg += [
-        f'<rect y="{footer_y}" width="{W}" height="70" fill="#B07A29" opacity="0.15"/>',
-        f'<line x1="0" y1="{footer_y}" x2="{W}" y2="{footer_y}" stroke="#B07A29" stroke-width="1"/>',
-        f'<text x="{W//2}" y="{footer_y + 26}" text-anchor="middle" '
-        f'font-family="Georgia,serif" font-size="12" font-style="italic" fill="#E3B15C">'
-        f'{xml(versiculo[:90])}</text>',
-        f'<text x="{W//2}" y="{footer_y + 50}" text-anchor="middle" '
-        f'font-family="Arial,sans-serif" font-size="10" fill="#5a6080">'
-        f'montedasoliveiras.com</text>',
-        '</svg>',
-    ]
-    return "\n".join(svg)
-
-
-def save_infographic(svg_content: str, slug: str) -> str | None:
+def generate_imagen_infographic(infographic: dict, article_title: str, slug: str) -> str | None:
+    gemini_key = os.environ.get("GEMINI_API_KEY", "")
+    if not gemini_key:
+        return None
     try:
-        path = f"{slug}/infografico.svg"
+        pontos_str = " | ".join(p.get("texto", "") for p in infographic.get("pontos", [])[:6])
+        versiculo  = infographic.get("versiculo", "")
+        titulo     = infographic.get("titulo", article_title)
+
+        imagen_prompt = (
+            f"Professional Christian editorial infographic about '{titulo}'. "
+            f"Dark navy blue background (#1a2035), gold accents (#B07A29), elegant serif typography. "
+            f"Key points displayed as icon cards: {pontos_str}. "
+            f"Bible verse at the bottom: '{versiculo}'. "
+            f"Clean modern layout, 16:9 widescreen, high resolution, no watermark, "
+            f"subtle cross or dove symbol as decorative element, "
+            f"label 'montedasoliveiras.com' in small text at bottom right. "
+            f"Style: premium magazine infographic, professional journalism."
+        )
+
+        client = google_genai.Client(api_key=gemini_key)
+        response = client.models.generate_images(
+            model="imagen-3.0-generate-002",
+            prompt=imagen_prompt,
+            config=google_types.GenerateImagesConfig(
+                number_of_images=1,
+                aspect_ratio="16:9",
+                output_mime_type="image/jpeg",
+            ),
+        )
+        image_bytes = response.generated_images[0].image.image_bytes
+
+        path = f"{slug}/infografico-ia.jpg"
         supabase.storage.from_("media").upload(
             path,
-            svg_content.encode("utf-8"),
-            {"content-type": "image/svg+xml", "upsert": "true"},
+            image_bytes,
+            {"content-type": "image/jpeg", "upsert": "true"},
         )
-        return supabase.storage.from_("media").get_public_url(path)
+        url = supabase.storage.from_("media").get_public_url(path)
+        print(f"      ✓ Infográfico gerado com Imagen 3")
+        return url
+
     except Exception as e:
-        print(f"[AVISO] Erro ao salvar infográfico: {e}", file=sys.stderr)
+        print(f"[AVISO] Imagen 3 falhou ({e}), tentando Pexels...", file=sys.stderr)
         return None
 
 
