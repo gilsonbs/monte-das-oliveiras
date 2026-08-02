@@ -84,6 +84,10 @@ export async function getFeaturedPosts(limit = 4) {
   return featured;
 }
 
+function isColumnMissingError(error: any): boolean {
+  return error?.code === '42703' || (error?.message ?? '').includes('does not exist');
+}
+
 export async function getRecentPosts(page = 1, perPage = 12, lang = 'pt') {
   const from = (page - 1) * perPage;
   const to = from + perPage - 1;
@@ -94,7 +98,18 @@ export async function getRecentPosts(page = 1, perPage = 12, lang = 'pt') {
     .range(from, to);
   if (lang !== 'pt') q.eq('language', lang);
   const { data, error, count } = await q;
-  if (error) throw error;
+  if (error) {
+    if (isColumnMissingError(error)) {
+      // Coluna language ainda não existe na view — retorna sem filtro de idioma
+      const fallback = await supabase
+        .from('posts_public')
+        .select('*', { count: 'exact' })
+        .order('published_at', { ascending: false })
+        .range(from, to);
+      return { posts: (fallback.data ?? []) as PostSummary[], total: fallback.count ?? 0 };
+    }
+    throw error;
+  }
   return { posts: data as PostSummary[], total: count ?? 0 };
 }
 
@@ -109,7 +124,18 @@ export async function getPostsByCategory(categorySlug: string, page = 1, perPage
     .range(from, to);
   if (lang !== 'pt') q.eq('language', lang);
   const { data, error, count } = await q;
-  if (error) throw error;
+  if (error) {
+    if (isColumnMissingError(error)) {
+      const fallback = await supabase
+        .from('posts_public')
+        .select('*', { count: 'exact' })
+        .eq('category_slug', categorySlug)
+        .order('published_at', { ascending: false })
+        .range(from, to);
+      return { posts: (fallback.data ?? []) as PostSummary[], total: fallback.count ?? 0 };
+    }
+    throw error;
+  }
   return { posts: data as PostSummary[], total: count ?? 0 };
 }
 
@@ -133,7 +159,19 @@ export async function getRelatedPosts(categorySlug: string, excludeSlug: string,
     .limit(limit);
   if (lang !== 'pt') q.eq('language', lang);
   const { data, error } = await q;
-  if (error) throw error;
+  if (error) {
+    if (isColumnMissingError(error)) {
+      const fallback = await supabase
+        .from('posts_public')
+        .select('*')
+        .eq('category_slug', categorySlug)
+        .neq('slug', excludeSlug)
+        .order('published_at', { ascending: false })
+        .limit(limit);
+      return (fallback.data ?? []) as PostSummary[];
+    }
+    throw error;
+  }
   return data as PostSummary[];
 }
 
@@ -144,7 +182,13 @@ export async function getPublishedSlugsByLang(lang: string) {
   } else {
     q.eq('language', lang);
   }
-  const { data } = await q;
+  const { data, error } = await q;
+  // Se a coluna language não existir na view, retorna array vazio
+  // (as páginas EN/ES ficam sem artigos individuais até a view ser atualizada)
+  if (error) {
+    if (isColumnMissingError(error)) return [];
+    throw error;
+  }
   return (data ?? []).map((p: any) => p.slug as string);
 }
 
