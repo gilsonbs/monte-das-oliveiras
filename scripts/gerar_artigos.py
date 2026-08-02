@@ -34,6 +34,13 @@ CATEGORY_CONFIG = {
         ],
         "estilo": "profético e escatológico, conectando eventos atuais às profecias bíblicas",
         "palavra_chave_base": "fim dos tempos",
+        "instrucoes_especificas": (
+            "FOCO OBRIGATÓRIO: o artigo deve partir da NOTÍCIA RECENTE fornecida (guerra, desastre natural, "
+            "crise geopolítica ou evento mundial) e conectá-la diretamente a profecias bíblicas do fim dos tempos. "
+            "Mencione o evento específico no título e na introdução. Cite pelo menos 2 profecias bíblicas "
+            "(Mateus 24, Apocalipse, Daniel, etc.) que se relacionam com o evento atual. "
+            "O leitor deve sair com a sensação de que os sinais do fim dos tempos estão se cumprindo."
+        ),
     },
     "estudos-biblicos": {
         "feeds": [
@@ -47,6 +54,13 @@ CATEGORY_CONFIG = {
         ],
         "estilo": "didático e aprofundado, como um pastor ensinando a congregação",
         "palavra_chave_base": "estudo bíblico",
+        "instrucoes_especificas": (
+            "FOCO OBRIGATÓRIO: o artigo deve ter como centro UM PERSONAGEM BÍBLICO específico "
+            "(ex: Davi, Paulo, Ester, José, Rute, Moisés, Pedro, Maria Madalena). "
+            "Inclua pelo menos 3 passagens bíblicas diretas sobre esse personagem, citadas em blockquote. "
+            "Mostre a trajetória humana do personagem (falhas, vitórias, chamado) e extraia lições práticas "
+            "para o crente de hoje. O título deve mencionar o nome do personagem bíblico."
+        ),
     },
     "igreja-perseguida": {
         "feeds": [
@@ -61,6 +75,12 @@ CATEGORY_CONFIG = {
         ],
         "estilo": "jornalístico e comovente, que mobiliza intercessão e consciência missionária",
         "palavra_chave_base": "perseguição de cristãos",
+        "instrucoes_especificas": (
+            "FOCO OBRIGATÓRIO: relatar com detalhes a situação de cristãos perseguidos no país ou região "
+            "mencionada na notícia. Inclua dados concretos (números, países, situação legal). "
+            "Termine sempre com um chamado à oração e intercessão pelos irmãos perseguidos. "
+            "O tom deve comover sem sensacionalismo."
+        ),
     },
     "vida-crista": {
         "feeds": [
@@ -73,6 +93,11 @@ CATEGORY_CONFIG = {
         ],
         "estilo": "prático e acolhedor, aplicando a Bíblia ao cotidiano do crente brasileiro",
         "palavra_chave_base": "vida cristã",
+        "instrucoes_especificas": (
+            "FOCO OBRIGATÓRIO: conectar o tema à vida prática do crente brasileiro. "
+            "Use exemplos do cotidiano (família, trabalho, relacionamentos) e mostre como a Bíblia "
+            "oferece respostas concretas. Tom acolhedor, nunca julgador."
+        ),
     },
     "crente-pode": {
         "feeds": [
@@ -86,6 +111,15 @@ CATEGORY_CONFIG = {
         ],
         "estilo": "didático e direto, respondendo dúvidas práticas do crente com base bíblica sólida",
         "palavra_chave_base": "crente pode",
+        "instrucoes_especificas": (
+            "FORMATO DE TÍTULO OBRIGATÓRIO: o campo 'title' DEVE começar com 'Crente pode' seguido de "
+            "uma pergunta prática da vida cristã com ponto de interrogação. "
+            "Exemplos válidos: 'Crente pode brigar?', 'Crente pode assistir filmes de terror?', "
+            "'Crente pode namorar não crente?', 'Crente pode beber vinho?', 'Crente pode tatuar?'. "
+            "O artigo responde à pergunta de forma direta, com base bíblica clara, sem rodeios. "
+            "Apresente primeiro o que a Bíblia diz, depois as diferentes visões dentro do evangelicalismo, "
+            "e conclua com uma orientação prática e pastoral."
+        ),
     },
     "devocional-diario": {
         "feeds": [
@@ -99,6 +133,15 @@ CATEGORY_CONFIG = {
         ],
         "estilo": "meditativo e edificante, como um devocional matinal que inspira e fortalece a fé",
         "palavra_chave_base": "devocional diário",
+        "instrucoes_especificas": (
+            "FOCO OBRIGATÓRIO: o artigo deve transmitir uma MENSAGEM DE ESPERANÇA EM MEIO À DOR. "
+            "Tom obrigatoriamente inspirador, acolhedor e encorajador — nunca pesado ou condenatório. "
+            "Ideal para ser lido nas primeiras horas da manhã. "
+            "Escolha UMA promessa bíblica central e desenvolva todo o devocional a partir dela. "
+            "Mostre que Deus está presente mesmo nos momentos mais difíceis. "
+            "Termine SEMPRE com uma oração curta e poderosa (3 a 5 linhas) que o leitor possa repetir. "
+            "O título deve ser poético e inspirador, não uma pergunta."
+        ),
     },
     "lideranca-e-igreja": {
         "feeds": [
@@ -112,6 +155,15 @@ CATEGORY_CONFIG = {
         ],
         "estilo": "formativo e prático, voltado para líderes e pastores que buscam aprofundamento ministerial",
         "palavra_chave_base": "liderança cristã",
+        "instrucoes_especificas": (
+            "FOCO OBRIGATÓRIO: o artigo deve apresentar LIÇÕES DE VIDA práticas extraídas da Bíblia "
+            "para líderes, pastores e servos de Deus. "
+            "Use exemplos de líderes bíblicos (Moisés, Neemias, Paulo, Josué, etc.) para ilustrar os princípios. "
+            "Mostre COMO a Bíblia guia nas decisões difíceis de liderança, nos conflitos, no esgotamento ministerial "
+            "e no crescimento espiritual do líder. "
+            "Cada H2 deve apresentar uma lição clara e aplicável. "
+            "Termine com um encorajamento direto ao líder cristão."
+        ),
     },
     "noticias-gospel": {
         "feeds": [
@@ -126,6 +178,13 @@ CATEGORY_CONFIG = {
         ],
         "estilo": "jornalístico e informativo, analisando notícias do mundo evangélico com perspectiva bíblica",
         "palavra_chave_base": "notícias gospel",
+        "instrucoes_especificas": (
+            "FOCO OBRIGATÓRIO: reportar e analisar a NOTÍCIA RECENTE do mundo gospel fornecida. "
+            "Tom jornalístico: quem, o quê, quando, onde, por quê. "
+            "Após apresentar os fatos, adicione uma reflexão bíblica sobre o impacto ou o significado "
+            "espiritual do evento para a comunidade evangélica brasileira. "
+            "O título deve ser noticioso e direto, como manchete de jornal cristão."
+        ),
     },
 }
 
@@ -314,6 +373,9 @@ TEMA DA NOTÍCIA: {tema}
 ESTILO DA CATEGORIA: {estilo}
 PALAVRA-CHAVE PRINCIPAL: "{palavra_chave}"
 
+INSTRUÇÕES ESPECÍFICAS DESTA CATEGORIA (PRIORIDADE MÁXIMA — siga à risca):
+{instrucoes_especificas}
+
 LINKS INTERNOS (inclua 2 com chamadas criativas no corpo do texto):
 {links_internos}
 
@@ -391,6 +453,7 @@ def generate_article(noticia: dict, palavra_chave: str, internal_posts: list[dic
         tema=f"{noticia['titulo']}\n{noticia['resumo'][:400]}\nFonte: {noticia['link']}",
         estilo=config["estilo"],
         palavra_chave=palavra_chave,
+        instrucoes_especificas=config.get("instrucoes_especificas", "Siga as regras gerais abaixo."),
         links_internos=links_str,
     )
 
