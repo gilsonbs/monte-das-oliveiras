@@ -368,6 +368,8 @@ RETORNE APENAS JSON VÁLIDO com esta estrutura:
     ],
     "versiculo": "Versículo bíblico mais relevante para o tema (até 120 chars) — Referência Bíblica"
   }},
+ATENÇÃO — campo "icone": use SEMPRE o caractere emoji literal (ex: 📖 ✝️ 🕊️ 🙏 🔥 ⚡ 💡 🌿 🛡️ 🎯 ❤️ 🌟).
+NUNCA use sequências de escape unicode como \u{{1F4D6}} ou \\u{{}} — isso gera JSON inválido.
   "faq_schema": {{
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -399,7 +401,10 @@ def generate_article(noticia: dict, palavra_chave: str, internal_posts: list[dic
         max_tokens=8192,
         temperature=0.8,
     )
-    data = json.loads(resp.choices[0].message.content)
+    raw = resp.choices[0].message.content
+    # Converte escapes JS \u{XXXXX} (inválidos em JSON) para caracteres reais
+    raw = re.sub(r'\\u\{([0-9a-fA-F]+)\}', lambda m: chr(int(m.group(1), 16)), raw)
+    data = json.loads(raw)
 
     # Gera infográfico com Imagen 3 (fallback: Pexels com query do infográfico)
     if "infographic" in data:
