@@ -240,29 +240,28 @@ LINKS INTERNOS (inclua 2 com chamadas criativas no corpo do texto):
 {links_internos}
 
 REGRAS OBRIGATÓRIAS:
-- Mínimo de 2.800 palavras de conteúdo real (não conte tags HTML)
+- Mínimo de 1.300 palavras de conteúdo real (não conte tags HTML)
 - Tom conversacional, pastoral e informativo — jamais frio ou acadêmico
 - A palavra-chave deve aparecer nos primeiros 2 parágrafos e em pelo menos 1 título H2 ou H3
-- Densidade da palavra-chave: ~1% (mínimo de 12 ocorrências naturais, nunca forçadas)
-- Além da palavra-chave principal, use variações e termos relacionados ao longo do texto
-- Parágrafos de 100 a 150 palavras — bem desenvolvidos, nunca rasos
-- No mínimo 5 títulos H2 informativos e descritivos (SEM numeração nos títulos)
-- No mínimo 4 referências bíblicas com versículo completo em blockquote
-- Pelo menos 1 lista <ul> ou tabela comparativa quando relevante
+- Densidade da palavra-chave: ~1% (mínimo de 10 ocorrências naturais, nunca forçadas)
+- Além da palavra-chave principal, use variações semânticas e termos relacionados
+- Parágrafos de 80 a 150 palavras — bem desenvolvidos, ricos em detalhes, nunca rasos
+- No mínimo 4 títulos H2 informativos e descritivos (SEM numeração nos títulos)
+- No mínimo 3 referências bíblicas com versículo completo em blockquote
+- Pelo menos 1 lista <ul> com dados, passos ou comparações relevantes
 - Conecte o tema com a realidade espiritual do crente brasileiro
-- Inclua 2 links internos com chamadas criativas para os artigos listados acima
-- Termine com 3 perguntas que incentivem comentários dos leitores
-- Seção de FAQ ao final com 5 perguntas e respostas detalhadas
+- Inclua links internos com chamadas criativas para os artigos listados acima
+- Termine com 2 perguntas que incentivem comentários dos leitores
+- Seção de FAQ ao final com 4 perguntas e respostas detalhadas
 
 ESTRUTURA DO ARTIGO:
-1. Introdução impactante (apresenta o tema + palavra-chave)
-2. Desenvolvimento: mínimo 5 seções com H2
-3. Referências bíblicas integradas ao texto
-4. Lista ou tabela quando aplicável
-5. Links internos com chamadas criativas
-6. Conclusão com chamada à reflexão ou oração
-7. Perguntas para comentários
-8. FAQ (H2 "Perguntas Frequentes" + H3 para cada pergunta)
+1. Introdução impactante — contextualiza e apresenta a palavra-chave
+2. Desenvolvimento — mínimo 3 seções H2 com análise bíblica
+3. Aplicação prática para o crente brasileiro
+4. Links internos com chamadas criativas
+5. Conclusão com oração ou chamada à ação
+6. Perguntas para comentários
+7. FAQ (H2 "Perguntas Frequentes" + H3 por pergunta)
 
 FORMATO HTML (use APENAS estas tags):
 <p>, <h2>, <h3>, <blockquote>, <ul>, <ol>, <li>, <strong>, <em>, <a href="URL">texto</a>
@@ -270,22 +269,35 @@ NÃO use: <h1>, <div>, <section>, <html>, <body>, <br>
 
 RETORNE APENAS JSON VÁLIDO com esta estrutura:
 {{
-  "title": "Título editorial chamativo (até 80 chars, pode ter número: '7 sinais que...')",
+  "title": "Título editorial chamativo (até 80 chars)",
   "seo_title": "Título SEO 50-60 chars exatos com a palavra-chave",
   "slug": "slug-sem-acento-3-a-6-palavras",
   "excerpt": "Resumo do valor do artigo em até 200 chars",
   "meta_description": "Meta description 130-155 chars, verbo de ação, convida ao clique",
-  "read_time_minutes": 14,
+  "read_time_minutes": 7,
   "tags": "tag1, tag2, tag3, tag4, tag5, tag6, tag7, tag8",
   "pexels_query": "3 to 5 english words for cover photo search on Pexels",
+  "infographic": {{
+    "titulo": "Título do infográfico (até 50 chars)",
+    "subtitulo": "Subtítulo explicativo (até 70 chars)",
+    "pontos": [
+      {{"icone": "📖", "texto": "Ponto chave 1 (até 55 chars)"}},
+      {{"icone": "✝️", "texto": "Ponto chave 2 (até 55 chars)"}},
+      {{"icone": "🕊️", "texto": "Ponto chave 3 (até 55 chars)"}},
+      {{"icone": "⚡", "texto": "Ponto chave 4 (até 55 chars)"}},
+      {{"icone": "🙏", "texto": "Ponto chave 5 (até 55 chars)"}},
+      {{"icone": "🔥", "texto": "Ponto chave 6 (até 55 chars)"}}
+    ],
+    "versiculo": "Versículo bíblico mais relevante para o tema (até 120 chars) — Referência Bíblica"
+  }},
   "faq_schema": {{
     "@context": "https://schema.org",
     "@type": "FAQPage",
     "mainEntity": [
-      {{"@type": "Question", "name": "Pergunta?", "acceptedAnswer": {{"@type": "Answer", "text": "Resposta detalhada."}}}}
+      {{"@type": "Question", "name": "Pergunta?", "acceptedAnswer": {{"@type": "Answer", "text": "Resposta com mínimo 3 frases."}}}}
     ]
   }},
-  "content": "<p>Conteúdo HTML completo com no mínimo 2.800 palavras...</p>"
+  "content": "<p>Conteúdo HTML completo com no mínimo 1.300 palavras...</p>"
 }}"""
 
 
@@ -311,12 +323,142 @@ def generate_article(noticia: dict, palavra_chave: str, internal_posts: list[dic
     )
     data = json.loads(resp.choices[0].message.content)
 
-    # Embute FAQ JSON-LD no final do conteúdo (Google lê em qualquer posição da página)
+    # Gera e embute o infográfico SVG no início do conteúdo
+    if "infographic" in data:
+        svg_content = build_infographic_svg(data["infographic"])
+        infog_url = save_infographic(svg_content, data.get("slug", "post"))
+        if infog_url:
+            infog_html = (
+                f'<figure style="margin:32px 0;text-align:center">'
+                f'<img src="{infog_url}" alt="{xml(data["infographic"].get("titulo","Infográfico"))}" '
+                f'style="max-width:100%;border-radius:8px" loading="lazy"/>'
+                f'<figcaption style="font-size:12px;color:#8A8367;margin-top:8px">'
+                f'Infográfico: {xml(data["infographic"].get("titulo",""))}'
+                f'</figcaption></figure>'
+            )
+            # Insere após o 1º parágrafo
+            first_p_end = data["content"].find("</p>")
+            if first_p_end != -1:
+                pos = first_p_end + 4
+                data["content"] = data["content"][:pos] + "\n" + infog_html + data["content"][pos:]
+            else:
+                data["content"] = infog_html + data["content"]
+            print(f"      ✓ Infográfico gerado e incorporado ao artigo")
+
+    # Embute FAQ JSON-LD no final do conteúdo
     if "faq_schema" in data:
         faq_json = json.dumps(data["faq_schema"], ensure_ascii=False)
         data["content"] += f'\n<script type="application/ld+json">{faq_json}</script>'
 
     return data
+
+
+# ── Infográfico SVG ──────────────────────────────────────────────────────────
+
+def wrap_text(text: str, max_chars: int) -> list[str]:
+    words = text.split()
+    lines, line = [], ""
+    for word in words:
+        if len(line) + len(word) + 1 <= max_chars:
+            line = (line + " " + word).strip()
+        else:
+            if line:
+                lines.append(line)
+            line = word
+    if line:
+        lines.append(line)
+    return lines or [""]
+
+
+def xml(text: str) -> str:
+    return (text.replace("&", "&amp;").replace("<", "&lt;")
+                .replace(">", "&gt;").replace('"', "&quot;"))
+
+
+def build_infographic_svg(data: dict) -> str:
+    titulo    = xml(data.get("titulo", "Infográfico"))
+    subtitulo = xml(data.get("subtitulo", ""))
+    pontos    = data.get("pontos", [])[:6]
+    versiculo = xml(data.get("versiculo", ""))
+
+    W, H = 800, 540
+    col_w = W // 3
+    row_h = 110
+    grid_top = 130
+
+    # Cabeçalho
+    svg = [
+        f'<svg width="{W}" height="{H}" xmlns="http://www.w3.org/2000/svg">',
+        f'<rect width="{W}" height="{H}" fill="#1a2035"/>',
+        f'<rect width="{W}" height="110" fill="#2E3555"/>',
+        f'<rect y="107" width="{W}" height="4" fill="#B07A29"/>',
+        # Título
+        f'<text x="{W//2}" y="52" text-anchor="middle" font-family="Georgia,serif" '
+        f'font-size="22" font-weight="bold" fill="#F3EEDD">{titulo}</text>',
+        # Subtítulo
+        f'<text x="{W//2}" y="80" text-anchor="middle" font-family="Arial,sans-serif" '
+        f'font-size="13" fill="#CFC9AE">{subtitulo}</text>',
+        # Linha decorativa
+        f'<line x1="60" y1="95" x2="{W-60}" y2="95" stroke="#B07A29" stroke-width="1" opacity="0.5"/>',
+    ]
+
+    # 6 pontos em grade 3×2
+    for i, ponto in enumerate(pontos):
+        col = i % 3
+        row = i // 3
+        cx = col * col_w + col_w // 2
+        cy = grid_top + row * row_h
+
+        icone = xml(ponto.get("icone", "•"))
+        texto = xml(ponto.get("texto", ""))
+        linhas = wrap_text(texto, 22)
+
+        # Caixa de fundo
+        svg.append(
+            f'<rect x="{col * col_w + 12}" y="{cy - 18}" '
+            f'width="{col_w - 24}" height="{row_h - 14}" '
+            f'rx="8" fill="#243050" stroke="#3a4a70" stroke-width="1"/>'
+        )
+        # Ícone
+        svg.append(
+            f'<text x="{cx}" y="{cy + 18}" text-anchor="middle" '
+            f'font-size="28">{icone}</text>'
+        )
+        # Texto (até 2 linhas)
+        for j, linha in enumerate(linhas[:2]):
+            svg.append(
+                f'<text x="{cx}" y="{cy + 52 + j * 18}" text-anchor="middle" '
+                f'font-family="Arial,sans-serif" font-size="12" fill="#CFC9AE">{linha}</text>'
+            )
+
+    # Rodapé com versículo
+    footer_y = grid_top + 2 * row_h + 10
+    svg += [
+        f'<rect y="{footer_y}" width="{W}" height="70" fill="#B07A29" opacity="0.15"/>',
+        f'<line x1="0" y1="{footer_y}" x2="{W}" y2="{footer_y}" stroke="#B07A29" stroke-width="1"/>',
+        f'<text x="{W//2}" y="{footer_y + 26}" text-anchor="middle" '
+        f'font-family="Georgia,serif" font-size="12" font-style="italic" fill="#E3B15C">'
+        f'{xml(versiculo[:90])}</text>',
+        f'<text x="{W//2}" y="{footer_y + 50}" text-anchor="middle" '
+        f'font-family="Arial,sans-serif" font-size="10" fill="#5a6080">'
+        f'montedasoliveiras.com</text>',
+        '</svg>',
+    ]
+    return "\n".join(svg)
+
+
+def save_infographic(svg_content: str, slug: str) -> str | None:
+    try:
+        path = f"{slug}/infografico.svg"
+        supabase.storage.from_("media").upload(
+            path,
+            svg_content.encode("utf-8"),
+            {"content-type": "image/svg+xml", "upsert": "true"},
+        )
+        return supabase.storage.from_("media").get_public_url(path)
+    except Exception as e:
+        print(f"[AVISO] Erro ao salvar infográfico: {e}", file=sys.stderr)
+        return None
 
 
 # ── Salvar rascunho no Supabase ───────────────────────────────────────────────
@@ -346,7 +488,7 @@ def save_draft(article: dict, category_id: str, cover_media_id: str | None) -> s
 
 def main():
     print("=" * 60)
-    print(f"Monte das Oliveiras — Gerador de Artigos (Gemini + Pexels)")
+    print(f"Monte das Oliveiras — Gerador de Artigos (Groq + Pexels)")
     print(f"Categoria: {CATEGORY_SLUG}")
     print(f"Horário:   {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}")
     print("=" * 60)
