@@ -355,7 +355,7 @@ Notícias:
 Retorne JSON: {{"indice": 0, "palavra_chave": "palavra-chave principal para SEO", "motivo": "breve justificativa"}}"""
 
     resp = groq.chat.completions.create(
-        model="llama-3.3-70b-versatile",
+        model="llama-3.1-8b-instant",
         messages=[{"role": "user", "content": prompt}],
         response_format={"type": "json_object"},
         max_tokens=512,
@@ -470,14 +470,32 @@ def generate_article(noticia: dict, palavra_chave: str, internal_posts: list[dic
         links_internos=links_str,
     )
 
-    resp = groq.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[{"role": "user", "content": prompt}],
-        response_format={"type": "json_object"},
-        max_tokens=8192,
-        temperature=0.8,
-    )
-    raw = resp.choices[0].message.content
+    # Modelos em ordem de preferência — tenta o próximo se o anterior atingir rate limit
+    ARTICLE_MODELS = [
+        "llama-3.3-70b-versatile",
+        "llama3-70b-8192",
+        "llama-3.1-8b-instant",
+    ]
+    raw = None
+    for model in ARTICLE_MODELS:
+        try:
+            print(f"      → Modelo: {model}")
+            resp = groq.chat.completions.create(
+                model=model,
+                messages=[{"role": "user", "content": prompt}],
+                response_format={"type": "json_object"},
+                max_tokens=8192,
+                temperature=0.8,
+            )
+            raw = resp.choices[0].message.content
+            break
+        except Exception as e:
+            if "rate_limit" in str(e).lower() or "429" in str(e):
+                print(f"      ⚠ Rate limit em {model}, tentando próximo modelo...", file=sys.stderr)
+                continue
+            raise
+    if raw is None:
+        raise RuntimeError("Todos os modelos Groq atingiram o rate limit. Tente novamente amanhã.")
     # Converte escapes JS \u{XXXXX} (inválidos em JSON) para caracteres reais
     raw = re.sub(r'\\u\{([0-9a-fA-F]+)\}', lambda m: chr(int(m.group(1), 16)), raw)
     data = json.loads(raw)
