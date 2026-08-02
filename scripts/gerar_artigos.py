@@ -14,7 +14,8 @@ from datetime import datetime, timezone, timedelta
 
 import feedparser
 from supabase import create_client
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 # ── Configuração por categoria ────────────────────────────────────────────────
 
@@ -84,15 +85,7 @@ supabase = create_client(
     os.environ["SUPABASE_SERVICE_KEY"],
 )
 
-genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-gemini = genai.GenerativeModel(
-    "gemini-2.0-flash",
-    generation_config=genai.GenerationConfig(
-        response_mime_type="application/json",
-        max_output_tokens=8192,
-        temperature=0.8,
-    ),
-)
+gemini = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
 PEXELS_KEY = os.environ.get("PEXELS_API_KEY", "")
 
@@ -225,7 +218,15 @@ Notícias:
 
 Retorne JSON: {{"indice": 0, "palavra_chave": "palavra-chave principal para SEO", "motivo": "breve justificativa"}}"""
 
-    resp = gemini.generate_content(prompt)
+    resp = gemini.models.generate_content(
+        model="gemini-2.0-flash",
+        contents=prompt,
+        config=types.GenerateContentConfig(
+            response_mime_type="application/json",
+            max_output_tokens=512,
+            temperature=0.3,
+        ),
+    )
     return json.loads(resp.text)
 
 
@@ -304,7 +305,15 @@ def generate_article(noticia: dict, palavra_chave: str, internal_posts: list[dic
         links_internos=links_str,
     )
 
-    resp = gemini.generate_content(prompt)
+    resp = gemini.models.generate_content(
+        model="gemini-2.0-flash",
+        contents=prompt,
+        config=types.GenerateContentConfig(
+            response_mime_type="application/json",
+            max_output_tokens=8192,
+            temperature=0.8,
+        ),
+    )
     data = json.loads(resp.text)
 
     # Embute FAQ JSON-LD no final do conteúdo (Google lê em qualquer posição da página)
