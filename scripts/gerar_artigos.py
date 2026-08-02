@@ -14,8 +14,7 @@ from datetime import datetime, timezone, timedelta
 
 import feedparser
 from supabase import create_client
-from google import genai
-from google.genai import types
+from groq import Groq
 
 # ── Configuração por categoria ────────────────────────────────────────────────
 
@@ -85,7 +84,7 @@ supabase = create_client(
     os.environ["SUPABASE_SERVICE_KEY"],
 )
 
-gemini = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+groq = Groq(api_key=os.environ["GROQ_API_KEY"])
 
 PEXELS_KEY = os.environ.get("PEXELS_API_KEY", "")
 
@@ -218,16 +217,14 @@ Notícias:
 
 Retorne JSON: {{"indice": 0, "palavra_chave": "palavra-chave principal para SEO", "motivo": "breve justificativa"}}"""
 
-    resp = gemini.models.generate_content(
-        model="gemini-2.0-flash",
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            response_mime_type="application/json",
-            max_output_tokens=512,
-            temperature=0.3,
-        ),
+    resp = groq.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[{"role": "user", "content": prompt}],
+        response_format={"type": "json_object"},
+        max_tokens=512,
+        temperature=0.3,
     )
-    return json.loads(resp.text)
+    return json.loads(resp.choices[0].message.content)
 
 
 # ── Gemini: gerar artigo completo (~2800 palavras) ────────────────────────────
@@ -305,16 +302,14 @@ def generate_article(noticia: dict, palavra_chave: str, internal_posts: list[dic
         links_internos=links_str,
     )
 
-    resp = gemini.models.generate_content(
-        model="gemini-2.0-flash",
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            response_mime_type="application/json",
-            max_output_tokens=8192,
-            temperature=0.8,
-        ),
+    resp = groq.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[{"role": "user", "content": prompt}],
+        response_format={"type": "json_object"},
+        max_tokens=8192,
+        temperature=0.8,
     )
-    data = json.loads(resp.text)
+    data = json.loads(resp.choices[0].message.content)
 
     # Embute FAQ JSON-LD no final do conteúdo (Google lê em qualquer posição da página)
     if "faq_schema" in data:
