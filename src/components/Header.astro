@@ -1,15 +1,27 @@
 ---
 import { getCategories } from '../lib/supabase';
+import type { Lang } from '../i18n/translations';
+import { getCategoryName, getLangPrefix } from '../i18n/translations';
+
+interface Props { lang?: Lang; }
+const { lang = 'pt' } = Astro.props;
+const prefix = getLangPrefix(lang);
 
 const categories = (await getCategories().catch(() => [])).filter(
   (cat) => cat.slug !== 'webstories'
 );
 const currentPath = Astro.url.pathname;
+
+const langLinks: { code: Lang; label: string }[] = [
+  { code: 'pt', label: 'PT' },
+  { code: 'en', label: 'EN' },
+  { code: 'es', label: 'ES' },
+];
 ---
 
 <header>
   <div class="header-inner wrap">
-    <a class="logo" href="/">
+    <a class="logo" href={`${prefix}/`}>
       <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
         <path d="M2 18C6 14 9 20 13 15C17 10 20 17 24 13" stroke="#E3B15C" stroke-width="1.6" stroke-linecap="round"/>
         <circle cx="19" cy="8" r="3.2" fill="#E3B15C"/>
@@ -19,11 +31,22 @@ const currentPath = Astro.url.pathname;
     <div class="nav-scroll">
       <nav>
         {categories.map((cat) => (
-          <a href={`/categoria/${cat.slug}`} class={currentPath.includes(cat.slug) ? 'active' : ''}>
-            {cat.name}
+          <a href={`${prefix}/categoria/${cat.slug}`} class={currentPath.includes(cat.slug) ? 'active' : ''}>
+            {getCategoryName(cat.slug, lang)}
           </a>
         ))}
       </nav>
+    </div>
+    <div class="lang-switcher">
+      {langLinks.map(({ code, label }) => (
+        <a
+          href={code === 'pt' ? '/' : `/${code}/`}
+          class={lang === code ? 'active' : ''}
+          onclick={`localStorage.setItem('mdo_lang','${code}')`}
+        >
+          {label}
+        </a>
+      ))}
     </div>
   </div>
 </header>
@@ -34,9 +57,10 @@ const currentPath = Astro.url.pathname;
     display: flex; align-items: center; justify-content: space-between;
     padding: 22px 32px;
     border-bottom: 1px solid rgba(237,231,212,0.15);
+    gap: 20px;
   }
   .logo {
-    display: flex; align-items: center; gap: 10px;
+    display: flex; align-items: center; gap: 10px; flex-shrink: 0;
     font-family: var(--font-display); font-size: 21px; font-weight: 600; color: #F3EEDD;
   }
   .nav-scroll { display: contents; }
@@ -44,9 +68,22 @@ const currentPath = Astro.url.pathname;
   nav a { color: #CFC9AE; letter-spacing: .02em; transition: color .15s; }
   nav a:hover { color: #F3EEDD; }
   nav a.active { color: #E3B15C; }
+
+  .lang-switcher {
+    display: flex; gap: 6px; align-items: center; flex-shrink: 0;
+    font-family: var(--font-ui); font-size: 11px; font-weight: 700; letter-spacing: .06em;
+  }
+  .lang-switcher a {
+    color: #8A8367; padding: 3px 7px; border-radius: 4px;
+    border: 1px solid rgba(237,231,212,0.15); transition: all .15s;
+  }
+  .lang-switcher a:hover { color: #F3EEDD; border-color: rgba(237,231,212,0.4); }
+  .lang-switcher a.active { color: #E3B15C; border-color: #E3B15C; }
+
   @media (max-width: 860px) {
     .header-inner { flex-wrap: wrap; padding: 16px 0 16px 20px; row-gap: 12px; }
     .logo { font-size: 18px; }
+    .lang-switcher { margin-left: auto; padding-right: 20px; }
     .nav-scroll {
       display: block; order: 3; flex-basis: 100%; overflow: hidden; position: relative;
     }

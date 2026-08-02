@@ -1,22 +1,17 @@
 ---
 import type { PostSummary } from '../lib/supabase';
+import type { Lang } from '../i18n/translations';
+import { timeAgo, getLangPrefix } from '../i18n/translations';
 
 interface Props {
   post: PostSummary;
+  lang?: Lang;
 }
-const { post } = Astro.props;
-
-function timeAgo(dateStr: string) {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  if (days < 1) return 'Hoje';
-  if (days === 1) return 'Há 1 dia';
-  if (days < 30) return `Há ${days} dias`;
-  return new Date(dateStr).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
-}
+const { post, lang = 'pt' } = Astro.props;
+const prefix = getLangPrefix(lang);
 ---
 
-<a class="card" href={`/${post.slug}`}>
+<a class="card" href={`${prefix}/${post.slug}`}>
   <div class="card-img">
     {post.card_url && <img src={post.card_url} alt={post.alt_text || post.title} loading="lazy" decoding="async" width="800" height="600" />}
   </div>
@@ -25,8 +20,8 @@ function timeAgo(dateStr: string) {
     <h3>{post.title}</h3>
     {post.excerpt && <p class="excerpt">{post.excerpt}</p>}
     <div class="meta">
-      {post.read_time_minutes && <span>{post.read_time_minutes} min de leitura</span>}
-      <span> · {timeAgo(post.published_at)}</span>
+      {post.read_time_minutes && <span>{post.read_time_minutes} min</span>}
+      <span> · {timeAgo(post.published_at, lang)}</span>
     </div>
   </div>
 </a>

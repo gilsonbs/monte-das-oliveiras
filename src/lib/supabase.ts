@@ -84,27 +84,31 @@ export async function getFeaturedPosts(limit = 4) {
   return featured;
 }
 
-export async function getRecentPosts(page = 1, perPage = 12) {
+export async function getRecentPosts(page = 1, perPage = 12, lang = 'pt') {
   const from = (page - 1) * perPage;
   const to = from + perPage - 1;
-  const { data, error, count } = await supabase
+  const q = supabase
     .from('posts_public')
     .select('*', { count: 'exact' })
     .order('published_at', { ascending: false })
     .range(from, to);
+  if (lang !== 'pt') q.eq('language', lang);
+  const { data, error, count } = await q;
   if (error) throw error;
   return { posts: data as PostSummary[], total: count ?? 0 };
 }
 
-export async function getPostsByCategory(categorySlug: string, page = 1, perPage = 12) {
+export async function getPostsByCategory(categorySlug: string, page = 1, perPage = 12, lang = 'pt') {
   const from = (page - 1) * perPage;
   const to = from + perPage - 1;
-  const { data, error, count } = await supabase
+  const q = supabase
     .from('posts_public')
     .select('*', { count: 'exact' })
     .eq('category_slug', categorySlug)
     .order('published_at', { ascending: false })
     .range(from, to);
+  if (lang !== 'pt') q.eq('language', lang);
+  const { data, error, count } = await q;
   if (error) throw error;
   return { posts: data as PostSummary[], total: count ?? 0 };
 }
@@ -119,16 +123,29 @@ export async function getPostBySlug(slug: string) {
   return data as PostFull | null;
 }
 
-export async function getRelatedPosts(categorySlug: string, excludeSlug: string, limit = 3) {
-  const { data, error } = await supabase
+export async function getRelatedPosts(categorySlug: string, excludeSlug: string, limit = 3, lang = 'pt') {
+  const q = supabase
     .from('posts_public')
     .select('*')
     .eq('category_slug', categorySlug)
     .neq('slug', excludeSlug)
     .order('published_at', { ascending: false })
     .limit(limit);
+  if (lang !== 'pt') q.eq('language', lang);
+  const { data, error } = await q;
   if (error) throw error;
   return data as PostSummary[];
+}
+
+export async function getPublishedSlugsByLang(lang: string) {
+  const q = supabase.from('posts_public').select('slug');
+  if (lang === 'pt') {
+    q.or('language.eq.pt,language.is.null');
+  } else {
+    q.eq('language', lang);
+  }
+  const { data } = await q;
+  return (data ?? []).map((p: any) => p.slug as string);
 }
 
 export async function getApprovedComments(postId: string) {

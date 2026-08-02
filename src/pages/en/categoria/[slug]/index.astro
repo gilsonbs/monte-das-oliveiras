@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import PostCard from '../../../../components/PostCard.astro';
+import AdSlot from '../../../../components/AdSlot.astro';
+import { getPostsByCategory, getCategories } from '../../../../lib/supabase';
+import { getUI, getCategoryName } from '../../../../i18n/translations';
+
+const lang = 'en' as const;
+const ui = getUI(lang);
+const PER_PAGE = 12;
+const page = 1;
+
+export async function getStaticPaths() {
+  const categories = await getCategories();
+  return categories.map((cat) => ({ params: { slug: cat.slug } }));
+}
+
+const { slug } = Astro.params;
+const categories = await getCategories();
+const category = categories.find((c) => c.slug === slug);
+
+if (!category) {
+  return Astro.redirect('/en/');
+}
+
+const catName = getCategoryName(slug!, lang);
+const { posts, total } = await getPostsByCategory(slug!, page, PER_PAGE, lang);
+const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
+---
+
+<BaseLayout title={catName} description={`Articles about ${catName} — Mount of Olives`} lang={lang}>
+  <div class="wrap">
+    <div class="page-head">
+      <span class="eyebrow">{ui.category}</span>
+      <h1>{catName}</h1>
+      <p class="count">{total} {total === 1 ? 'article' : 'articles'}</p>
+    </div>
+
+    <div class="layout">
+      <div class="grid-col">
+        <div class="grid">
+          {posts.map((post) => <PostCard post={post} lang={lang} />)}
+        </div>
+
+        {totalPages > 1 && (
+          <nav class="pagination">
+            <span>Page 1 of {totalPages}</span>
+            <a href={`/en/categoria/${slug}/2/`}>Next &rarr;</a>
+          </nav>
+        )}
+      </div>
+      <aside>
+        <AdSlot slotKey="sidebar_300x600" />
+      </aside>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-head { padding: 44px 0 30px; border-bottom: 1px solid var(--clay-line); margin-bottom: 36px; }
+  .page-head h1 { font-family: var(--font-display); font-size: 30px; font-weight: 500; margin: 10px 0 6px; }
+  .page-head .count { font-family: var(--font-ui); font-size: 13px; color: #8A8367; margin: 0; }
+
+  .layout { display: grid; grid-template-columns: 1fr 300px; gap: 48px; align-items: start; padding-bottom: 60px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+
+  .pagination {
+    display: flex; align-items: center; justify-content: center; gap: 20px; margin-top: 40px;
+    font-family: var(--font-ui); font-size: 13px; color: var(--ink-soft);
+  }
+  .pagination a { color: var(--olive-deep); font-weight: 500; }
+
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; }
+    .grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>

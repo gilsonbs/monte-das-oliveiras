@@ -613,9 +613,105 @@ def generate_imagen_infographic(infographic: dict, article_title: str, slug: str
         return None
 
 
+# ── Traduzir artigo para EN ou ES ────────────────────────────────────────────
+
+TRANSLATE_PROMPT = """You are a professional Christian content translator.
+Translate the article below from Brazilian Portuguese to {lang_name}.
+
+The translation must:
+- Sound natural and fluent to a native speaker — NOT like a machine translation
+- Preserve all HTML tags exactly as they appear (<p>, <h2>, <h3>, <blockquote>, <ul>, <li>, <strong>, <em>, <a>)
+- Keep Bible verse references in the standard format used in {lang_name} Christian communities
+- Translate the slug into {lang_name} (3 to 5 lowercase words, hyphens only, no accents, no special chars)
+- Translate title, seo_title, excerpt, meta_description naturally
+- Keep read_time_minutes, tags (translate each tag), pexels_query (in English always) unchanged in structure
+
+ORIGINAL ARTICLE (JSON):
+{article_json}
+
+Return ONLY valid JSON with the same structure as the input, with all text fields translated to {lang_name}.
+The "content" field must contain the fully translated HTML.
+The "slug" must be a new {lang_name} slug (NOT just the original slug with a suffix).
+Do NOT add any explanation outside the JSON."""
+
+
+def translate_article(article: dict, target_lang: str) -> dict | None:
+    lang_names = {"en": "English", "es": "Spanish"}
+    lang_name = lang_names.get(target_lang, target_lang)
+
+    # Prepara JSON sem o faq_schema para economizar tokens (ele fica igual)
+    article_for_translation = {k: v for k, v in article.items() if k != "faq_schema"}
+
+    prompt = TRANSLATE_PROMPT.format(
+        lang_name=lang_name,
+        article_json=json.dumps(article_for_translation, ensure_ascii=False),
+    )
+
+    GROQ_MODELS = [
+        "llama-3.3-70b-versatile",
+        "llama-3.1-70b-versatile",
+        "llama-3.1-8b-instant",
+    ]
+    raw = None
+    for model in GROQ_MODELS:
+        try:
+            print(f"      → Tradução {target_lang.upper()}: {model} (Groq)")
+            resp = groq.chat.completions.create(
+                model=model,
+                messages=[{"role": "user", "content": prompt}],
+                response_format={"type": "json_object"},
+                max_tokens=8192,
+                temperature=0.3,
+            )
+            raw = resp.choices[0].message.content
+            break
+        except Exception as e:
+            err = str(e).lower()
+            if "rate_limit" in err or "429" in err or "decommissioned" in err or "400" in err:
+                print(f"      ⚠ {model} indisponível para tradução, tentando próximo...", file=sys.stderr)
+                continue
+            raise
+
+    if raw is None:
+        cerebras_key = os.environ.get("CEREBRAS_API_KEY", "")
+        if cerebras_key:
+            cerebras_client = Cerebras(api_key=cerebras_key)
+            for cb_model in ["llama-3.3-70b", "llama3.3-70b", "llama-3.1-70b", "llama3.1-70b"]:
+                try:
+                    print(f"      → Tradução {target_lang.upper()}: {cb_model} (Cerebras)")
+                    cb_resp = cerebras_client.chat.completions.create(
+                        model=cb_model,
+                        messages=[
+                            {"role": "system", "content": "Return ONLY valid JSON, no extra text."},
+                            {"role": "user", "content": prompt},
+                        ],
+                        max_tokens=8192,
+                        temperature=0.3,
+                    )
+                    cb_text = cb_resp.choices[0].message.content
+                    match = re.search(r'```(?:json)?\s*([\s\S]+?)\s*```', cb_text)
+                    raw = match.group(1) if match else cb_text
+                    break
+                except Exception as e:
+                    print(f"      ⚠ Cerebras {cb_model} falhou na tradução: {e}", file=sys.stderr)
+
+    if raw is None:
+        print(f"[AVISO] Não foi possível gerar tradução para {target_lang.upper()}", file=sys.stderr)
+        return None
+
+    raw = re.sub(r'\\u\{([0-9a-fA-F]+)\}', lambda m: chr(int(m.group(1), 16)), raw)
+    translated = json.loads(raw)
+
+    # Restaura faq_schema original (não traduzido para economizar tokens)
+    if "faq_schema" in article:
+        translated["faq_schema"] = article["faq_schema"]
+
+    return translated
+
+
 # ── Salvar rascunho no Supabase ───────────────────────────────────────────────
 
-def save_draft(article: dict, category_id: str, cover_media_id: str | None) -> str:
+def save_draft(article: dict, category_id: str, cover_media_id: str | None, language: str = "pt") -> str:
     payload = {
         "title": article["title"],
         "slug": article["slug"],
@@ -629,6 +725,7 @@ def save_draft(article: dict, category_id: str, cover_media_id: str | None) -> s
         "status": "draft",
         "is_featured": False,
         "published_at": None,
+        "language": language,
     }
     resp = supabase.table("posts").insert(payload).execute()
     if resp.data:
@@ -685,10 +782,31 @@ def main():
     if not cover_media_id:
         print("      Artigo ficará sem capa — adicione uma manualmente no admin.")
 
-    # 6. Salvar
-    print(f"\n[4/4] Salvando rascunho no Supabase...")
-    post_id = save_draft(article, category_id, cover_media_id)
-    print(f"      ✓ Rascunho salvo! ID: {post_id}")
+    # 6. Salvar artigo PT
+    print(f"\n[4/5] Salvando rascunho PT no Supabase...")
+    post_id = save_draft(article, category_id, cover_media_id, language="pt")
+    print(f"      ✓ Rascunho PT salvo! ID: {post_id}")
+
+    # 7. Traduzir e salvar EN
+    print(f"\n[5/5] Gerando traduções (EN e ES)...")
+    for target_lang in ["en", "es"]:
+        print(f"\n   → Traduzindo para {target_lang.upper()}...")
+        try:
+            translated = translate_article(article, target_lang)
+            if translated is None:
+                print(f"      ✗ Tradução {target_lang.upper()} ignorada.")
+                continue
+
+            word_count_t = len(re.findall(r"\w+", re.sub(r"<[^>]+>", "", translated.get("content", ""))))
+            print(f"      ✓ Título: {translated['title'][:70]}")
+            print(f"      ✓ Slug:   {translated['slug']}")
+            print(f"      ✓ Palavras: ~{word_count_t}")
+
+            trans_id = save_draft(translated, category_id, cover_media_id, language=target_lang)
+            print(f"      ✓ Rascunho {target_lang.upper()} salvo! ID: {trans_id}")
+
+        except Exception as e:
+            print(f"      ✗ Erro na tradução {target_lang.upper()}: {e}", file=sys.stderr)
 
     print(f"\n{'=' * 60}")
     print(f"✓ Concluído! Revise e publique em:")

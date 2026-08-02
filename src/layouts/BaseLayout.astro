@@ -4,6 +4,7 @@ import NewsTicker from "../components/NewsTicker.astro";
 import Footer from "../components/Footer.astro";
 import ConsentBanner from "../components/ConsentBanner.astro";
 import "../styles/tokens.css";
+import type { Lang } from "../i18n/translations";
 
 interface Props {
   title: string;
@@ -15,6 +16,8 @@ interface Props {
   noindex?: boolean;
   publishedTime?: string;
   section?: string;
+  lang?: Lang;
+  slug?: string;
 }
 
 const {
@@ -27,9 +30,19 @@ const {
   noindex = false,
   publishedTime,
   section,
+  lang = "pt",
+  slug,
 } = Astro.props;
 
 const siteURL = "https://montedasoliveiras.com";
+const altSlug = slug ? `/${slug}` : "/";
+const hreflangs = [
+  { hreflang: "pt-BR", href: `${siteURL}${altSlug}` },
+  { hreflang: "en",    href: `${siteURL}/en${altSlug}` },
+  { hreflang: "es",    href: `${siteURL}/es${altSlug}` },
+  { hreflang: "x-default", href: `${siteURL}${altSlug}` },
+];
+
 const canonicalURL =
   canonical || new URL(Astro.url.pathname, Astro.site).toString();
 const ogImage = image.startsWith("http") ? image : `${siteURL}${image}`;
@@ -40,7 +53,7 @@ const fullTitle =
 ---
 
 <!doctype html>
-<html lang="pt-BR">
+<html lang={lang === "en" ? "en" : lang === "es" ? "es" : "pt-BR"}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -48,6 +61,7 @@ const fullTitle =
       name="google-site-verification"
       content="XXQFkjDOD2t9oUYJl1Z2-b45tHK9CS6Ov9F-nN10dx0"
     />
+    {hreflangs.map((h) => <link rel="alternate" hreflang={h.hreflang} href={h.href} />)}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -146,9 +160,24 @@ const fullTitle =
       }
       window.addEventListener("mdo-consent-granted", loadGA);
     </script>
+
+    <script>
+      // Redireciona para o idioma do navegador na primeira visita
+      const path = window.location.pathname;
+      const isLang = path.startsWith('/en') || path.startsWith('/es') || path.startsWith('/admin');
+      if (!isLang) {
+        const saved = localStorage.getItem('mdo_lang');
+        if (!saved) {
+          const br = (navigator.language || navigator.languages?.[0] || 'pt').toLowerCase();
+          if (br.startsWith('en')) { localStorage.setItem('mdo_lang','en'); window.location.replace('/en/'); }
+          else if (br.startsWith('es')) { localStorage.setItem('mdo_lang','es'); window.location.replace('/es/'); }
+          else localStorage.setItem('mdo_lang','pt');
+        }
+      }
+    </script>
   </head>
   <body>
-    <Header />
+    <Header lang={lang} />
     <NewsTicker />
     <slot />
     <Footer />
