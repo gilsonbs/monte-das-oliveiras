@@ -505,7 +505,7 @@ def generate_article(noticia: dict, palavra_chave: str, internal_posts: list[dic
                 print("      → Modelo: llama-3.3-70b (Cerebras — fallback)")
                 cerebras_client = Cerebras(api_key=cerebras_key)
                 cb_resp = cerebras_client.chat.completions.create(
-                    model="llama-3.3-70b",
+                    model="llama3.3-70b",
                     messages=[{"role": "user", "content": prompt}],
                     response_format={"type": "json_object"},
                     max_tokens=8192,
