@@ -17,6 +17,7 @@ from supabase import create_client
 from groq import Groq
 from google import genai as google_genai
 from google.genai import types as google_types
+from cerebras.cloud.sdk import Cerebras
 
 # ── Configuração por categoria ────────────────────────────────────────────────
 
@@ -496,25 +497,23 @@ def generate_article(noticia: dict, palavra_chave: str, internal_posts: list[dic
                 continue
             raise
 
-    # Fallback: Gemini 2.0 Flash (1.500 req/dia gratuitos, qualidade equivalente ao 70b)
+    # Fallback: Cerebras llama-3.3-70b (gratuito, sem restrição regional, cota separada)
     if raw is None:
-        gemini_key = os.environ.get("GEMINI_API_KEY", "")
-        if gemini_key:
+        cerebras_key = os.environ.get("CEREBRAS_API_KEY", "")
+        if cerebras_key:
             try:
-                print("      → Modelo: gemini-2.0-flash (Google — fallback)")
-                gemini_client = google_genai.Client(api_key=gemini_key)
-                gemini_resp = gemini_client.models.generate_content(
-                    model="gemini-2.0-flash",
-                    contents=prompt,
-                    config=google_types.GenerateContentConfig(
-                        response_mime_type="application/json",
-                        max_output_tokens=8192,
-                        temperature=0.8,
-                    ),
+                print("      → Modelo: llama-3.3-70b (Cerebras — fallback)")
+                cerebras_client = Cerebras(api_key=cerebras_key)
+                cb_resp = cerebras_client.chat.completions.create(
+                    model="llama-3.3-70b",
+                    messages=[{"role": "user", "content": prompt}],
+                    response_format={"type": "json_object"},
+                    max_tokens=8192,
+                    temperature=0.8,
                 )
-                raw = gemini_resp.text
+                raw = cb_resp.choices[0].message.content
             except Exception as e:
-                print(f"      ⚠ Gemini Flash falhou: {e}", file=sys.stderr)
+                print(f"      ⚠ Cerebras falhou: {e}", file=sys.stderr)
 
     if raw is None:
         raise RuntimeError("Todos os modelos atingiram o rate limit. Tente novamente mais tarde.")
