@@ -709,6 +709,55 @@ def translate_article(article: dict, target_lang: str) -> dict | None:
     return translated
 
 
+# ── Postar no Facebook ───────────────────────────────────────────────────────
+
+FACEBOOK_EMOJI = {
+    "fim-dos-tempos":    "⚠️",
+    "estudos-biblicos":  "📖",
+    "igreja-perseguida": "🙏",
+    "vida-crista":       "❤️",
+    "crente-pode":       "🤔",
+    "devocional-diario": "🌅",
+    "lideranca-e-igreja": "✝️",
+    "noticias-gospel":   "📰",
+}
+
+
+def post_to_facebook_page(article: dict, article_url: str) -> None:
+    """Posta o artigo PT na Página do Facebook via Graph API."""
+    token = os.environ.get("FACEBOOK_PAGE_ACCESS_TOKEN", "")
+    if not token:
+        print("      [FB] FACEBOOK_PAGE_ACCESS_TOKEN não definido — publicação ignorada.")
+        return
+
+    emoji = FACEBOOK_EMOJI.get(CATEGORY_SLUG, "✝️")
+    title = article.get("title", "")
+    excerpt = (article.get("excerpt") or "").strip()
+
+    message = (
+        f"{emoji} {title}\n\n"
+        f"{excerpt}\n\n"
+        f"👉 Leia o artigo completo no link abaixo ⬇️"
+    )
+
+    try:
+        resp = requests.post(
+            "https://graph.facebook.com/v20.0/me/feed",
+            data={"message": message, "link": article_url, "access_token": token},
+            timeout=30,
+        )
+        result = resp.json()
+        if "id" in result:
+            print(f"      ✓ Postado no Facebook! ID: {result['id']}")
+        elif "error" in result:
+            err = result["error"]
+            print(f"      ✗ Erro Facebook [{err.get('code')}]: {err.get('message')}", file=sys.stderr)
+        else:
+            print(f"      ✗ Resposta inesperada: {result}", file=sys.stderr)
+    except Exception as e:
+        print(f"      ✗ Exceção ao postar no Facebook: {e}", file=sys.stderr)
+
+
 # ── Salvar rascunho no Supabase ───────────────────────────────────────────────
 
 def save_draft(article: dict, category_id: str, cover_media_id: str | None, language: str = "pt") -> str:
@@ -783,12 +832,17 @@ def main():
         print("      Artigo ficará sem capa — adicione uma manualmente no admin.")
 
     # 6. Salvar artigo PT
-    print(f"\n[4/5] Salvando rascunho PT no Supabase...")
+    print(f"\n[4/6] Salvando rascunho PT no Supabase...")
     post_id = save_draft(article, category_id, cover_media_id, language="pt")
     print(f"      ✓ Rascunho PT salvo! ID: {post_id}")
 
-    # 7. Traduzir e salvar EN
-    print(f"\n[5/5] Gerando traduções (EN e ES)...")
+    # 7. Postar no Facebook
+    article_url = f"https://montedasoliveiras.com/{article['slug']}"
+    print(f"\n[5/6] Postando no Facebook...")
+    post_to_facebook_page(article, article_url)
+
+    # 8. Traduzir e salvar EN/ES
+    print(f"\n[6/6] Gerando traduções (EN e ES)...")
     for target_lang in ["en", "es"]:
         print(f"\n   → Traduzindo para {target_lang.upper()}...")
         try:
