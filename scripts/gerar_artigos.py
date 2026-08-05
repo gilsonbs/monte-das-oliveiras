@@ -225,14 +225,24 @@ def fetch_news() -> list[dict]:
 
 # ── Supabase: dados auxiliares ────────────────────────────────────────────────
 
-def fetch_recent_titles(hours: int = 48) -> list[str]:
+def fetch_recent_titles(hours: int = 72) -> list[str]:
     cutoff = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
     try:
-        resp = supabase.table("posts").select("title").gte("created_at", cutoff).execute()
+        resp = supabase.table("posts").select("title, slug").gte("created_at", cutoff).execute()
         return [r["title"] for r in (resp.data or [])]
     except Exception as e:
         print(f"[AVISO] Títulos recentes: {e}", file=sys.stderr)
         return []
+
+
+def fetch_recent_slugs(hours: int = 72) -> set[str]:
+    cutoff = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
+    try:
+        resp = supabase.table("posts").select("slug").gte("created_at", cutoff).execute()
+        return {r["slug"] for r in (resp.data or [])}
+    except Exception as e:
+        print(f"[AVISO] Slugs recentes: {e}", file=sys.stderr)
+        return set()
 
 
 def fetch_category_id() -> str | None:
@@ -347,8 +357,12 @@ def select_news(items: list[dict], recent: list[str]) -> dict:
 Categoria ativa: "{CATEGORY_SLUG}" | Estilo: {config['estilo']}
 Palavras-chave da categoria: {filtros_str}
 
-Selecione A MELHOR notícia das disponíveis para virar artigo com ângulo bíblico.
-Evite temas similares aos publicados recentemente: {recent_str}
+REGRA ABSOLUTA — PROIBIDO repetir temas já publicados nas últimas 72 horas:
+{recent_str}
+Se uma notícia trata do mesmo assunto (mesmo evento, mesmo personagem, mesma região ou tema principal)
+que qualquer item da lista acima, DESCARTE-A completamente e escolha outra.
+
+Selecione A MELHOR notícia das disponíveis que NÃO seja repetição de tema recente:
 
 Notícias:
 {json.dumps([{"i": i, "titulo": n["titulo"], "resumo": n["resumo"][:200]} for i, n in enumerate(items)], ensure_ascii=False)}
@@ -890,6 +904,7 @@ def main():
         sys.exit(1)
 
     recent = fetch_recent_titles()
+    recent_slugs = fetch_recent_slugs()
     internal_posts = fetch_internal_posts()
 
     # 3. Selecionar notícia
@@ -909,6 +924,11 @@ def main():
     print(f"      ✓ Slug:   {article['slug']}")
     print(f"      ✓ Palavras: ~{word_count} | Leitura: {article.get('read_time_minutes', '?')} min")
     print(f"      ✓ Tags: {article.get('tags', '')[:70]}")
+
+    # Verifica slug duplicado antes de continuar
+    if article["slug"] in recent_slugs:
+        print(f"\n[AVISO] Slug '{article['slug']}' já existe nas últimas 72h — artigo ignorado para evitar duplicata.")
+        sys.exit(0)
 
     # 5. Imagem
     pexels_query = article.get("pexels_query") or palavra_chave
