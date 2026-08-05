@@ -723,12 +723,75 @@ FACEBOOK_EMOJI = {
 }
 
 
+def _refresh_facebook_token(token: str) -> str:
+    """Troca o token por um novo de 60 dias e atualiza o GitHub Secret."""
+    app_id = os.environ.get("FACEBOOK_APP_ID", "1092693706771528")
+    app_secret = os.environ.get("FACEBOOK_APP_SECRET", "")
+    if not app_secret:
+        return token  # sem app secret, usa o token atual
+
+    try:
+        resp = requests.get(
+            "https://graph.facebook.com/oauth/access_token",
+            params={
+                "grant_type": "fb_exchange_token",
+                "client_id": app_id,
+                "client_secret": app_secret,
+                "fb_exchange_token": token,
+            },
+            timeout=15,
+        )
+        new_token = resp.json().get("access_token", token)
+        if new_token == token:
+            return token
+        print("      ✓ Token do Facebook renovado por mais 60 dias.")
+        _update_github_secret("FACEBOOK_PAGE_ACCESS_TOKEN", new_token)
+        return new_token
+    except Exception as e:
+        print(f"      [FB] Aviso ao renovar token: {e}", file=sys.stderr)
+        return token
+
+
+def _update_github_secret(secret_name: str, secret_value: str) -> None:
+    """Salva um novo valor no GitHub Secret via API REST."""
+    import base64
+    gh_token = os.environ.get("GITHUB_TOKEN", "")
+    repo = os.environ.get("GITHUB_REPOSITORY", "")
+    if not gh_token or not repo:
+        return
+    try:
+        from nacl import encoding, public as nacl_public  # PyNaCl
+        # Busca chave pública do repositório
+        key_resp = requests.get(
+            f"https://api.github.com/repos/{repo}/actions/secrets/public-key",
+            headers={"Authorization": f"Bearer {gh_token}", "Accept": "application/vnd.github+json"},
+            timeout=10,
+        ).json()
+        pub_key = nacl_public.PublicKey(key_resp["key"].encode(), encoding.Base64Encoder())
+        box = nacl_public.SealedBox(pub_key)
+        encrypted = base64.b64encode(box.encrypt(secret_value.encode())).decode()
+        requests.put(
+            f"https://api.github.com/repos/{repo}/actions/secrets/{secret_name}",
+            headers={"Authorization": f"Bearer {gh_token}", "Accept": "application/vnd.github+json"},
+            json={"encrypted_value": encrypted, "key_id": key_resp["key_id"]},
+            timeout=10,
+        )
+        print(f"      ✓ GitHub Secret '{secret_name}' atualizado automaticamente.")
+    except ImportError:
+        pass  # PyNaCl não instalado, pula silenciosamente
+    except Exception as e:
+        print(f"      [FB] Aviso ao atualizar secret: {e}", file=sys.stderr)
+
+
 def post_to_facebook_page(article: dict, article_url: str) -> None:
     """Posta o artigo PT na Página do Facebook via Graph API."""
     token = os.environ.get("FACEBOOK_PAGE_ACCESS_TOKEN", "")
     if not token:
         print("      [FB] FACEBOOK_PAGE_ACCESS_TOKEN não definido — publicação ignorada.")
         return
+
+    # Renova token por mais 60 dias a cada execução
+    token = _refresh_facebook_token(token)
 
     emoji = FACEBOOK_EMOJI.get(CATEGORY_SLUG, "✝️")
     title = article.get("title", "")
