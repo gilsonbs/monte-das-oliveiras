@@ -711,6 +711,8 @@ def translate_article(article: dict, target_lang: str) -> dict | None:
 
 # ── Postar no Facebook ───────────────────────────────────────────────────────
 
+FACEBOOK_PAGE_ID = "61574569546872"
+
 FACEBOOK_EMOJI = {
     "fim-dos-tempos":    "⚠️",
     "estudos-biblicos":  "📖",
@@ -804,8 +806,9 @@ def post_to_facebook_page(article: dict, article_url: str) -> None:
     )
 
     try:
+        page_id = os.environ.get("FACEBOOK_PAGE_ID", FACEBOOK_PAGE_ID)
         resp = requests.post(
-            "https://graph.facebook.com/v20.0/me/feed",
+            f"https://graph.facebook.com/v20.0/{page_id}/feed",
             data={"message": message, "link": article_url, "access_token": token},
             timeout=30,
         )
