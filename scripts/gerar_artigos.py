@@ -845,7 +845,8 @@ def post_to_facebook_page(article: dict, article_url: str) -> None:
 
 # ── Salvar rascunho no Supabase ───────────────────────────────────────────────
 
-def save_draft(article: dict, category_id: str, cover_media_id: str | None, language: str = "pt") -> str:
+def save_draft(article: dict, category_id: str, cover_media_id: str | None, language: str = "pt", publish: bool = False) -> str:
+    now = datetime.now(timezone.utc).isoformat()
     payload = {
         "title": article["title"],
         "slug": article["slug"],
@@ -856,9 +857,9 @@ def save_draft(article: dict, category_id: str, cover_media_id: str | None, lang
         "read_time_minutes": article.get("read_time_minutes") or None,
         "category_id": category_id,
         "cover_media_id": cover_media_id,
-        "status": "draft",
+        "status": "published" if publish else "draft",
         "is_featured": False,
-        "published_at": None,
+        "published_at": now if publish else None,
         "language": language,
     }
     resp = supabase.table("posts").insert(payload).execute()
@@ -916,12 +917,12 @@ def main():
     if not cover_media_id:
         print("      Artigo ficará sem capa — adicione uma manualmente no admin.")
 
-    # 6. Salvar artigo PT
-    print(f"\n[4/6] Salvando rascunho PT no Supabase...")
-    post_id = save_draft(article, category_id, cover_media_id, language="pt")
-    print(f"      ✓ Rascunho PT salvo! ID: {post_id}")
+    # 6. Publicar artigo PT
+    print(f"\n[4/6] Publicando artigo PT no Supabase...")
+    post_id = save_draft(article, category_id, cover_media_id, language="pt", publish=True)
+    print(f"      ✓ Artigo PT publicado! ID: {post_id}")
 
-    # 7. Postar no Facebook
+    # 7. Postar no Facebook (artigo já está no ar)
     article_url = f"https://montedasoliveiras.com/{article['slug']}"
     print(f"\n[5/6] Postando no Facebook...")
     post_to_facebook_page(article, article_url)
@@ -948,8 +949,9 @@ def main():
             print(f"      ✗ Erro na tradução {target_lang.upper()}: {e}", file=sys.stderr)
 
     print(f"\n{'=' * 60}")
-    print(f"✓ Concluído! Revise e publique em:")
-    print(f"  https://montedasoliveiras.com/admin/posts/editor?id={post_id}")
+    print(f"✓ Concluído! Artigo publicado em:")
+    print(f"  {article_url}")
+    print(f"  (editar: https://montedasoliveiras.com/admin/posts/editor?id={post_id})")
     print("=" * 60)
 
 
