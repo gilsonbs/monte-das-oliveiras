@@ -511,12 +511,12 @@ def generate_article(noticia: dict, palavra_chave: str, internal_posts: list[dic
                 continue
             raise
 
-    # Fallback: Cerebras (gratuito, sem restrição regional, cota separada)
+    # Fallback 1: Cerebras (cota separada)
     if raw is None:
         cerebras_key = os.environ.get("CEREBRAS_API_KEY", "")
         if cerebras_key:
             cerebras_client = Cerebras(api_key=cerebras_key)
-            for cb_model in ["llama-3.3-70b", "llama3.3-70b", "llama-3.1-70b", "llama3.1-70b", "llama3.1-8b"]:
+            for cb_model in ["llama-3.3-70b", "llama3.1-8b"]:
                 try:
                     print(f"      → Modelo: {cb_model} (Cerebras — fallback)")
                     cb_resp = cerebras_client.chat.completions.create(
@@ -535,6 +535,27 @@ def generate_article(noticia: dict, palavra_chave: str, internal_posts: list[dic
                     break
                 except Exception as e:
                     print(f"      ⚠ Cerebras {cb_model} falhou: {type(e).__name__}: {e}")
+
+    # Fallback 2: Gemini Flash (cota generosa, separada do Groq/Cerebras)
+    if raw is None:
+        gemini_key = os.environ.get("GEMINI_API_KEY", "")
+        if gemini_key:
+            try:
+                print("      → Modelo: gemini-2.0-flash (Gemini — fallback)")
+                gem_client = google_genai.Client(api_key=gemini_key)
+                gem_resp = gem_client.models.generate_content(
+                    model="gemini-2.0-flash",
+                    contents=prompt,
+                    config=google_types.GenerateContentConfig(
+                        response_mime_type="application/json",
+                        max_output_tokens=8192,
+                        temperature=0.8,
+                    ),
+                )
+                raw = gem_resp.text
+                print("      ✓ Gemini Flash respondeu com sucesso")
+            except Exception as e:
+                print(f"      ⚠ Gemini Flash falhou: {type(e).__name__}: {e}", file=sys.stderr)
 
     if raw is None:
         raise RuntimeError("Todos os modelos atingiram o rate limit. Tente novamente mais tarde.")
@@ -686,11 +707,12 @@ def translate_article(article: dict, target_lang: str) -> dict | None:
                 continue
             raise
 
+    # Fallback 1: Cerebras
     if raw is None:
         cerebras_key = os.environ.get("CEREBRAS_API_KEY", "")
         if cerebras_key:
             cerebras_client = Cerebras(api_key=cerebras_key)
-            for cb_model in ["llama-3.3-70b", "llama3.3-70b", "llama-3.1-70b", "llama3.1-70b"]:
+            for cb_model in ["llama-3.3-70b", "llama3.1-8b"]:
                 try:
                     print(f"      → Tradução {target_lang.upper()}: {cb_model} (Cerebras)")
                     cb_resp = cerebras_client.chat.completions.create(
@@ -708,6 +730,27 @@ def translate_article(article: dict, target_lang: str) -> dict | None:
                     break
                 except Exception as e:
                     print(f"      ⚠ Cerebras {cb_model} falhou na tradução: {e}", file=sys.stderr)
+
+    # Fallback 2: Gemini Flash
+    if raw is None:
+        gemini_key = os.environ.get("GEMINI_API_KEY", "")
+        if gemini_key:
+            try:
+                print(f"      → Tradução {target_lang.upper()}: gemini-2.0-flash (Gemini)")
+                gem_client = google_genai.Client(api_key=gemini_key)
+                gem_resp = gem_client.models.generate_content(
+                    model="gemini-2.0-flash",
+                    contents=prompt,
+                    config=google_types.GenerateContentConfig(
+                        response_mime_type="application/json",
+                        max_output_tokens=8192,
+                        temperature=0.3,
+                    ),
+                )
+                raw = gem_resp.text
+                print(f"      ✓ Gemini Flash (tradução {target_lang.upper()}) OK")
+            except Exception as e:
+                print(f"      ⚠ Gemini Flash falhou na tradução: {e}", file=sys.stderr)
 
     if raw is None:
         print(f"[AVISO] Não foi possível gerar tradução para {target_lang.upper()}", file=sys.stderr)
