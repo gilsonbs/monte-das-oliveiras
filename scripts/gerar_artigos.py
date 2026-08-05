@@ -711,7 +711,7 @@ def translate_article(article: dict, target_lang: str) -> dict | None:
 
 # ── Postar no Facebook ───────────────────────────────────────────────────────
 
-FACEBOOK_PAGE_ID = "61574569546872"
+FACEBOOK_PAGE_ID = "622708424257879"
 
 FACEBOOK_EMOJI = {
     "fim-dos-tempos":    "⚠️",
@@ -785,15 +785,35 @@ def _update_github_secret(secret_name: str, secret_value: str) -> None:
         print(f"      [FB] Aviso ao atualizar secret: {e}", file=sys.stderr)
 
 
+def _get_page_token(user_token: str, page_id: str) -> str:
+    """Obtém o page token a partir do user token via GET /{page_id}?fields=access_token."""
+    try:
+        resp = requests.get(
+            f"https://graph.facebook.com/v20.0/{page_id}",
+            params={"fields": "access_token", "access_token": user_token},
+            timeout=15,
+        )
+        page_token = resp.json().get("access_token", "")
+        if page_token:
+            return page_token
+    except Exception as e:
+        print(f"      [FB] Aviso ao buscar page token: {e}", file=sys.stderr)
+    return user_token
+
+
 def post_to_facebook_page(article: dict, article_url: str) -> None:
     """Posta o artigo PT na Página do Facebook via Graph API."""
-    token = os.environ.get("FACEBOOK_PAGE_ACCESS_TOKEN", "")
-    if not token:
+    user_token = os.environ.get("FACEBOOK_PAGE_ACCESS_TOKEN", "")
+    if not user_token:
         print("      [FB] FACEBOOK_PAGE_ACCESS_TOKEN não definido — publicação ignorada.")
         return
 
-    # Renova token por mais 60 dias a cada execução
-    token = _refresh_facebook_token(token)
+    # Renova user token por mais 60 dias a cada execução
+    user_token = _refresh_facebook_token(user_token)
+
+    # Obtém o page token a partir do user token
+    page_id = os.environ.get("FACEBOOK_PAGE_ID", FACEBOOK_PAGE_ID)
+    page_token = _get_page_token(user_token, page_id)
 
     emoji = FACEBOOK_EMOJI.get(CATEGORY_SLUG, "✝️")
     title = article.get("title", "")
@@ -806,10 +826,9 @@ def post_to_facebook_page(article: dict, article_url: str) -> None:
     )
 
     try:
-        page_id = os.environ.get("FACEBOOK_PAGE_ID", FACEBOOK_PAGE_ID)
         resp = requests.post(
             f"https://graph.facebook.com/v20.0/{page_id}/feed",
-            data={"message": message, "link": article_url, "access_token": token},
+            data={"message": message, "link": article_url, "access_token": page_token},
             timeout=30,
         )
         result = resp.json()
