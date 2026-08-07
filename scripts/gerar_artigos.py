@@ -902,29 +902,93 @@ def post_to_facebook_page(article: dict, article_url: str) -> None:
 
 # ── Disparar rebuild do site ─────────────────────────────────────────────────
 
-def _trigger_site_rebuild() -> None:
-    """Dispara o workflow deploy.yml para reconstruir o site estático e atualizar o sitemap."""
+def _trigger_site_rebuild() -> bool:
+    """Dispara o deploy.yml e aguarda a conclusão. Retorna True se bem-sucedido."""
     gh_token = os.environ.get("GITHUB_TOKEN", "")
     repo = os.environ.get("GITHUB_REPOSITORY", "")
     if not gh_token or not repo:
         print("      [BUILD] GITHUB_TOKEN ou GITHUB_REPOSITORY ausente — rebuild ignorado.", file=sys.stderr)
-        return
+        return False
+
+    headers = {
+        "Authorization": f"Bearer {gh_token}",
+        "Accept": "application/vnd.github+json",
+    }
+
+    # Registra o horário antes de disparar para localizar o run correto
+    dispatched_at = datetime.now(timezone.utc)
+
     try:
         resp = requests.post(
             f"https://api.github.com/repos/{repo}/actions/workflows/deploy.yml/dispatches",
-            headers={
-                "Authorization": f"Bearer {gh_token}",
-                "Accept": "application/vnd.github+json",
-            },
+            headers=headers,
             json={"ref": "main"},
             timeout=15,
         )
-        if resp.status_code == 204:
-            print("      ✓ Build do site disparado — página e sitemap serão atualizados.")
-        else:
+        if resp.status_code != 204:
             print(f"      ⚠ Build não disparado: {resp.status_code} {resp.text[:120]}", file=sys.stderr)
+            return False
+        print("      ✓ Build disparado — aguardando conclusão (pode levar ~5 min)...")
     except Exception as e:
         print(f"      ⚠ Erro ao disparar build: {e}", file=sys.stderr)
+        return False
+
+    # Aguarda o GitHub registrar o run (leva alguns segundos)
+    time.sleep(10)
+
+    # Busca o run_id do build que acabou de ser disparado
+    run_id = None
+    for _ in range(6):  # tenta por até 1 minuto
+        try:
+            runs_resp = requests.get(
+                f"https://api.github.com/repos/{repo}/actions/workflows/deploy.yml/runs",
+                headers=headers,
+                params={"branch": "main", "per_page": 5},
+                timeout=15,
+            )
+            runs = runs_resp.json().get("workflow_runs", [])
+            for run in runs:
+                created = datetime.fromisoformat(run["created_at"].replace("Z", "+00:00"))
+                if created >= dispatched_at:
+                    run_id = run["id"]
+                    break
+            if run_id:
+                break
+        except Exception:
+            pass
+        time.sleep(10)
+
+    if not run_id:
+        print("      ⚠ Não foi possível localizar o run do build — continuando sem aguardar.", file=sys.stderr)
+        return False
+
+    # Aguarda o build terminar (timeout de 10 minutos)
+    print(f"      → Run ID: {run_id} — monitorando...")
+    for attempt in range(20):  # 20 x 30s = 10 min
+        time.sleep(30)
+        try:
+            run_resp = requests.get(
+                f"https://api.github.com/repos/{repo}/actions/runs/{run_id}",
+                headers=headers,
+                timeout=15,
+            )
+            run = run_resp.json()
+            status = run.get("status", "")
+            conclusion = run.get("conclusion", "")
+            elapsed = (attempt + 1) * 30
+            print(f"      → Build: {status} / {conclusion or '...'} ({elapsed}s)")
+            if status == "completed":
+                if conclusion == "success":
+                    print("      ✓ Build concluído com sucesso! Página e sitemap atualizados.")
+                    return True
+                else:
+                    print(f"      ✗ Build falhou: {conclusion}", file=sys.stderr)
+                    return False
+        except Exception as e:
+            print(f"      ⚠ Erro ao verificar build: {e}", file=sys.stderr)
+
+    print("      ⚠ Timeout aguardando build — continuando mesmo assim.", file=sys.stderr)
+    return False
 
 
 # ── Salvar rascunho no Supabase ───────────────────────────────────────────────
