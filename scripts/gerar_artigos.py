@@ -900,6 +900,33 @@ def post_to_facebook_page(article: dict, article_url: str) -> None:
         print(f"      ✗ Exceção ao postar no Facebook: {e}", file=sys.stderr)
 
 
+# ── Disparar rebuild do site ─────────────────────────────────────────────────
+
+def _trigger_site_rebuild() -> None:
+    """Dispara o workflow deploy.yml para reconstruir o site estático e atualizar o sitemap."""
+    gh_token = os.environ.get("GITHUB_TOKEN", "")
+    repo = os.environ.get("GITHUB_REPOSITORY", "")
+    if not gh_token or not repo:
+        print("      [BUILD] GITHUB_TOKEN ou GITHUB_REPOSITORY ausente — rebuild ignorado.", file=sys.stderr)
+        return
+    try:
+        resp = requests.post(
+            f"https://api.github.com/repos/{repo}/actions/workflows/deploy.yml/dispatches",
+            headers={
+                "Authorization": f"Bearer {gh_token}",
+                "Accept": "application/vnd.github+json",
+            },
+            json={"ref": "main"},
+            timeout=15,
+        )
+        if resp.status_code == 204:
+            print("      ✓ Build do site disparado — página e sitemap serão atualizados.")
+        else:
+            print(f"      ⚠ Build não disparado: {resp.status_code} {resp.text[:120]}", file=sys.stderr)
+    except Exception as e:
+        print(f"      ⚠ Erro ao disparar build: {e}", file=sys.stderr)
+
+
 # ── Salvar rascunho no Supabase ───────────────────────────────────────────────
 
 def save_draft(article: dict, category_id: str, cover_media_id: str | None, language: str = "pt", publish: bool = False) -> str:
@@ -985,12 +1012,16 @@ def main():
     post_id = save_draft(article, category_id, cover_media_id, language="pt", publish=True)
     print(f"      ✓ Artigo PT publicado! ID: {post_id}")
 
-    # 7. Postar no Facebook (artigo já está no ar)
+    # 7. Disparar rebuild para criar a página e atualizar o sitemap
+    print(f"\n[5/6] Disparando build do site...")
+    _trigger_site_rebuild()
+
+    # 8. Postar no Facebook
     article_url = f"https://montedasoliveiras.com/{article['slug']}"
     print(f"\n[5/6] Postando no Facebook...")
     post_to_facebook_page(article, article_url)
 
-    # 8. Traduzir e salvar EN/ES
+    # 9. Traduzir e salvar EN/ES
     print(f"\n[6/6] Gerando traduções (EN e ES)...")
     for target_lang in ["en", "es"]:
         print(f"\n   → Traduzindo para {target_lang.upper()}...")
