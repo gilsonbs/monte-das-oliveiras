@@ -7,8 +7,9 @@ export async function GET() {
   );
 
   const { data: posts } = await supabase
-    .from('posts_public')
-    .select('title, slug, published_at, description')
+    .from('posts')
+    .select('title, slug, published_at')
+    .eq('status', 'published')
     .eq('language', 'pt')
     .order('published_at', { ascending: false })
     .limit(20);
@@ -21,7 +22,6 @@ export async function GET() {
       <link>${site}/${post.slug}</link>
       <guid isPermaLink="true">${site}/${post.slug}</guid>
       <pubDate>${new Date(post.published_at).toUTCString()}</pubDate>
-      ${post.description ? `<description><![CDATA[${post.description}]]></description>` : ''}
     </item>`).join('\n');
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
