@@ -1,5 +1,6 @@
 name: Build e Deploy
 
+
 on:
   push:
     branches: [main]
@@ -7,8 +8,10 @@ on:
   repository_dispatch:
     types: [content-updated]
 
+
 permissions:
   contents: write
+
 
 jobs:
   build-and-deploy:
@@ -17,14 +20,17 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v4
 
+
       - name: Configurar Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
+
 
       - name: Instalar dependências
         run: npm ci
+
 
       - name: Criar .env de produção
         run: |
@@ -32,30 +38,6 @@ jobs:
           echo "PUBLIC_SUPABASE_ANON_KEY=${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}" >> .env
           echo "PUBLIC_GA_MEASUREMENT_ID=${{ secrets.PUBLIC_GA_MEASUREMENT_ID }}" >> .env
 
+
       - name: Buildar site estático
         run: npm run build
-
-      - name: Configurar Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Instalar dependências Python
-        run: pip install supabase Pillow requests
-
-      - name: Gerar cards para redes sociais
-        continue-on-error: true
-        env:
-          PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
-          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-        run: python scripts/gerar_card_social.py --recent 5
-
-      - name: Deploy via FTP para Hostgator
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./dist/
-          server-dir:
-          exclude: .git* .git*/** node_modules/**
