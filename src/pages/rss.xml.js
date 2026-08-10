@@ -1,12 +1,7 @@
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '../lib/supabase';
 
 export async function GET() {
-  const supabase = createClient(
-    import.meta.env.PUBLIC_SUPABASE_URL,
-    import.meta.env.PUBLIC_SUPABASE_ANON_KEY
-  );
-
-  const { data: posts } = await supabase
+  const { data: posts, error } = await supabase
     .from('posts')
     .select('title, slug, published_at')
     .eq('status', 'published')
@@ -15,6 +10,8 @@ export async function GET() {
     .limit(20);
 
   const site = 'https://montedasoliveiras.com';
+  const count = posts?.length ?? 0;
+  const errMsg = error ? error.message : 'none';
 
   const items = (posts || []).map(post => `
     <item>
@@ -25,6 +22,7 @@ export async function GET() {
     </item>`).join('\n');
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<!-- posts: ${count} | error: ${errMsg} -->
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Monte das Oliveiras</title>
