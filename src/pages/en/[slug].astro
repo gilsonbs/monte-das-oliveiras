@@ -42,9 +42,7 @@ const { before, after } = splitAfterParagraphs(post.content, 3);
 
 const publishedISO = new Date(post.published_at).toISOString();
 const postURL = `https://montedasoliveiras.com/en/${post.slug}`;
-const absImage = post.share_url
-  ? (post.share_url.startsWith('http') ? post.share_url : `https://montedasoliveiras.com${post.share_url}`)
-  : undefined;
+const absImage = `${import.meta.env.PUBLIC_SUPABASE_URL}/storage/v1/object/public/social-cards/${post.slug}.jpg`;
 
 const catName = post.category_slug ? getCategoryName(post.category_slug, lang) : post.category_name;
 
