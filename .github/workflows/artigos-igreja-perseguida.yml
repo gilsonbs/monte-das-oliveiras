@@ -1,8 +1,6 @@
 name: Artigos — Igreja Perseguida (Seg/Qua/Sex)
 
 on:
-  schedule:
-    - cron: '0 13 * * 1,3,5'   # 10h BRT (UTC-3) — Segunda, Quarta, Sexta
   workflow_dispatch: {}
 
 jobs:

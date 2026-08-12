@@ -1,8 +1,6 @@
 name: Artigos — Estudos Bíblicos (Ter/Qui/Sáb)
 
 on:
-  schedule:
-    - cron: '0 13 * * 2,4,6'   # 10h BRT (UTC-3) — Terça, Quinta, Sábado
   workflow_dispatch: {}
 
 jobs:

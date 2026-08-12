@@ -1,8 +1,6 @@
 name: Artigos — Devocional Diário (Seg-Sex)
 
 on:
-  schedule:
-    - cron: '0 10 * * 1-5'   # 7h BRT (UTC-3) — Segunda a Sexta
   workflow_dispatch: {}
 
 jobs:
