@@ -138,19 +138,19 @@ const fullTitle =
       const CONSENT_KEY = "mdo_ad_consent";
 
       function loadGA() {
-        if (!GA_ID || (window as any).__gaLoaded) return;
-        (window as any).__gaLoaded = true;
+        if (!GA_ID || window.__gaLoaded) return;
+        window.__gaLoaded = true;
 
         const s = document.createElement("script");
         s.async = true;
         s.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
         document.head.appendChild(s);
 
-        (window as any).dataLayer = (window as any).dataLayer || [];
+        window.dataLayer = window.dataLayer || [];
         function gtag() {
-          (window as any).dataLayer.push(arguments);
+          window.dataLayer.push(arguments);
         }
-        (window as any).gtag = gtag;
+        window.gtag = gtag;
         gtag("js", new Date());
         gtag("config", GA_ID, { anonymize_ip: true });
       }
