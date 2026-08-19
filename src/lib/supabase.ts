@@ -231,3 +231,93 @@ export async function getTagsByPostId(postId: string) {
   if (error) throw error;
   return (data ?? []).map((r: any) => r.tags).filter(Boolean);
 }
+
+export async function getTags() {
+  const { data, error } = await supabase
+    .from('tags')
+    .select('id, name, slug')
+    .order('name');
+  if (error) throw error;
+  return data as { id: string; name: string; slug: string }[];
+}
+
+export async function getTagBySlug(slug: string) {
+  const { data, error } = await supabase
+    .from('tags')
+    .select('id, name, slug')
+    .eq('slug', slug)
+    .maybeSingle();
+  if (error) throw error;
+  return data as { id: string; name: string; slug: string } | null;
+}
+
+export async function getPostsCountByTag(tagId: string, lang = 'pt'): Promise<number> {
+  const q = supabase
+    .from('post_tags')
+    .select('post_id, posts!inner(status, language)', { count: 'exact', head: true })
+    .eq('tag_id', tagId)
+    .eq('posts.status', 'published');
+
+  if (lang === 'pt') {
+    q.or('language.eq.pt,language.is.null', { foreignTable: 'posts' });
+  } else {
+    q.eq('posts.language', lang);
+  }
+
+  const { count, error } = await q;
+  if (error) {
+    if (isColumnMissingError(error)) {
+      const fallback = await supabase
+        .from('post_tags')
+        .select('post_id, posts!inner(status)', { count: 'exact', head: true })
+        .eq('tag_id', tagId)
+        .eq('posts.status', 'published');
+      return fallback.count ?? 0;
+    }
+    throw error;
+  }
+  return count ?? 0;
+}
+
+export async function getPostsByTag(tagSlug: string, page = 1, perPage = 12, lang = 'pt') {
+  const from = (page - 1) * perPage;
+  const to = from + perPage - 1;
+
+  const { data: tagData, error: tagError } = await supabase
+    .from('post_tags')
+    .select('post_id, tags!inner(slug)')
+    .eq('tags.slug', tagSlug);
+
+  if (tagError) throw tagError;
+  const postIds = (tagData ?? []).map((pt: any) => pt.post_id);
+
+  if (postIds.length === 0) {
+    return { posts: [], total: 0 };
+  }
+
+  const q = supabase
+    .from('posts_public')
+    .select('*', { count: 'exact' })
+    .in('id', postIds)
+    .order('published_at', { ascending: false })
+    .range(from, to);
+
+  if (lang !== 'pt') {
+    q.eq('language', lang);
+  }
+
+  const { data, error, count } = await q;
+  if (error) {
+    if (isColumnMissingError(error)) {
+      const fallback = await supabase
+        .from('posts_public')
+        .select('*', { count: 'exact' })
+        .in('id', postIds)
+        .order('published_at', { ascending: false })
+        .range(from, to);
+      return { posts: (fallback.data ?? []) as PostSummary[], total: fallback.count ?? 0 };
+    }
+    throw error;
+  }
+  return { posts: data as PostSummary[], total: count ?? 0 };
+}
