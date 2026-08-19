@@ -162,10 +162,9 @@ const fullTitle =
     </script>
 
     <script>
-      // Redireciona para o idioma do navegador na primeira visita
+      // Redireciona para o idioma do navegador na primeira visita (apenas na página inicial)
       const path = window.location.pathname;
-      const isLang = path.startsWith('/en') || path.startsWith('/es') || path.startsWith('/admin');
-      if (!isLang) {
+      if (path === '/') {
         const saved = localStorage.getItem('mdo_lang');
         if (!saved) {
           const br = (navigator.language || navigator.languages?.[0] || 'pt').toLowerCase();

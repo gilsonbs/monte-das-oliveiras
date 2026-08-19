@@ -5,7 +5,7 @@ export async function GET() {
     .from('posts')
     .select('title, slug, published_at')
     .eq('status', 'published')
-    .eq('language', 'pt')
+    .or('language.eq.pt,language.is.null')
     .order('published_at', { ascending: false })
     .limit(20);
 
