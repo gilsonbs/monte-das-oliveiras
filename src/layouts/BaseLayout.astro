@@ -35,7 +35,10 @@ const {
 } = Astro.props;
 
 const siteURL = "https://montedasoliveiras.com";
-const altSlug = slug ? `/${slug}` : "/";
+let altSlug = slug ? `/${slug}` : "/";
+if (altSlug !== "/" && !altSlug.endsWith("/")) {
+  altSlug += "/";
+}
 const hreflangs = [
   { hreflang: "pt-BR", href: `${siteURL}${altSlug}` },
   { hreflang: "en",    href: `${siteURL}/en${altSlug}` },
@@ -59,7 +62,7 @@ const fullTitle =
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="google-site-verification"
-      content="XXQFkjDOD2t9oUYJl1Z2-b45tHK9CS6Ov9F-nN10dx0"
+      content={import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION || "XXQFkjDOD2t9oUYJl1Z2-b45tHK9CS6Ov9F-nN10dx0"}
     />
     {hreflangs.map((h) => <link rel="alternate" hreflang={h.hreflang} href={h.href} />)}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

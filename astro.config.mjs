@@ -6,5 +6,6 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://montedasoliveiras.com',
   output: 'static',
+  trailingSlash: 'always',
   integrations: [sitemap()],
 });

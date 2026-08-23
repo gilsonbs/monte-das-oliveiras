@@ -18,6 +18,8 @@
     "@tiptap/core": "^3.27.4",
     "@tiptap/extension-image": "^3.27.4",
     "@tiptap/extension-link": "^3.27.4",
+    "@tiptap/extension-text-align": "^3.27.4",
+    "@tiptap/extension-underline": "^3.27.4",
     "@tiptap/starter-kit": "^3.27.4",
     "astro": "^7.0.9"
   }

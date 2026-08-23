@@ -30,11 +30,16 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
           <div class="toolbar" id="toolbar">
             <button type="button" data-cmd="bold" title="Negrito"><b>B</b></button>
             <button type="button" data-cmd="italic" title="Itálico"><i>I</i></button>
+            <button type="button" data-cmd="underline" title="Sublinhado"><u>U</u></button>
             <button type="button" data-cmd="h2" title="Título de seção">H2</button>
             <button type="button" data-cmd="h3" title="Subtítulo">H3</button>
             <button type="button" data-cmd="blockquote" title="Citação">"</button>
             <button type="button" data-cmd="link" title="Link">🔗</button>
             <button type="button" data-cmd="bulletList" title="Lista">≡</button>
+            <button type="button" data-cmd="align-left" title="Alinhar à esquerda">←</button>
+            <button type="button" data-cmd="align-center" title="Centralizar">↔</button>
+            <button type="button" data-cmd="align-right" title="Alinhar à direita">→</button>
+            <button type="button" data-cmd="align-justify" title="Justificar">▤</button>
             <button type="button" data-cmd="image" title="Inserir imagem">🖼</button>
           </div>
           <input type="file" id="inline-img-input" accept="image/*" hidden />
@@ -116,6 +121,8 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
   import StarterKit from '@tiptap/starter-kit';
   import Link from '@tiptap/extension-link';
   import ImageExt from '@tiptap/extension-image';
+  import Underline from '@tiptap/extension-underline';
+  import TextAlign from '@tiptap/extension-text-align';
 
   const supabase = createSupabaseBrowserClient();
   const postId = new URLSearchParams(window.location.search).get('id');
@@ -148,12 +155,50 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
   const contentHidden = document.getElementById('content') as HTMLInputElement;
   const editor = new Editor({
     element: document.getElementById('editor')!,
-    extensions: [StarterKit, Link.configure({ openOnClick: false }), ImageExt],
+    extensions: [
+      StarterKit,
+      Link.configure({ openOnClick: false }),
+      ImageExt,
+      Underline,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
+    ],
     content: '<p></p>',
     onUpdate: ({ editor }) => {
       contentHidden.value = editor.getHTML();
     },
+    onTransaction: () => {
+      updateToolbarActiveStates();
+    },
   });
+
+  function updateToolbarActiveStates() {
+    const buttons = document.querySelectorAll('#toolbar button[data-cmd]');
+    buttons.forEach((btnEl) => {
+      const btn = btnEl as HTMLButtonElement;
+      const cmd = btn.dataset.cmd;
+      let active = false;
+
+      if (cmd === 'bold') active = editor.isActive('bold');
+      else if (cmd === 'italic') active = editor.isActive('italic');
+      else if (cmd === 'underline') active = editor.isActive('underline');
+      else if (cmd === 'h2') active = editor.isActive('heading', { level: 2 });
+      else if (cmd === 'h3') active = editor.isActive('heading', { level: 3 });
+      else if (cmd === 'blockquote') active = editor.isActive('blockquote');
+      else if (cmd === 'bulletList') active = editor.isActive('bulletList');
+      else if (cmd === 'align-left') active = editor.isActive({ textAlign: 'left' });
+      else if (cmd === 'align-center') active = editor.isActive({ textAlign: 'center' });
+      else if (cmd === 'align-right') active = editor.isActive({ textAlign: 'right' });
+      else if (cmd === 'align-justify') active = editor.isActive({ textAlign: 'justify' });
+
+      if (active) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
 
   document.getElementById('toolbar')!.addEventListener('click', (e) => {
     const btn = (e.target as HTMLElement).closest('button[data-cmd]') as HTMLButtonElement | null;
@@ -163,10 +208,15 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 
     if (cmd === 'bold') chain.toggleBold().run();
     else if (cmd === 'italic') chain.toggleItalic().run();
+    else if (cmd === 'underline') chain.toggleUnderline().run();
     else if (cmd === 'h2') chain.toggleHeading({ level: 2 }).run();
     else if (cmd === 'h3') chain.toggleHeading({ level: 3 }).run();
     else if (cmd === 'blockquote') chain.toggleBlockquote().run();
     else if (cmd === 'bulletList') chain.toggleBulletList().run();
+    else if (cmd === 'align-left') chain.setTextAlign('left').run();
+    else if (cmd === 'align-center') chain.setTextAlign('center').run();
+    else if (cmd === 'align-right') chain.setTextAlign('right').run();
+    else if (cmd === 'align-justify') chain.setTextAlign('justify').run();
     else if (cmd === 'link') {
       const url = window.prompt('URL do link:');
       if (url) chain.setLink({ href: url }).run();
@@ -481,7 +531,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     width: 32px; height: 32px; border: 1px solid transparent; background: transparent; border-radius: 5px;
     font-family: var(--font-ui); font-size: 13px; font-weight: 600; color: #5F5E5A; cursor: pointer;
   }
-  .toolbar button:hover { background: var(--olive-bg, #EEF1E4); border-color: #E4E0D3; }
+  .toolbar button:hover, .toolbar button.active { background: var(--olive-bg, #EEF1E4); border-color: #E4E0D3; color: var(--olive-deep); }
 
   .tiptap-editor { min-height: 320px; font-family: var(--font-ui); font-size: 14px; line-height: 1.7; color: #3A362E; }
   .tiptap-editor :global(.ProseMirror) { min-height: 320px; outline: none; }
