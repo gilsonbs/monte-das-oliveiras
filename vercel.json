@@ -2,5 +2,10 @@
   "framework": "astro",
   "buildCommand": "node scripts/vercel-build.mjs",
   "outputDirectory": "dist",
-  "installCommand": "npm ci"
+  "installCommand": "npm ci",
+  "env": {
+    "PUBLIC_SUPABASE_URL": "https://cgpowoygdlptumbvjixo.supabase.co",
+    "PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_W5EEh1O6kKSdJ3mlyqZIFA_Uxgte2wA",
+    "PUBLIC_GA_MEASUREMENT_ID": "G-FRF66SPD2W"
+  }
 }
