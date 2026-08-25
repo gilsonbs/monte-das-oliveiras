@@ -19,7 +19,6 @@ on:
 
 permissions:
   contents: read
-  actions: write
 
 jobs:
   gerar:
@@ -49,7 +48,6 @@ jobs:
           FACEBOOK_APP_SECRET:          ${{ secrets.FACEBOOK_APP_SECRET }}
           FACEBOOK_APP_ID:              "1092693706771528"
           FACEBOOK_PAGE_ID:             "622708424257879"
-          GITHUB_TOKEN:                 ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPOSITORY:            ${{ github.repository }}
+          VERCEL_DEPLOY_HOOK_URL:       ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
           CATEGORY_SLUG:                ${{ inputs.category }}
         run: python scripts/gerar_artigos.py

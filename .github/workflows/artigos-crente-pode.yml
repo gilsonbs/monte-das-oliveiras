@@ -26,6 +26,7 @@ jobs:
           GROQ_API_KEY:         ${{ secrets.GROQ_API_KEY }}
           GEMINI_API_KEY:       ${{ secrets.GEMINI_API_KEY }}
           PEXELS_API_KEY:       ${{ secrets.PEXELS_API_KEY }}
-          CEREBRAS_API_KEY:     ${{ secrets.CEREBRAS_API_KEY }}
-          CATEGORY_SLUG:        crente-pode
+          CEREBRAS_API_KEY:         ${{ secrets.CEREBRAS_API_KEY }}
+          VERCEL_DEPLOY_HOOK_URL:   ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+          CATEGORY_SLUG:            crente-pode
         run: python scripts/gerar_artigos.py

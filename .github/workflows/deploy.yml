@@ -1,4 +1,4 @@
-name: Build e Deploy
+name: Social Cards e Deploy
 
 on:
   push:
@@ -8,32 +8,14 @@ on:
     types: [content-updated]
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  build-and-deploy:
+  social-cards-e-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
-
-      - name: Configurar Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Instalar dependências
-        run: npm ci --legacy-peer-deps
-
-      - name: Criar .env de produção
-        run: |
-          echo "PUBLIC_SUPABASE_URL=${{ secrets.PUBLIC_SUPABASE_URL }}" >> .env
-          echo "PUBLIC_SUPABASE_ANON_KEY=${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}" >> .env
-          echo "PUBLIC_GA_MEASUREMENT_ID=${{ secrets.PUBLIC_GA_MEASUREMENT_ID }}" >> .env
-
-      - name: Buildar site estático
-        run: npm run build
 
       - name: Configurar Python
         uses: actions/setup-python@v5
@@ -50,13 +32,9 @@ jobs:
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
         run: python scripts/gerar_card_social.py --recent 5
 
-      - name: Deploy via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./dist/
-          server-dir: 
-          timeout: 600000
-          parallel: 3
+      - name: Acionar rebuild no Vercel
+        if: github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch'
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_URL }}")
+          echo "Vercel Deploy Hook status: $STATUS"
+          [ "$STATUS" = "201" ] || [ "$STATUS" = "200" ] && echo "✓ Deploy acionado" || echo "⚠ Status inesperado: $STATUS"
