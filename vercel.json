@@ -1,6 +1,6 @@
 {
   "framework": "astro",
-  "buildCommand": "npm run build",
+  "buildCommand": "echo \"PUBLIC_SUPABASE_URL=$PUBLIC_SUPABASE_URL\" >> .env && echo \"PUBLIC_SUPABASE_ANON_KEY=$PUBLIC_SUPABASE_ANON_KEY\" >> .env && echo \"PUBLIC_GA_MEASUREMENT_ID=$PUBLIC_GA_MEASUREMENT_ID\" >> .env && npm run build",
   "outputDirectory": "dist",
   "installCommand": "npm ci"
 }
