@@ -1,6 +1,6 @@
 {
   "framework": "astro",
-  "buildCommand": "sh scripts/vercel-build.sh",
+  "buildCommand": "node scripts/vercel-build.mjs",
   "outputDirectory": "dist",
   "installCommand": "npm ci"
 }
