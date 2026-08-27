@@ -7,7 +7,11 @@ export default defineConfig({
   site: 'https://montedasoliveiras.com',
   output: 'static',
   trailingSlash: 'always',
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      filter: (page) => !page.includes('/admin/'),
+    }),
+  ],
   vite: {
     define: {
       'import.meta.env.PUBLIC_SUPABASE_URL':      JSON.stringify(process.env.PUBLIC_SUPABASE_URL      ?? ''),
