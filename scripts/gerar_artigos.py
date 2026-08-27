@@ -381,8 +381,8 @@ Retorne JSON: {{"indice": 0, "palavra_chave": "palavra-chave principal para SEO"
 
 # ── Gemini: gerar artigo completo (~2800 palavras) ────────────────────────────
 
-GEM_PROMPT = """Você é um redator especializado em conteúdo cristão evangélico para montedasoliveiras.com.
-Escreva um artigo COMPLETO, ORIGINAL e PROFUNDO com as especificações abaixo.
+GEM_PROMPT = """Você é um pastor e teólogo evangélico brasileiro com 20 anos de ministério, responsável pela curadoria editorial do montedasoliveiras.com.
+Escreva um artigo COMPLETO, APROFUNDADO e COM AUTORIDADE PASTORAL sobre o tema abaixo.
 
 TEMA DA NOTÍCIA: {tema}
 ESTILO DA CATEGORIA: {estilo}
@@ -391,58 +391,67 @@ PALAVRA-CHAVE PRINCIPAL: "{palavra_chave}"
 INSTRUÇÕES ESPECÍFICAS DESTA CATEGORIA (PRIORIDADE MÁXIMA — siga à risca):
 {instrucoes_especificas}
 
-LINKS INTERNOS (inclua 2 com chamadas criativas no corpo do texto):
+LINKS INTERNOS (inclua 2 no corpo do texto com anchor text descritivo):
 {links_internos}
 
-REGRAS OBRIGATÓRIAS:
-- Mínimo de 1.300 palavras de conteúdo real (não conte tags HTML)
-- Tom conversacional, pastoral e informativo — jamais frio ou acadêmico
-- A palavra-chave deve aparecer nos primeiros 2 parágrafos e em pelo menos 1 título H2 ou H3
-- Densidade da palavra-chave: ~1% (mínimo de 10 ocorrências naturais, nunca forçadas)
-- Além da palavra-chave principal, use variações semânticas e termos relacionados
-- Parágrafos de 80 a 150 palavras — bem desenvolvidos, ricos em detalhes, nunca rasos
-- No mínimo 4 títulos H2 informativos e descritivos (SEM numeração nos títulos)
-- No mínimo 3 referências bíblicas com versículo completo em blockquote
-- Pelo menos 1 lista <ul> com dados, passos ou comparações relevantes
-- Conecte o tema com a realidade espiritual do crente brasileiro
-- Inclua links internos com chamadas criativas para os artigos listados acima
-- Termine com 2 perguntas que incentivem comentários dos leitores
-- Seção de FAQ ao final com 4 perguntas e respostas detalhadas
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+REGRAS DE CONTEÚDO (o Google avalia cada uma)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- MÍNIMO DE 1.800 palavras de conteúdo real (não conte tags HTML) — artigos rasos não ranqueiam
+- Demonstre EXPERTISE REAL: cite contexto histórico, cultural ou teológico que um leitor casual não saberia
+- Cada H2 deve introduzir uma ideia NOVA, não repetir o que o parágrafo anterior disse
+- Parágrafos de 80 a 160 palavras — desenvolvidos, analíticos, nunca superficiais
+- Cite versículos com CAPÍTULO E VERSÍCULO EXATOS (ex: Mateus 24:6-8) — nunca invente versículos
+- No mínimo 4 títulos H2 informativos e específicos (SEM numeração, SEM "Conclusão" como H2)
+- No mínimo 4 citações bíblicas em <blockquote>, cada uma com a referência exata
+- Pelo menos 1 lista <ul> com pontos concretos e específicos (não genéricos)
+- Inclua UMA perspectiva pastoral única: algo que diferencia a análise bíblica deste site de uma busca genérica no Google
+- Inclua links internos com anchor text descritivo (não use "clique aqui" ou "leia mais")
+- Termine com 2 perguntas abertas que convidem o leitor a comentar sua experiência pessoal
+- Seção de FAQ ao final com 4 perguntas REAIS que pessoas buscam no Google sobre o tema
 
-ESTRUTURA DO ARTIGO:
-1. Introdução impactante — contextualiza e apresenta a palavra-chave
-2. Desenvolvimento — mínimo 3 seções H2 com análise bíblica
-3. Aplicação prática para o crente brasileiro
-4. Links internos com chamadas criativas
-5. Conclusão com oração ou chamada à ação
-6. Perguntas para comentários
-7. FAQ (H2 "Perguntas Frequentes" + H3 por pergunta)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ESTRUTURA OBRIGATÓRIA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Introdução (2 parágrafos) — contextualiza o tema, apresenta a palavra-chave, estabelece por que isso importa para o crente hoje
+2. Bloco "O que você vai aprender" — lista <ul> com 4 a 6 tópicos concretos que o artigo vai abordar (logo após a introdução)
+3. Desenvolvimento — mínimo 3 seções H2 com análise bíblica aprofundada
+4. Perspectiva pastoral — H2 com insight teológico exclusivo, algo que vai além do óbvio
+5. Aplicação prática — como o crente brasileiro pode aplicar isso na vida real
+6. Links internos contextualizados
+7. Conclusão + oração curta e específica para o tema (3 a 5 linhas)
+8. 2 perguntas para comentários
+9. FAQ — H2 "Perguntas Frequentes" + H3 para cada pergunta
 
 FORMATO HTML (use APENAS estas tags):
 <p>, <h2>, <h3>, <blockquote>, <ul>, <ol>, <li>, <strong>, <em>, <a href="URL">texto</a>
 NÃO use: <h1>, <div>, <section>, <html>, <body>, <br>
 
-TÍTULO — REGRAS DE OURO (leia com atenção):
-O título é o elemento mais importante. Ele precisa parar o leitor no meio do scroll.
-Use UM dos estilos abaixo (escolha o que melhor se encaixa no tema):
-  • POLÊMICO/CONTROVERSO: "A Verdade que Ninguém Quer Ouvir Sobre [tema]"
-  • REVELAÇÃO: "O Que a Bíblia Realmente Diz Sobre [tema] (e a maioria ignora)"
-  • URGÊNCIA: "[Evento atual] Confirma o Que a Bíblia Já Avisou Há Séculos"
-  • NÚMERO + PROMESSA: "7 Sinais de Que [tema] Está Mais Perto do Que Você Pensa"
-  • DESAFIO: "Você Está Pronto Para o Que Está por Vir? A Bíblia Responde"
-  • EMOÇÃO: "Por Que Deus Permite a Dor? A Resposta Que Vai Mudar Sua Perspectiva"
-  • CURIOSIDADE: "O Segredo Escondido em [passagem/personagem] Que Vai Te Surpreender"
-Evite títulos genéricos, neutros ou acadêmicos. O título deve gerar curiosidade ou leve polêmica.
-(Para a categoria crente-pode, mantenha o formato "Crente pode [pergunta]?" — escolha um tema polêmico.)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TÍTULO — REGRAS ANTI-CLICKBAIT (importante para o Google)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+O título deve descrever EXATAMENTE o que o artigo entrega. O Google penaliza títulos enganosos.
+PROIBIDO usar: "A Verdade que Ninguém Quer Ouvir", "O Segredo Escondido", "Você Não Vai Acreditar",
+"Chocante", "O Que a Maioria Ignora", "Surpreendente".
+
+Use UM dos estilos aprovados pelo Google:
+  • ESPECÍFICO + PALAVRA-CHAVE: "O Que a Bíblia Ensina Sobre [tema específico]"
+  • PERGUNTA REAL: "Por Que [evento/situação]? A Perspectiva Bíblica"
+  • PERSONAGEM + LIÇÃO: "[Nome bíblico]: Lições de [tema] para o Crente Hoje"
+  • PRÁTICO: "Como [ação concreta] Segundo as Escrituras"
+  • NOTÍCIA + BÍBLIA: "[Evento específico]: O Que as Profecias Dizem"
+  • DÚVIDA COMUM: "Crente pode [ação]? O Que a Bíblia Responde" (apenas categoria crente-pode)
+
+O título deve ter entre 50 e 75 caracteres. Inclua a palavra-chave principal no título.
 
 RETORNE APENAS JSON VÁLIDO com esta estrutura:
 {{
-  "title": "Título criativo, impactante ou polêmico (até 80 chars)",
-  "seo_title": "Título SEO 50-60 chars exatos com a palavra-chave",
+  "title": "Título específico e preciso com a palavra-chave (50-75 chars)",
+  "seo_title": "Título SEO 50-60 chars exatos com a palavra-chave no início",
   "slug": "slug-sem-acento-3-a-6-palavras",
-  "excerpt": "Resumo do valor do artigo em até 200 chars",
-  "meta_description": "Meta description 130-155 chars, verbo de ação, convida ao clique",
-  "read_time_minutes": 7,
+  "excerpt": "Resumo concreto do que o leitor vai aprender, até 200 chars",
+  "meta_description": "Meta description 130-155 chars: descreve o conteúdo real, inclui palavra-chave, convida ao clique sem clickbait",
+  "read_time_minutes": 9,
   "tags": "tag1, tag2, tag3, tag4, tag5, tag6, tag7, tag8",
   "pexels_query": "3 to 5 english words for cover photo search on Pexels",
   "infographic": {{
@@ -464,10 +473,10 @@ NUNCA use sequências de escape unicode — isso gera JSON inválido.
     "@context": "https://schema.org",
     "@type": "FAQPage",
     "mainEntity": [
-      {{"@type": "Question", "name": "Pergunta?", "acceptedAnswer": {{"@type": "Answer", "text": "Resposta com mínimo 3 frases."}}}}
+      {{"@type": "Question", "name": "Pergunta real que alguém buscaria no Google?", "acceptedAnswer": {{"@type": "Answer", "text": "Resposta completa com mínimo 3 frases. Cite versículos bíblicos quando aplicável."}}}}
     ]
   }},
-  "content": "<p>Conteúdo HTML completo com no mínimo 1.300 palavras...</p>"
+  "content": "<p>Conteúdo HTML completo com no mínimo 1.800 palavras...</p>"
 }}"""
 
 
@@ -981,13 +990,19 @@ def main():
     print(f"      ✓ Motivo: {selected.get('motivo', '')[:80]}")
 
     # 4. Gerar artigo
-    print(f"\n[2/4] Gerando artigo com Gemini 2.0 Flash (mín. 2.800 palavras)...")
+    MIN_WORDS = 1_500
+    print(f"\n[2/4] Gerando artigo (mín. {MIN_WORDS} palavras)...")
     article = generate_article(noticia, palavra_chave, internal_posts)
     word_count = len(re.findall(r"\w+", re.sub(r"<[^>]+>", "", article.get("content", ""))))
     print(f"      ✓ Título: {article['title'][:70]}")
     print(f"      ✓ Slug:   {article['slug']}")
     print(f"      ✓ Palavras: ~{word_count} | Leitura: {article.get('read_time_minutes', '?')} min")
     print(f"      ✓ Tags: {article.get('tags', '')[:70]}")
+
+    if word_count < MIN_WORDS:
+        print(f"\n[AVISO] Artigo com apenas {word_count} palavras (mínimo: {MIN_WORDS}). "
+              "Descartado — conteúdo raso prejudica o SEO.", file=sys.stderr)
+        sys.exit(0)
 
     # Verifica slug duplicado antes de continuar
     if article["slug"] in recent_slugs:
