@@ -22,9 +22,39 @@ if (!category) {
 
 const { posts, total } = await getPostsByCategory(slug!, page, PER_PAGE);
 const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
+
+const siteURL = 'https://montedasoliveiras.com';
+const catURL = `${siteURL}/categoria/${slug}/`;
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: category.name,
+    description: `Artigos sobre ${category.name} no Monte das Oliveiras`,
+    url: catURL,
+    inLanguage: 'pt-BR',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: category.name,
+    url: catURL,
+    numberOfItems: total,
+    itemListElement: posts.map((post, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: `${siteURL}/${post.slug}/`,
+      name: post.title,
+    })),
+  },
+];
 ---
 
-<BaseLayout title={category.name} description={`Posts sobre ${category.name} — Monte das Oliveiras`}>
+<BaseLayout
+  title={category.name}
+  description={`Artigos sobre ${category.name} — estudos bíblicos e vida cristã no Monte das Oliveiras.`}
+  jsonLd={jsonLd}
+>
   <div class="wrap">
     <div class="page-head">
       <span class="eyebrow">Categoria</span>

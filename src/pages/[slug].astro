@@ -95,7 +95,7 @@ const jsonLd = [
   {post.cover_url && (
     <div class="cover wrap">
       <div class="cover-img">
-        <img src={post.cover_url} alt={post.alt_text || post.title} width="1200" height="675" />
+        <img src={post.cover_url} alt={post.alt_text || post.title} width="1200" height="675" loading="eager" fetchpriority="high" />
       </div>
     </div>
   )}

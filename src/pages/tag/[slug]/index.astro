@@ -21,9 +21,39 @@ if (!tag) {
 
 const { posts, total } = await getPostsByTag(slug!, page, PER_PAGE);
 const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
+
+const siteURL = 'https://montedasoliveiras.com';
+const tagURL = `${siteURL}/tag/${slug}/`;
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: tag.name,
+    description: `Artigos marcados com ${tag.name} no Monte das Oliveiras`,
+    url: tagURL,
+    inLanguage: 'pt-BR',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: tag.name,
+    url: tagURL,
+    numberOfItems: total,
+    itemListElement: posts.map((post, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: `${siteURL}/${post.slug}/`,
+      name: post.title,
+    })),
+  },
+];
 ---
 
-<BaseLayout title={`Tag: ${tag.name}`} description={`Artigos sobre ${tag.name} — Monte das Oliveiras`}>
+<BaseLayout
+  title={`${tag.name} — Artigos | Monte das Oliveiras`}
+  description={`Artigos sobre ${tag.name} — estudos bíblicos e vida cristã no Monte das Oliveiras.`}
+  jsonLd={jsonLd}
+>
   <div class="wrap">
     <div class="page-head">
       <span class="eyebrow">Tag</span>

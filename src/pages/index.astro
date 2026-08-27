@@ -34,16 +34,18 @@ const feedPosts = recent.filter((p) => !featuredSlugs.has(p.slug)).slice(6);
   }}
 >
 
+  <h1 class="sr-only">Monte das Oliveiras — Estudos Bíblicos, Escatologia e Vida Cristã</h1>
+
   {heroPost && (
     <section class="hero-section">
       <div class="hero wrap">
         <a href={`/${heroPost.slug}`} class="hero-main">
           <div class="hero-main-img">
-            {heroPost.cover_url && <img src={heroPost.cover_url} alt={heroPost.alt_text || heroPost.title} width="1200" height="675" />}
+            {heroPost.cover_url && <img src={heroPost.cover_url} alt={heroPost.alt_text || heroPost.title} width="1200" height="675" loading="eager" fetchpriority="high" />}
           </div>
           <div class="hero-main-overlay">
             {heroPost.category_name && <span class="eyebrow hero-eyebrow">{heroPost.category_name}</span>}
-            <h1>{heroPost.title}</h1>
+            <h2 class="hero-title">{heroPost.title}</h2>
             {heroPost.excerpt && <p>{heroPost.excerpt}</p>}
             <div class="hero-meta">
               {heroPost.read_time_minutes && <span>{heroPost.read_time_minutes} min de leitura</span>}
@@ -134,7 +136,7 @@ const feedPosts = recent.filter((p) => !featuredSlugs.has(p.slug)).slice(6);
     position: relative; z-index: 1; padding: 28px 30px 30px; width: 100%;
     background: linear-gradient(0deg, rgba(20,23,38,.92) 0%, rgba(20,23,38,.55) 60%, transparent 100%);
   }
-  .hero-main h1 { font-family: var(--font-display); font-weight: 500; font-size: 32px; line-height: 1.16; color: #F6F1E1; margin: 0 0 12px; }
+  .hero-title { font-family: var(--font-display); font-weight: 500; font-size: 32px; line-height: 1.16; color: #F6F1E1; margin: 0 0 12px; }
   .hero-main p { color: #C5C0AA; font-size: 14px; max-width: 50ch; margin: 0 0 14px; }
   .hero-meta { font-family: var(--font-ui); font-size: 12px; color: #B9B4A0; }
 
