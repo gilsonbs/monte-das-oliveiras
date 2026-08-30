@@ -1024,24 +1024,12 @@ def main():
     print(f"      ✓ Artigo PT publicado! ID: {post_id}")
 
     # 7. Disparar rebuild para criar a página e atualizar o sitemap
-    print(f"\n[5/6] Disparando build do site...")
+    print(f"\n[4/5] Disparando build do site...")
     _trigger_site_rebuild()
 
-    # 8. Postar no Facebook
+    # 8. Traduzir e salvar EN/ES
     article_url = f"https://montedasoliveiras.com/{article['slug']}"
-    print(f"\n[5/6] Postando no Facebook...")
-    fb_posted = post_to_facebook_page(article, article_url)
-    if fb_posted and post_id != "?":
-        try:
-            supabase.table("posts").update(
-                {"facebook_reshared_at": datetime.now(timezone.utc).isoformat()}
-            ).eq("id", post_id).execute()
-            print("      ✓ facebook_reshared_at registrado no Supabase.")
-        except Exception as e:
-            print(f"      [FB] Aviso ao registrar facebook_reshared_at: {e}", file=sys.stderr)
-
-    # 9. Traduzir e salvar EN/ES
-    print(f"\n[6/6] Gerando traduções (EN e ES)...")
+    print(f"\n[5/5] Gerando traduções (EN e ES)...")
     for target_lang in ["en", "es"]:
         print(f"\n   → Traduzindo para {target_lang.upper()}...")
         try:
@@ -1062,9 +1050,9 @@ def main():
             print(f"      ✗ Erro na tradução {target_lang.upper()}: {e}", file=sys.stderr)
 
     print(f"\n{'=' * 60}")
-    print(f"✓ Concluído! Artigo publicado em:")
-    print(f"  {article_url}")
-    print(f"  (editar: https://montedasoliveiras.com/admin/posts/editor?id={post_id})")
+    print(f"✓ Concluído! Artigo publicado em: {article_url}")
+    print(f"  Editar: https://montedasoliveiras.com/admin/posts/editor?id={post_id}")
+    print(f"  Facebook: pendente — rode postar_facebook.py após o build do Vercel.")
     print("=" * 60)
 
 
