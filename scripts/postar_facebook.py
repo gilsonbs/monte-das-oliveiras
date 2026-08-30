@@ -32,15 +32,36 @@ def get_pending_post():
     return resp.data[0] if resp.data else None
 
 
+def get_image_url(slug: str) -> str | None:
+    resp = (
+        supabase.table("posts_public")
+        .select("share_url, cover_url")
+        .eq("slug", slug)
+        .limit(1)
+        .execute()
+    )
+    if resp.data:
+        d = resp.data[0]
+        return d.get("share_url") or d.get("cover_url")
+    return None
+
+
 def post_to_facebook(post: dict) -> bool:
-    url   = f"{SITE_URL}/{post['slug']}"
-    title = post["title"]
+    url     = f"{SITE_URL}/{post['slug']}"
+    title   = post["title"]
     excerpt = (post.get("excerpt") or "").strip()
     message = f"{title}\n\n{excerpt}\n\n👉 {url}" if excerpt else f"{title}\n\n👉 {url}"
 
+    image_url = get_image_url(post["slug"])
+    print(f"  Imagem: {image_url or '(nenhuma)'}")
+
+    payload = {"message": message, "link": url, "access_token": PAGE_TOKEN}
+    if image_url:
+        payload["picture"] = image_url
+
     resp = requests.post(
         f"https://graph.facebook.com/v20.0/{PAGE_ID}/feed",
-        data={"message": message, "link": url, "access_token": PAGE_TOKEN},
+        data=payload,
         timeout=30,
     )
     result = resp.json()
