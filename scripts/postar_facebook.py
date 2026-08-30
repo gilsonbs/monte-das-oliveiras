@@ -20,10 +20,10 @@ supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def get_pending_post():
     resp = (
-        supabase.table("posts_public")
+        supabase.table("posts")
         .select("id, slug, title, excerpt")
         .eq("status", "published")
-        .eq("language", "pt")
+        .or_("language.eq.pt,language.is.null")
         .is_("facebook_reshared_at", "null")
         .order("published_at", desc=False)   # mais antigo primeiro
         .limit(1)
