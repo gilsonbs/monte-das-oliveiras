@@ -32,18 +32,17 @@ def get_pending_post():
     return resp.data[0] if resp.data else None
 
 
-def get_image_url(slug: str) -> str | None:
-    resp = (
-        supabase.table("posts_public")
-        .select("share_url, cover_url")
-        .eq("slug", slug)
-        .limit(1)
-        .execute()
+def force_scrape(url: str):
+    """Força o Facebook a re-scrape a URL e atualizar o cache do og:image."""
+    resp = requests.post(
+        "https://graph.facebook.com/",
+        params={"id": url, "scrape": "true", "access_token": PAGE_TOKEN},
+        timeout=30,
     )
-    if resp.data:
-        d = resp.data[0]
-        return d.get("share_url") or d.get("cover_url")
-    return None
+    result = resp.json()
+    images = result.get("og_object", {}).get("image", [])
+    og_image = images[0].get("url") if images else None
+    print(f"  Scrape OK. og:image = {og_image or '(não encontrado)'}")
 
 
 def post_to_facebook(post: dict) -> bool:
@@ -52,16 +51,12 @@ def post_to_facebook(post: dict) -> bool:
     excerpt = (post.get("excerpt") or "").strip()
     message = f"{title}\n\n{excerpt}\n\n👉 {url}" if excerpt else f"{title}\n\n👉 {url}"
 
-    image_url = get_image_url(post["slug"])
-    print(f"  Imagem: {image_url or '(nenhuma)'}")
-
-    payload = {"message": message, "link": url, "access_token": PAGE_TOKEN}
-    if image_url:
-        payload["picture"] = image_url
+    print(f"  Forçando scrape da URL...")
+    force_scrape(url)
 
     resp = requests.post(
         f"https://graph.facebook.com/v20.0/{PAGE_ID}/feed",
-        data=payload,
+        data={"message": message, "link": url, "access_token": PAGE_TOKEN},
         timeout=30,
     )
     result = resp.json()
