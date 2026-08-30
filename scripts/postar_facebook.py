@@ -23,12 +23,13 @@ def get_pending_post():
         supabase.table("posts")
         .select("id, slug, title, excerpt")
         .eq("status", "published")
-        .or_("language.eq.pt,language.is.null")
+        .eq("language", "pt")
         .is_("facebook_reshared_at", "null")
         .order("published_at", desc=False)   # mais antigo primeiro
         .limit(1)
         .execute()
     )
+    print(f"  Artigos pendentes encontrados: {len(resp.data)}")
     return resp.data[0] if resp.data else None
 
 
