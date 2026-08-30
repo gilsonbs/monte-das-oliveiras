@@ -900,6 +900,7 @@ def post_to_facebook_page(article: dict, article_url: str) -> None:
         result = resp.json()
         if "id" in result:
             print(f"      ✓ Postado no Facebook! ID: {result['id']}")
+            return True
         elif "error" in result:
             err = result["error"]
             print(f"      ✗ Erro Facebook [{err.get('code')}]: {err.get('message')}", file=sys.stderr)
@@ -907,6 +908,7 @@ def post_to_facebook_page(article: dict, article_url: str) -> None:
             print(f"      ✗ Resposta inesperada: {result}", file=sys.stderr)
     except Exception as e:
         print(f"      ✗ Exceção ao postar no Facebook: {e}", file=sys.stderr)
+    return False
 
 
 # ── Disparar rebuild do site ─────────────────────────────────────────────────
@@ -1028,7 +1030,15 @@ def main():
     # 8. Postar no Facebook
     article_url = f"https://montedasoliveiras.com/{article['slug']}"
     print(f"\n[5/6] Postando no Facebook...")
-    post_to_facebook_page(article, article_url)
+    fb_posted = post_to_facebook_page(article, article_url)
+    if fb_posted and post_id != "?":
+        try:
+            supabase.table("posts").update(
+                {"facebook_reshared_at": datetime.now(timezone.utc).isoformat()}
+            ).eq("id", post_id).execute()
+            print("      ✓ facebook_reshared_at registrado no Supabase.")
+        except Exception as e:
+            print(f"      [FB] Aviso ao registrar facebook_reshared_at: {e}", file=sys.stderr)
 
     # 9. Traduzir e salvar EN/ES
     print(f"\n[6/6] Gerando traduções (EN e ES)...")
