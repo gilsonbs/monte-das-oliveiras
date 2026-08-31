@@ -14,9 +14,10 @@ export default defineConfig({
   ],
   vite: {
     define: {
-      'import.meta.env.PUBLIC_SUPABASE_URL':      JSON.stringify(process.env.PUBLIC_SUPABASE_URL      ?? ''),
-      'import.meta.env.PUBLIC_SUPABASE_ANON_KEY': JSON.stringify(process.env.PUBLIC_SUPABASE_ANON_KEY ?? ''),
-      'import.meta.env.PUBLIC_GA_MEASUREMENT_ID': JSON.stringify(process.env.PUBLIC_GA_MEASUREMENT_ID ?? ''),
+      'import.meta.env.PUBLIC_SUPABASE_URL':         JSON.stringify(process.env.PUBLIC_SUPABASE_URL         ?? ''),
+      'import.meta.env.PUBLIC_SUPABASE_ANON_KEY':    JSON.stringify(process.env.PUBLIC_SUPABASE_ANON_KEY    ?? ''),
+      'import.meta.env.PUBLIC_GA_MEASUREMENT_ID':    JSON.stringify(process.env.PUBLIC_GA_MEASUREMENT_ID    ?? ''),
+      'import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK_URL': JSON.stringify(process.env.VERCEL_DEPLOY_HOOK_URL   ?? ''),
     },
   },
 });

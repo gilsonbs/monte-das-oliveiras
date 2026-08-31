@@ -427,6 +427,16 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       await upsertTagsAndLink(savedId!, tagsText);
 
       saveStatus.textContent = 'Salvo!';
+
+      if (status === 'published') {
+        const hookUrl = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK_URL;
+        if (hookUrl) {
+          saveStatus.textContent = 'Publicando...';
+          await fetch(hookUrl, { method: 'POST' }).catch(() => {});
+          saveStatus.textContent = 'Publicado! O site será atualizado em ~1 min.';
+        }
+      }
+
       window.location.href = `/admin/posts/editor?id=${savedId}`;
     } catch (err: any) {
       saveStatus.textContent = '';
