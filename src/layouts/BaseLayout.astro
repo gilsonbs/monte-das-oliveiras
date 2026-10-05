@@ -35,6 +35,17 @@ const {
 } = Astro.props;
 
 const siteURL = "https://montedasoliveiras.com";
+
+function normalizeSiteURL(value: string) {
+  const url = new URL(value, siteURL);
+  url.protocol = "https:";
+  url.hostname = "montedasoliveiras.com";
+  if (url.pathname !== "/" && !url.pathname.endsWith("/")) {
+    url.pathname += "/";
+  }
+  return url.toString();
+}
+
 let altSlug = slug ? `/${slug}` : "/";
 if (altSlug !== "/" && !altSlug.endsWith("/")) {
   altSlug += "/";
@@ -47,7 +58,7 @@ const hreflangs = [
 ];
 
 const canonicalURL =
-  canonical || new URL(Astro.url.pathname, Astro.site).toString();
+  normalizeSiteURL(canonical || new URL(Astro.url.pathname, Astro.site).toString());
 const ogImage = image.startsWith("http") ? image : `${siteURL}${image}`;
 const fullTitle =
   title === "Monte das Oliveiras"

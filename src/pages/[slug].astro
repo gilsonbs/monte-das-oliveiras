@@ -40,23 +40,63 @@ const { before, after } = splitAfterParagraphs(post.content, 3);
 
 const publishedISO = new Date(post.published_at).toISOString();
 
-const postURL = `https://montedasoliveiras.com/${post.slug}`;
+const siteURL = 'https://montedasoliveiras.com';
+const postURL = `${siteURL}/${post.slug}/`;
 const absImage = post.share_url || post.cover_url || undefined;
+
+const seoOverrides: Record<string, { title?: string; description?: string }> = {
+  'tocar-nas-partes-intimas-e-pecado': {
+    title: 'Tocar nas Partes Íntimas é Pecado? Entenda pela Bíblia',
+    description: 'Tocar nas partes íntimas é pecado? Veja princípios bíblicos sobre pureza, intenção do coração, domínio próprio e consciência cristã.',
+  },
+  'profecias-messianicas-cumpridas': {
+    title: 'Profecias Messiânicas Cumpridas em Jesus Cristo',
+    description: 'Conheça profecias messiânicas cumpridas em Jesus e entenda como o Antigo Testamento aponta para Cristo com detalhes impressionantes.',
+  },
+  'nao-haviam-mulheres-entre-os-12-apostolos': {
+    title: 'Por Que Não Havia Mulheres Entre os 12 Apóstolos?',
+    description: 'Entenda por que Jesus escolheu 12 homens como apóstolos e como ele valorizou profundamente as mulheres no Novo Testamento.',
+  },
+  'mapa-das-viagens-missionarias-de-paulo': {
+    title: 'Mapa das Viagens Missionárias de Paulo: Rotas e Lições',
+    description: 'Veja o mapa das viagens missionárias de Paulo, suas rotas, cidades principais e lições para entender missões na Bíblia.',
+  },
+  'o-absinto-do-apocalipse': {
+    title: 'Absinto no Apocalipse: O Significado da Terceira Trombeta',
+    description: 'Entenda o significado de Absinto no Apocalipse, a terceira trombeta e as principais interpretações bíblicas dessa profecia.',
+  },
+  'profecias-biblicas': {
+    title: 'Profecias Bíblicas Cumpridas: Exemplos e Significados',
+    description: 'Veja profecias bíblicas cumpridas, seus contextos e o que elas revelam sobre a fidelidade de Deus nas Escrituras.',
+  },
+  'parabola-dos-talentos': {
+    title: 'Parábola dos Talentos: Explicação e Lições Bíblicas',
+    description: 'Entenda a parábola dos talentos, seu significado espiritual e as lições de responsabilidade, fidelidade e serviço cristão.',
+  },
+  'pos-e-pre-tribulacionismo': {
+    title: 'Pré-Tribulacionismo e Pós-Tribulacionismo: Diferenças',
+    description: 'Compare pré-tribulacionismo e pós-tribulacionismo e entenda as principais visões cristãs sobre arrebatamento e tribulação.',
+  },
+};
+
+const seo = seoOverrides[post.slug] ?? {};
+const pageTitle = seo.title || post.seo_title || post.title;
+const pageDescription = seo.description || post.meta_description || post.excerpt || undefined;
 
 const jsonLd = [
   {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    headline: post.title,
-    description: post.meta_description || post.excerpt,
+    headline: pageTitle,
+    description: pageDescription,
     image: absImage ? [absImage] : undefined,
     datePublished: publishedISO,
     dateModified: publishedISO,
-    author: { '@type': 'Organization', name: 'Monte das Oliveiras', url: 'https://montedasoliveiras.com' },
+    author: { '@type': 'Organization', name: 'Monte das Oliveiras', url: siteURL },
     publisher: {
       '@type': 'Organization',
       name: 'Monte das Oliveiras',
-      logo: { '@type': 'ImageObject', url: 'https://montedasoliveiras.com/apple-touch-icon.png' },
+      logo: { '@type': 'ImageObject', url: `${siteURL}/apple-touch-icon.png` },
     },
     mainEntityOfPage: { '@type': 'WebPage', '@id': postURL },
     inLanguage: 'pt-BR',
@@ -65,8 +105,8 @@ const jsonLd = [
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://montedasoliveiras.com' },
-      ...(post.category_name && post.category_slug ? [{ '@type': 'ListItem', position: 2, name: post.category_name, item: `https://montedasoliveiras.com/categoria/${post.category_slug}` }] : []),
+      { '@type': 'ListItem', position: 1, name: 'Home', item: siteURL },
+      ...(post.category_name && post.category_slug ? [{ '@type': 'ListItem', position: 2, name: post.category_name, item: `${siteURL}/categoria/${post.category_slug}/` }] : []),
       { '@type': 'ListItem', position: post.category_name ? 3 : 2, name: post.title, item: postURL },
     ],
   },
@@ -74,8 +114,8 @@ const jsonLd = [
 ---
 
 <BaseLayout
-  title={post.seo_title || post.title}
-  description={post.meta_description || post.excerpt || undefined}
+  title={pageTitle}
+  description={pageDescription}
   image={absImage || undefined}
   canonical={post.canonical_url || undefined}
   type="article"

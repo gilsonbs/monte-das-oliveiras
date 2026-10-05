@@ -40,7 +40,7 @@ const { posts, total } = await getPostsByCategory(slug!, page, PER_PAGE);
 const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
 ---
 
-<BaseLayout title={`${category.name} — página ${page}`} description={`Posts sobre ${category.name} — Monte das Oliveiras`}>
+<BaseLayout title={`${category.name} — página ${page}`} description={`Posts sobre ${category.name} — Monte das Oliveiras`} noindex={true}>
   <div class="wrap">
     <div class="page-head">
       <span class="eyebrow">Categoria</span>
