@@ -9,7 +9,7 @@ export async function GET() {
     .order('published_at', { ascending: false })
     .limit(20);
 
-  const site = 'https://montedasoliveiras.com';
+  const site = 'https://www.montedasoliveiras.com';
   const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
 
   const items = (posts || []).map(post => {

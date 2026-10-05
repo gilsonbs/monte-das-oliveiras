@@ -23,7 +23,7 @@ if (!category) {
 const { posts, total } = await getPostsByCategory(slug!, page, PER_PAGE);
 const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
 
-const siteURL = 'https://montedasoliveiras.com';
+const siteURL = 'https://www.montedasoliveiras.com';
 const catURL = `${siteURL}/categoria/${slug}/`;
 const jsonLd = [
   {

@@ -22,7 +22,7 @@ if (!tag) {
 const { posts, total } = await getPostsByTag(slug!, page, PER_PAGE);
 const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
 
-const siteURL = 'https://montedasoliveiras.com';
+const siteURL = 'https://www.montedasoliveiras.com';
 const tagURL = `${siteURL}/tag/${slug}/`;
 const jsonLd = [
   {

@@ -4,7 +4,7 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://montedasoliveiras.com',
+  site: 'https://www.montedasoliveiras.com',
   output: 'static',
   trailingSlash: 'always',
   integrations: [

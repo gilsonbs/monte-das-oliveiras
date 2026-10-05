@@ -41,7 +41,7 @@ function splitAfterParagraphs(html: string, count: number) {
 const { before, after } = splitAfterParagraphs(post.content, 3);
 
 const publishedISO = new Date(post.published_at).toISOString();
-const postURL = `https://montedasoliveiras.com/es/${post.slug}`;
+const postURL = `https://www.montedasoliveiras.com/es/${post.slug}`;
 const absImage = `${import.meta.env.PUBLIC_SUPABASE_URL}/storage/v1/object/public/social-cards/${post.slug}.jpg`;
 
 const catName = post.category_slug ? getCategoryName(post.category_slug, lang) : post.category_name;
@@ -55,11 +55,11 @@ const jsonLd = [
     image: absImage ? [absImage] : undefined,
     datePublished: publishedISO,
     dateModified: publishedISO,
-    author: { '@type': 'Organization', name: 'Monte de los Olivos', url: 'https://montedasoliveiras.com/es/' },
+    author: { '@type': 'Organization', name: 'Monte de los Olivos', url: 'https://www.montedasoliveiras.com/es/' },
     publisher: {
       '@type': 'Organization',
       name: 'Monte de los Olivos',
-      logo: { '@type': 'ImageObject', url: 'https://montedasoliveiras.com/apple-touch-icon.png' },
+      logo: { '@type': 'ImageObject', url: 'https://www.montedasoliveiras.com/apple-touch-icon.png' },
     },
     mainEntityOfPage: { '@type': 'WebPage', '@id': postURL },
     inLanguage: 'es',
@@ -68,8 +68,8 @@ const jsonLd = [
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://montedasoliveiras.com/es/' },
-      ...(catName && post.category_slug ? [{ '@type': 'ListItem', position: 2, name: catName, item: `https://montedasoliveiras.com/es/categoria/${post.category_slug}` }] : []),
+      { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://www.montedasoliveiras.com/es/' },
+      ...(catName && post.category_slug ? [{ '@type': 'ListItem', position: 2, name: catName, item: `https://www.montedasoliveiras.com/es/categoria/${post.category_slug}` }] : []),
       { '@type': 'ListItem', position: catName ? 3 : 2, name: post.title, item: postURL },
     ],
   },

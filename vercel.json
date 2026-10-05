@@ -3,19 +3,6 @@
   "buildCommand": "node scripts/vercel-build.mjs",
   "outputDirectory": "dist",
   "installCommand": "npm ci",
-  "redirects": [
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "www.montedasoliveiras.com"
-        }
-      ],
-      "destination": "https://montedasoliveiras.com/$1",
-      "permanent": true
-    }
-  ],
   "env": {
     "PUBLIC_SUPABASE_URL": "https://cgpowoygdlptumbvjixo.supabase.co",
     "PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_W5EEh1O6kKSdJ3mlyqZIFA_Uxgte2wA",
