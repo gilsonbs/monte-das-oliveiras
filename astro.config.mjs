@@ -9,7 +9,15 @@ export default defineConfig({
   trailingSlash: 'always',
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/admin/'),
+      filter: (page) => {
+        const url = new URL(page);
+        const path = url.pathname;
+        return (
+          !path.includes('/admin/') &&
+          !path.includes('/tag/') &&
+          !path.match(/^\/(?:en\/|es\/)?categoria\/[^/]+\/\d+\/$/)
+        );
+      },
     }),
   ],
   vite: {

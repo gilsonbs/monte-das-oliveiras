@@ -37,7 +37,7 @@ const { posts, total } = await getPostsByTag(slug!, page, PER_PAGE, lang);
 const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
 ---
 
-<BaseLayout title={`Tag: ${tag.name} — page ${page}`} description={`Articles about ${tag.name} — page ${page} — Mount of Olives`} lang={lang}>
+<BaseLayout title={`Tag: ${tag.name} — page ${page}`} description={`Articles about ${tag.name} — page ${page} — Mount of Olives`} lang={lang} noindex={true}>
   <div class="wrap">
     <div class="page-head">
       <span class="eyebrow">Tag</span>
