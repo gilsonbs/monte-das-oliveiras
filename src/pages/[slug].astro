@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AdSlot from '../components/AdSlot.astro';
+import ArticleAnswerBox from '../components/ArticleAnswerBox.astro';
 import PriorityStudies from '../components/PriorityStudies.astro';
 import { supabase, getPostBySlug, getRelatedPosts, getTagsByPostId, getApprovedComments } from '../lib/supabase';
 
@@ -144,6 +145,7 @@ const jsonLd = [
   <div class="wrap">
     <div class="article-layout">
       <article>
+        <ArticleAnswerBox slug={post.slug} />
         <Fragment set:html={before} />
         <AdSlot slotKey="in_article" />
         <Fragment set:html={after} />
