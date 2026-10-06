@@ -11,6 +11,15 @@ if (!supabaseUrl || !supabaseKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
+const queryCache = new Map<string, Promise<unknown>>();
+
+function cached<T>(key: string, loader: () => Promise<T>): Promise<T> {
+  if (!queryCache.has(key)) {
+    queryCache.set(key, loader());
+  }
+  return queryCache.get(key) as Promise<T>;
+}
+
 // ---------- tipos ----------
 export interface PostSummary {
   id: string;
@@ -40,6 +49,7 @@ export interface PostFull extends PostSummary {
 // ---------- queries ----------
 
 export async function getFeaturedPosts(limit = 4) {
+  return cached(`featured:${limit}`, async () => {
   // 1. Posts marcados manualmente como destaque, com ordem definida
   const { data: ordered } = await supabase
     .from('posts_public')
@@ -82,6 +92,7 @@ export async function getFeaturedPosts(limit = 4) {
   }
 
   return featured;
+  });
 }
 
 function isColumnMissingError(error: any): boolean {
@@ -89,6 +100,7 @@ function isColumnMissingError(error: any): boolean {
 }
 
 export async function getRecentPosts(page = 1, perPage = 12, lang = 'pt') {
+  return cached(`recent:${lang}:${page}:${perPage}`, async () => {
   const from = (page - 1) * perPage;
   const to = from + perPage - 1;
   const q = supabase
@@ -111,9 +123,11 @@ export async function getRecentPosts(page = 1, perPage = 12, lang = 'pt') {
     throw error;
   }
   return { posts: data as PostSummary[], total: count ?? 0 };
+  });
 }
 
 export async function getPostsByCategory(categorySlug: string, page = 1, perPage = 12, lang = 'pt') {
+  return cached(`category-posts:${lang}:${categorySlug}:${page}:${perPage}`, async () => {
   const from = (page - 1) * perPage;
   const to = from + perPage - 1;
   const q = supabase
@@ -137,9 +151,11 @@ export async function getPostsByCategory(categorySlug: string, page = 1, perPage
     throw error;
   }
   return { posts: data as PostSummary[], total: count ?? 0 };
+  });
 }
 
 export async function getPostBySlug(slug: string) {
+  return cached(`post:${slug}`, async () => {
   const { data, error } = await supabase
     .from('posts_public')
     .select('*')
@@ -147,9 +163,11 @@ export async function getPostBySlug(slug: string) {
     .maybeSingle();
   if (error) throw error;
   return data as PostFull | null;
+  });
 }
 
 export async function getRelatedPosts(categorySlug: string, excludeSlug: string, limit = 3, lang = 'pt') {
+  return cached(`related:${lang}:${categorySlug}:${excludeSlug}:${limit}`, async () => {
   const q = supabase
     .from('posts_public')
     .select('*')
@@ -173,9 +191,11 @@ export async function getRelatedPosts(categorySlug: string, excludeSlug: string,
     throw error;
   }
   return data as PostSummary[];
+  });
 }
 
 export async function getPublishedSlugsByLang(lang: string) {
+  return cached(`slugs:${lang}`, async () => {
   const q = supabase.from('posts_public').select('slug');
   if (lang === 'pt') {
     q.or('language.eq.pt,language.is.null');
@@ -190,9 +210,11 @@ export async function getPublishedSlugsByLang(lang: string) {
     throw error;
   }
   return (data ?? []).map((p: any) => p.slug as string);
+  });
 }
 
 export async function getApprovedComments(postId: string) {
+  return cached(`comments:${postId}`, async () => {
   const { data, error } = await supabase
     .from('comments')
     .select('id, name, content, created_at')
@@ -201,9 +223,11 @@ export async function getApprovedComments(postId: string) {
     .order('created_at', { ascending: false });
   if (error) throw error;
   return data;
+  });
 }
 
 export async function getCategories() {
+  return cached('categories:with-posts', async () => {
   const [catsResp, postsResp] = await Promise.all([
     supabase.from('categories').select('id, name, slug').order('name'),
     supabase.from('posts').select('category_id').eq('status', 'published'),
@@ -211,6 +235,7 @@ export async function getCategories() {
   if (catsResp.error) throw catsResp.error;
   const withPosts = new Set((postsResp.data ?? []).map((p: any) => p.category_id));
   return (catsResp.data ?? []).filter((c: any) => withPosts.has(c.id)) as { id: string; name: string; slug: string }[];
+  });
 }
 
 export async function isTickerEnabled(): Promise<boolean> {
@@ -224,34 +249,34 @@ export async function isTickerEnabled(): Promise<boolean> {
 }
 
 export async function getTagsByPostId(postId: string) {
+  return cached(`post-tags:${postId}`, async () => {
   const { data, error } = await supabase
     .from('post_tags')
     .select('tags(name, slug)')
     .eq('post_id', postId);
   if (error) throw error;
   return (data ?? []).map((r: any) => r.tags).filter(Boolean);
+  });
 }
 
 export async function getTags() {
+  return cached('tags:all', async () => {
   const { data, error } = await supabase
     .from('tags')
     .select('id, name, slug')
     .order('name');
   if (error) throw error;
   return data as { id: string; name: string; slug: string }[];
+  });
 }
 
 export async function getTagBySlug(slug: string) {
-  const { data, error } = await supabase
-    .from('tags')
-    .select('id, name, slug')
-    .eq('slug', slug)
-    .maybeSingle();
-  if (error) throw error;
-  return data as { id: string; name: string; slug: string } | null;
+  const tags = await getTags();
+  return tags.find((tag) => tag.slug === slug) ?? null;
 }
 
 export async function getPostsCountByTag(tagId: string, lang = 'pt'): Promise<number> {
+  return cached(`tag-count:${lang}:${tagId}`, async () => {
   const q = supabase
     .from('post_tags')
     .select('post_id, posts!inner(status, language)', { count: 'exact', head: true })
@@ -277,9 +302,11 @@ export async function getPostsCountByTag(tagId: string, lang = 'pt'): Promise<nu
     throw error;
   }
   return count ?? 0;
+  });
 }
 
 export async function getPostsByTag(tagSlug: string, page = 1, perPage = 12, lang = 'pt') {
+  return cached(`tag-posts:${lang}:${tagSlug}:${page}:${perPage}`, async () => {
   const from = (page - 1) * perPage;
   const to = from + perPage - 1;
 
@@ -320,4 +347,5 @@ export async function getPostsByTag(tagSlug: string, page = 1, perPage = 12, lan
     throw error;
   }
   return { posts: data as PostSummary[], total: count ?? 0 };
+  });
 }
