@@ -150,7 +150,7 @@ const jsonLd = [
 
         {tags.length > 0 && (
           <div class="tags">
-            {tags.map((tag: any) => <a href={`/es/tag/${tag.slug}`}>{tag.name}</a>)}
+            {tags.map((tag: any) => <span>{tag.name}</span>)}
           </div>
         )}
       </article>
@@ -272,7 +272,7 @@ const jsonLd = [
   .share-btn.telegram  { background: #229ED9; color: #fff; }
 
   .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
-  .tags a {
+  .tags span {
     font-family: var(--font-ui); font-size: 12px; background: var(--card-bg); border: 1px solid var(--clay-line);
     color: var(--olive-deep); padding: 6px 12px; border-radius: var(--radius);
   }
