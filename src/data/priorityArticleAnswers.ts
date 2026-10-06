@@ -36,17 +36,18 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
     ],
   },
   'parabola-dos-talentos': {
-    question: 'Qual é a mensagem da parábola dos talentos?',
+    question: 'O que significa a parábola dos talentos em Mateus 25?',
     answer:
-      'A parábola dos talentos ensina responsabilidade diante de Deus. Os talentos representam oportunidades confiadas pelo Senhor, e a fidelidade é demonstrada no uso diligente daquilo que recebemos.',
+      'A parábola dos talentos, em Mateus 25:14-30, ensina que Deus confia dons, recursos e oportunidades aos seus servos. A fidelidade aparece quando usamos o que recebemos para servir ao Reino, em vez de esconder por medo ou negligência.',
     bullets: [
-      'A ênfase da parábola está na fidelidade, não apenas na quantidade recebida.',
-      'O servo negligente é repreendido por medo, omissão e falta de obediência.',
-      'A lição central é servir a Deus com responsabilidade enquanto aguardamos a volta de Cristo.',
+      'Os dois primeiros servos foram elogiados porque trabalharam com aquilo que receberam.',
+      'O servo que enterrou o talento foi repreendido por medo, omissão e infidelidade.',
+      'A lição central é viver com responsabilidade, propósito e prontidão enquanto aguardamos a volta de Cristo.',
     ],
     links: [
+      { href: '/vida-crista-com-proposito/', label: 'Vida cristã com propósito' },
+      { href: '/apoiar-missionarios/', label: 'Servindo ao Reino' },
       { href: '/profecias-biblicas/', label: 'Profecias bíblicas' },
-      { href: '/tocar-nas-partes-intimas-e-pecado/', label: 'Pureza e vida cristã' },
     ],
   },
   'pos-e-pre-tribulacionismo': {
