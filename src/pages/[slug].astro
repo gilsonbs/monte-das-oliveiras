@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import AdSlot from '../components/AdSlot.astro';
 import ArticleAnswerBox from '../components/ArticleAnswerBox.astro';
 import PriorityStudies from '../components/PriorityStudies.astro';
+import { priorityArticleAnswers } from '../data/priorityArticleAnswers';
 import { supabase, getPostBySlug, getRelatedPosts, getTagsByPostId, getApprovedComments } from '../lib/supabase';
 
 export async function getStaticPaths() {
@@ -84,6 +85,7 @@ const seoOverrides: Record<string, { title?: string; description?: string }> = {
 const seo = seoOverrides[post.slug] ?? {};
 const pageTitle = seo.title || post.seo_title || post.title;
 const pageDescription = seo.description || post.meta_description || post.excerpt || undefined;
+const priorityAnswer = priorityArticleAnswers[post.slug];
 
 const jsonLd = [
   {
@@ -112,6 +114,18 @@ const jsonLd = [
       { '@type': 'ListItem', position: post.category_name ? 3 : 2, name: post.title, item: postURL },
     ],
   },
+  ...(priorityAnswer ? [{
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [{
+      '@type': 'Question',
+      name: priorityAnswer.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: priorityAnswer.answer,
+      },
+    }],
+  }] : []),
 ];
 ---
 
