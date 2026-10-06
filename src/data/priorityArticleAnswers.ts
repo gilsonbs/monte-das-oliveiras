@@ -21,17 +21,18 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
     ],
   },
   'profecias-biblicas': {
-    question: 'O que são profecias bíblicas?',
+    question: 'Quais profecias bíblicas já se cumpriram?',
     answer:
-      'Profecias bíblicas são mensagens reveladas por Deus nas Escrituras. Elas podem anunciar juízo, restauração, a vinda do Messias ou acontecimentos ligados ao fim dos tempos.',
+      'A Bíblia registra profecias que se cumpriram na história de Israel, nas nações vizinhas e na vida de Jesus Cristo. Entre os exemplos estão anúncios feitos por Miquéias, Naum, Joel e Zacarias.',
     bullets: [
-      'Muitas profecias apontam para Jesus Cristo e seu ministério.',
-      'Outras tratam de Israel, das nações e do futuro escatológico.',
-      'A interpretação deve considerar contexto, gênero literário e cumprimento histórico.',
+      'Miquéias anunciou juízo sobre Jerusalém e apontou para Belém como cidade ligada ao Messias.',
+      'Naum profetizou a queda de Nínive, mostrando o juízo de Deus sobre a violência da Assíria.',
+      'Joel e Zacarias trazem profecias relacionadas ao derramamento do Espírito e à chegada do Rei humilde.',
     ],
     links: [
       { href: '/profecias-messianicas-cumpridas/', label: 'Profecias messiânicas cumpridas' },
       { href: '/o-absinto-do-apocalipse/', label: 'Absinto no Apocalipse' },
+      { href: '/pos-e-pre-tribulacionismo/', label: 'Profecias do fim dos tempos' },
     ],
   },
   'parabola-dos-talentos': {
