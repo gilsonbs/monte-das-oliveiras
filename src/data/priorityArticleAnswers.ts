@@ -68,15 +68,16 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'tocar-nas-partes-intimas-e-pecado': {
     question: 'Tocar nas partes íntimas é pecado?',
     answer:
-      'A Bíblia não usa essa frase diretamente, mas ensina princípios sobre pureza, domínio próprio, intenção do coração e fuga da imoralidade sexual. A resposta depende do contexto, da motivação e da consciência diante de Deus.',
+      'A Bíblia não usa essa frase diretamente, mas ensina princípios sobre pureza, domínio próprio, intenção do coração e fuga da imoralidade sexual. Mais do que o ato isolado, o ponto principal é discernir desejo, intenção, consciência e dependência diante de Deus.',
     bullets: [
-      'O ponto central é avaliar desejo, intenção, vício, culpa e afastamento de Deus.',
-      'Pureza bíblica envolve corpo, mente, coração e hábitos.',
-      'Quando há escravidão, culpa constante ou prática ligada à pornografia, é necessário buscar arrependimento, ajuda e restauração.',
+      'Pureza bíblica envolve corpo, mente, coração, hábitos e aquilo que alimenta os desejos.',
+      'Pornografia, fantasia cultivada e perda de domínio próprio tornam a prática espiritualmente perigosa.',
+      'Quando há culpa constante, vício ou escravidão, o caminho cristão envolve arrependimento, ajuda e restauração.',
     ],
     links: [
+      { href: '/e-pecado-se-masturbar/', label: 'Masturbação e vida cristã' },
+      { href: '/pornografia-e-pecado/', label: 'Pornografia é pecado?' },
       { href: '/parabola-dos-talentos/', label: 'Responsabilidade diante de Deus' },
-      { href: '/profecias-biblicas/', label: 'Estudos bíblicos' },
     ],
   },
 };
