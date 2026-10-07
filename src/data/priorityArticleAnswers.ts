@@ -80,6 +80,21 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       { href: '/discipulado-cristao-passo-a-passo/', label: 'Discipulado cristão' },
     ],
   },
+  'o-monte-das-oliveiras-esta-se-abrindo': {
+    question: 'O Monte das Oliveiras está se abrindo agora?',
+    answer:
+      'Até o momento, não há evidência confiável de que o Monte das Oliveiras esteja se dividindo como em Zacarias 14. Rachaduras visíveis podem ter causas comuns, como desgaste do solo ou infraestrutura, mas a profecia bíblica aponta para um evento futuro ligado à volta do Messias.',
+    bullets: [
+      'Zacarias 14 afirma que o monte será fendido quando o Senhor puser os pés sobre ele.',
+      'Atos 1 liga o Monte das Oliveiras à ascensão de Jesus e à promessa de sua volta.',
+      'O artigo diferencia sinais geológicos, rumores de internet e esperança profética bíblica.',
+    ],
+    links: [
+      { href: '/sinais-do-fim/', label: 'Sinais do fim' },
+      { href: '/profecias-biblicas/', label: 'Profecias bíblicas' },
+      { href: '/a-volta-de-jesus-os-sinais/', label: 'A volta de Jesus' },
+    ],
+  },
   'parabola-dos-talentos': {
     question: 'O que significa a parábola dos talentos em Mateus 25?',
     answer:
