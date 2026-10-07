@@ -35,6 +35,21 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       { href: '/pos-e-pre-tribulacionismo/', label: 'Profecias do fim dos tempos' },
     ],
   },
+  'profecias-messianicas-cumpridas': {
+    question: 'Quais profecias messiânicas Jesus cumpriu?',
+    answer:
+      'Jesus cumpriu profecias do Antigo Testamento sobre o nascimento, ministério, sofrimento, morte e missão do Messias. Entre os textos mais citados estão Miquéias 5:2, Isaías 53, Salmo 22, Zacarias 9:9 e Zacarias 11:12-13.',
+    bullets: [
+      'Miquéias anunciou Belém como o lugar ligado ao nascimento do Messias.',
+      'Isaías 53 apresenta o Servo Sofredor que leva as transgressões do povo.',
+      'Salmo 22 e Zacarias apontam para detalhes da rejeição, sofrimento, traição e entrada humilde do Rei.',
+    ],
+    links: [
+      { href: '/profecias-biblicas/', label: 'Profecias bíblicas cumpridas' },
+      { href: '/a-profecia-do-nazareno/', label: 'A profecia do Nazareno' },
+      { href: '/onde-jesus-nasceu/', label: 'Onde Jesus nasceu?' },
+    ],
+  },
   'parabola-dos-talentos': {
     question: 'O que significa a parábola dos talentos em Mateus 25?',
     answer:
