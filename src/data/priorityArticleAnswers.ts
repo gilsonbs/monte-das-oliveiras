@@ -143,11 +143,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'sinais-do-fim': {
     question: 'Quais são os sinais do fim dos tempos?',
     answer:
-      'Jesus falou sobre guerras, rumores de guerras, falsos cristos, perseguições, esfriamento do amor e a pregação do evangelho como sinais ligados ao fim dos tempos. Esses sinais devem despertar vigilância, santidade e esperança, não medo descontrolado.',
+      'Os sinais do fim dos tempos, segundo Jesus em Mateus 24, incluem engano religioso, guerras, fome, terremotos, perseguição, esfriamento do amor e a pregação do evangelho a todas as nações. Eles não servem para marcar datas, mas para chamar a igreja à vigilância, santidade e perseverança.',
     bullets: [
-      'Mateus 24 é uma das principais passagens sobre sinais, tribulação e vigilância.',
-      'A Bíblia alerta contra datas marcadas e interpretações sensacionalistas.',
-      'O foco cristão é permanecer fiel enquanto aguarda a volta de Cristo.',
+      'Mateus 24 organiza o tema em sinais, princípio das dores, tribulação e vigilância.',
+      'A Bíblia adverte contra falsos cristos, falsas profecias e interpretações alarmistas.',
+      'O centro da esperança cristã não é o medo do fim, mas a volta de Cristo e a fidelidade até o fim.',
     ],
     links: [
       { href: '/a-volta-de-jesus-os-sinais/', label: 'A volta de Jesus' },
@@ -158,11 +158,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'a-volta-de-jesus-os-sinais': {
     question: 'Quais sinais apontam para a volta de Jesus?',
     answer:
-      'A volta de Jesus é apresentada na Bíblia como certa, visível e ligada à consumação do Reino de Deus. Os sinais servem como alertas espirituais, mas a expectativa cristã deve produzir preparo, fidelidade e perseverança.',
+      'A Bíblia apresenta a volta de Jesus como certa, visível e gloriosa. Os sinais que antecedem esse dia apontam para vigilância espiritual, não para especulação: o cristão deve viver preparado, fiel ao evangelho e atento ao engano.',
     bullets: [
-      'Jesus ensinou seus discípulos a vigiar porque ninguém sabe o dia nem a hora.',
-      'Os sinais bíblicos incluem engano religioso, conflitos, perseguição e expansão do evangelho.',
-      'A esperança da volta de Cristo deve fortalecer a fé em vez de alimentar ansiedade.',
+      'Jesus disse que ninguém sabe o dia nem a hora, por isso a ordem é vigiar.',
+      'Os sinais incluem engano religioso, conflitos, perseguição, apostasia e anúncio do evangelho.',
+      'A esperança da volta de Cristo fortalece a fé, consola a igreja e chama à santidade.',
     ],
     links: [
       { href: '/sinais-do-fim/', label: 'Sinais do fim' },
@@ -203,11 +203,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'acordo-de-paz-oriente-medio': {
     question: 'Um acordo de paz no Oriente Médio pode ter significado profético?',
     answer:
-      'A Bíblia fala de alianças, conflitos e falsas seguranças no cenário do fim, por isso acordos de paz no Oriente Médio costumam despertar atenção. Mesmo assim, o discernimento cristão exige cautela antes de associar um evento específico a uma profecia final.',
+      'Acordos de paz no Oriente Médio chamam atenção porque Daniel 9 e outros textos proféticos falam de alianças, Israel e falsa segurança. Ainda assim, nenhum acordo atual deve ser tratado automaticamente como cumprimento final sem análise bíblica cuidadosa.',
     bullets: [
-      'Daniel 9 é frequentemente citado em discussões sobre aliança, paz e última semana profética.',
-      'A paz política pode ser importante, mas não deve ser confundida automaticamente com cumprimento final.',
-      'O artigo ajuda a observar o cenário com prudência bíblica e sem alarmismo.',
+      'Daniel 9:27 é uma passagem central nas discussões sobre aliança e última semana profética.',
+      'Paz política pode ser relevante, mas a Bíblia exige cautela antes de conclusões definitivas.',
+      'O melhor caminho é observar o cenário com discernimento, sem medo e sem sensacionalismo.',
     ],
     links: [
       { href: '/as-70-semanas-de-daniel/', label: 'As 70 semanas de Daniel' },
@@ -218,11 +218,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'terceiro-templo-anticristo-neste-ano': {
     question: 'O terceiro templo tem relação com o anticristo?',
     answer:
-      'Muitos estudiosos relacionam o terceiro templo, a abominação da desolação e o anticristo a textos como Daniel, Mateus 24 e 2 Tessalonicenses 2. A Bíblia, porém, chama a igreja ao discernimento, não à marcação precipitada de datas.',
+      'O terceiro templo é associado por muitos intérpretes a temas como a abominação da desolação, o homem da iniquidade e o cenário do anticristo. Mesmo assim, a Bíblia não autoriza marcar datas; ela chama a igreja a discernir os sinais com sobriedade.',
     bullets: [
-      'Daniel e Mateus 24 são passagens centrais nas discussões sobre templo e profecia.',
-      '2 Tessalonicenses 2 fala de oposição a Deus e engano religioso no tempo do fim.',
-      'O tema exige cuidado para distinguir possibilidade profética e afirmação categórica.',
+      'Daniel, Mateus 24 e 2 Tessalonicenses 2 são textos importantes nesse debate.',
+      'O tema envolve templo, engano religioso, oposição a Deus e eventos ligados ao fim.',
+      'É preciso distinguir expectativa profética, opinião de estudiosos e afirmação categórica.',
     ],
     links: [
       { href: '/as-70-semanas-de-daniel/', label: 'As 70 semanas de Daniel' },
@@ -293,11 +293,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'alerta-virus-nipah-profecia-biblica': {
     question: 'Pestilências são sinais do fim dos tempos?',
     answer:
-      'Jesus citou pestes e calamidades entre os sinais que antecedem o fim, mas a Bíblia não autoriza tratar cada doença específica como cumprimento final isolado. O caminho cristão é unir discernimento, prudência e esperança em Deus.',
+      'Jesus mencionou pestes e calamidades no contexto dos sinais dos tempos, mas a Bíblia não autoriza afirmar que uma doença específica seja, sozinha, o cumprimento final de uma profecia. O cristão deve unir prudência, responsabilidade e confiança em Deus.',
     bullets: [
-      'Lucas 21 menciona pestes, terremotos e sinais como parte do cenário de alerta.',
-      'A interpretação bíblica deve evitar pânico e especulação sobre datas.',
-      'Crises sanitárias lembram a fragilidade humana e a necessidade de buscar a Deus.',
+      'Lucas 21 cita pestes, terremotos e sinais como parte de um quadro maior de alerta.',
+      'Temas de saúde pedem cuidado, informação responsável e rejeição ao pânico.',
+      'Crises sanitárias lembram a fragilidade humana e a necessidade de esperança em Deus.',
     ],
     links: [
       { href: '/sinais-do-fim/', label: 'Sinais do fim' },
@@ -308,11 +308,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'daniel-mastral-e-trump-profecias-escatologia': {
     question: 'Como avaliar teorias proféticas sobre líderes atuais?',
     answer:
-      'Teorias proféticas sobre líderes atuais precisam ser avaliadas com sobriedade, Bíblia aberta e cuidado contra sensacionalismo. A escatologia cristã aponta para vigilância e fidelidade, não para dependência de nomes ou especulações populares.',
+      'Teorias proféticas envolvendo líderes atuais, política e escatologia devem ser avaliadas com sobriedade, Bíblia aberta e cautela. Nenhum nome contemporâneo deve ocupar o centro da esperança cristã, que permanece em Cristo e na fidelidade da Palavra.',
     bullets: [
-      'A Bíblia alerta sobre engano, poder político e oposição a Deus no fim dos tempos.',
-      'Nenhuma teoria deve ocupar o lugar da leitura cuidadosa das Escrituras.',
-      'O artigo ajuda a separar cenário profético, opinião pública e discernimento cristão.',
+      'A Bíblia alerta sobre engano, poder político e oposição a Deus nos últimos dias.',
+      'Opiniões populares e teorias devem ser testadas pelo contexto das Escrituras.',
+      'O discernimento cristão evita idolatrar líderes, demonizar pessoas sem base e alimentar medo.',
     ],
     links: [
       { href: '/sinais-do-anticristo/', label: 'Sinais do anticristo' },
