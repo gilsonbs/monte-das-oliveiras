@@ -50,6 +50,21 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       { href: '/onde-jesus-nasceu/', label: 'Onde Jesus nasceu?' },
     ],
   },
+  'nao-haviam-mulheres-entre-os-12-apostolos': {
+    question: 'Por que não havia mulheres entre os 12 apóstolos?',
+    answer:
+      'Jesus escolheu 12 homens como apóstolos por causa do simbolismo das 12 tribos de Israel e do contexto cultural e jurídico do primeiro século. Isso não significa que ele desvalorizava as mulheres; os Evangelhos mostram mulheres como discípulas, mantenedoras do ministério e primeiras testemunhas da ressurreição.',
+    bullets: [
+      'O número 12 apontava para a restauração de Israel e para a fundação do novo povo de Deus.',
+      'Mulheres como Maria Madalena, Joana e Susana tiveram papel essencial no ministério de Jesus.',
+      'A ausência entre os Doze não apaga o valor, a fé e o serviço das mulheres no Novo Testamento.',
+    ],
+    links: [
+      { href: '/a-mulher-samaritana/', label: 'A mulher samaritana' },
+      { href: '/a-fe-de-paulo/', label: 'A fé de Paulo' },
+      { href: '/mapa-das-viagens-missionarias-de-paulo/', label: 'Viagens missionárias de Paulo' },
+    ],
+  },
   'parabola-dos-talentos': {
     question: 'O que significa a parábola dos talentos em Mateus 25?',
     answer:
