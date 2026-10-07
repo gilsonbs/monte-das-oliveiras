@@ -440,4 +440,334 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       { href: '/a-volta-de-jesus-os-sinais/', label: 'A volta de Jesus' },
     ],
   },
+  'estudo-biblico-sobre-salvacao': {
+    question: 'O que é salvação segundo a Bíblia?',
+    answer:
+      'Salvação, segundo a Bíblia, é a obra de Deus que resgata o pecador pela graça, mediante a fé em Jesus Cristo. Ela envolve perdão, reconciliação com Deus, nova vida e esperança eterna.',
+    bullets: [
+      'A salvação não é conquistada por mérito humano, mas recebida pela graça de Deus.',
+      'Jesus é apresentado como o único caminho para reconciliação com o Pai.',
+      'A fé verdadeira produz arrependimento, transformação e perseverança.',
+    ],
+    links: [
+      { href: '/salvacao-significado/', label: 'Significado de salvação' },
+      { href: '/o-juizo-final-grande-trono-branco-biblia/', label: 'Juízo final' },
+      { href: '/vida-crista-com-proposito/', label: 'Vida cristã com propósito' },
+    ],
+  },
+  'a-mulher-samaritana': {
+    question: 'Quais lições aprendemos com a mulher samaritana?',
+    answer:
+      'A história da mulher samaritana mostra que Jesus rompe barreiras, revela a sede espiritual do coração humano e oferece água viva. O encontro em João 4 ensina sobre graça, adoração verdadeira e testemunho.',
+    bullets: [
+      'Jesus se aproxima de uma mulher rejeitada e revela compaixão e verdade.',
+      'A água viva aponta para a vida espiritual que só Cristo pode dar.',
+      'Depois do encontro com Jesus, a mulher se torna testemunha para sua cidade.',
+    ],
+    links: [
+      { href: '/o-amor-de-deus/', label: 'O amor de Deus' },
+      { href: '/discipulado-cristao-passo-a-passo/', label: 'Discipulado cristão' },
+      { href: '/estudo-biblico-sobre-salvacao/', label: 'Salvação' },
+    ],
+  },
+  'e-pecado-se-masturbar': {
+    question: 'Afinal, é pecado se masturbar?',
+    answer:
+      'A Bíblia não usa diretamente a palavra masturbação, mas ensina princípios sobre pureza, domínio próprio, desejos, consciência e santidade. A questão deve ser avaliada pelo que alimenta o coração e aproxima ou afasta a pessoa de Deus.',
+    bullets: [
+      'Pornografia, fantasia cultivada e escravidão do desejo tornam a prática espiritualmente perigosa.',
+      'Pureza bíblica envolve corpo, mente, intenção e vida secreta diante de Deus.',
+      'O caminho cristão inclui arrependimento, graça, domínio próprio e busca de ajuda quando há vício.',
+    ],
+    links: [
+      { href: '/tocar-nas-partes-intimas-e-pecado/', label: 'Tocar nas partes íntimas é pecado?' },
+      { href: '/pornografia-e-pecado/', label: 'Pornografia é pecado?' },
+      { href: '/o-pecado-contra-o-espirito-santo/', label: 'Pecado contra o Espírito Santo' },
+    ],
+  },
+  'a-fe-de-paulo': {
+    question: 'O que podemos aprender com a fé de Paulo?',
+    answer:
+      'A fé de Paulo mostra uma vida transformada por Cristo, marcada por missão, sofrimento, coragem e esperança. Sua trajetória ensina que a verdadeira fé persevera mesmo em prisões, perseguições e incertezas.',
+    bullets: [
+      'Paulo passou de perseguidor da igreja a apóstolo comprometido com o evangelho.',
+      'Sua fé aparece nas viagens missionárias, nas cartas e na disposição de sofrer por Cristo.',
+      'O exemplo de Paulo une doutrina, missão, oração e perseverança.',
+    ],
+    links: [
+      { href: '/a-vida-do-apostolo-paulo/', label: 'Vida do apóstolo Paulo' },
+      { href: '/mapa-das-viagens-missionarias-de-paulo/', label: 'Viagens missionárias de Paulo' },
+      { href: '/apoiar-missionarios/', label: 'Apoiar missionários' },
+    ],
+  },
+  'a-vida-do-apostolo-paulo': {
+    question: 'Quem foi o apóstolo Paulo?',
+    answer:
+      'Paulo foi um dos principais líderes da igreja primitiva. Antes perseguidor dos cristãos, ele foi alcançado por Cristo, tornou-se missionário, plantou igrejas e escreveu cartas fundamentais do Novo Testamento.',
+    bullets: [
+      'Sua conversão aparece em Atos 9 e marca uma mudança radical de vida.',
+      'Paulo levou o evangelho a judeus e gentios em várias regiões do Império Romano.',
+      'Suas cartas explicam temas como graça, fé, igreja, santidade e esperança cristã.',
+    ],
+    links: [
+      { href: '/a-fe-de-paulo/', label: 'A fé de Paulo' },
+      { href: '/mapa-das-viagens-missionarias-de-paulo/', label: 'Mapa das viagens de Paulo' },
+      { href: '/historia-da-igreja-primitiva-segundo-atos/', label: 'Igreja primitiva' },
+    ],
+  },
+  'historia-da-igreja-primitiva-segundo-atos': {
+    question: 'Como começou a igreja primitiva em Atos?',
+    answer:
+      'A igreja primitiva começou em Jerusalém após a ascensão de Jesus e o derramamento do Espírito Santo em Pentecostes. O livro de Atos mostra a expansão do evangelho, a comunhão dos discípulos e a formação das primeiras comunidades cristãs.',
+    bullets: [
+      'Pentecostes marca o início público da missão da igreja no poder do Espírito Santo.',
+      'A igreja crescia por meio da pregação, oração, comunhão e perseverança.',
+      'Atos mostra o evangelho saindo de Jerusalém para Judeia, Samaria e até os confins da terra.',
+    ],
+    links: [
+      { href: '/a-vida-do-apostolo-paulo/', label: 'Vida de Paulo' },
+      { href: '/discipulado-cristao-passo-a-passo/', label: 'Discipulado cristão' },
+      { href: '/o-que-sao-os-dons-espirituais/', label: 'Dons espirituais' },
+    ],
+  },
+  'discipulado-cristao-passo-a-passo': {
+    question: 'O que é discipulado cristão?',
+    answer:
+      'Discipulado cristão é o processo de seguir Jesus, aprender seus ensinamentos e ajudar outras pessoas a crescerem na fé. Ele envolve relacionamento, ensino bíblico, exemplo de vida, oração e compromisso com a missão.',
+    bullets: [
+      'Jesus mandou fazer discípulos, não apenas reunir ouvintes.',
+      'O discipulado combina Palavra, convivência, correção, serviço e maturidade espiritual.',
+      'Uma igreja saudável forma pessoas que seguem Cristo e ajudam outros a segui-lo.',
+    ],
+    links: [
+      { href: '/vida-crista-com-proposito/', label: 'Vida cristã com propósito' },
+      { href: '/7-passos-como-comecar-a-ler-a-biblia/', label: 'Começar a ler a Bíblia' },
+      { href: '/estudo-biblico-sobre-oracao/', label: 'Estudo sobre oração' },
+    ],
+  },
+  'estudo-biblico-sobre-oracao': {
+    question: 'O que a Bíblia ensina sobre oração?',
+    answer:
+      'A Bíblia ensina que oração é relacionamento com Deus, expressão de fé, dependência e adoração. Orar não é apenas pedir coisas, mas buscar a vontade do Pai, confessar pecados, agradecer e interceder.',
+    bullets: [
+      'Jesus ensinou seus discípulos a orar com simplicidade, reverência e confiança.',
+      'A oração bíblica inclui adoração, confissão, gratidão, petição e intercessão.',
+      'Uma vida de oração amadurece quando é constante, sincera e alinhada à Palavra.',
+    ],
+    links: [
+      { href: '/descubra-como-orar-como-jesus/', label: 'Como orar como Jesus' },
+      { href: '/vida-de-oracao/', label: 'Vida de oração' },
+      { href: '/orar-sem-cessar/', label: 'Orar sem cessar' },
+    ],
+  },
+  '7-passos-como-comecar-a-ler-a-biblia': {
+    question: 'Como começar a ler a Bíblia?',
+    answer:
+      'Para começar a ler a Bíblia, escolha um plano simples, ore antes da leitura e comece por livros que apresentam claramente Jesus e a vida cristã, como Marcos, João, Atos ou Filipenses. O importante é constância e entendimento, não pressa.',
+    bullets: [
+      'Comece com pequenas porções diárias e anote dúvidas, promessas e aplicações.',
+      'Leia o texto dentro do contexto, evitando frases isoladas sem sentido completo.',
+      'Combine leitura bíblica com oração e prática obediente do que foi aprendido.',
+    ],
+    links: [
+      { href: '/por-onde-comecar-a-ler-a-biblia/', label: 'Por onde começar' },
+      { href: '/estudo-biblico-sobre-oracao/', label: 'Estudo sobre oração' },
+      { href: '/discipulado-cristao-passo-a-passo/', label: 'Discipulado cristão' },
+    ],
+  },
+  'por-onde-comecar-a-ler-a-biblia': {
+    question: 'Por onde começar a ler a Bíblia?',
+    answer:
+      'Uma boa forma de começar a ler a Bíblia é pelos Evangelhos, especialmente Marcos ou João, porque apresentam a vida, os ensinos, a morte e a ressurreição de Jesus. Depois, Atos e algumas cartas ajudam a entender a igreja e a vida cristã.',
+    bullets: [
+      'Evangelhos mostram quem é Jesus e por que ele é o centro da fé cristã.',
+      'Atos mostra a expansão da igreja e a missão dos primeiros discípulos.',
+      'Salmos e Provérbios também ajudam na oração, sabedoria e vida devocional.',
+    ],
+    links: [
+      { href: '/7-passos-como-comecar-a-ler-a-biblia/', label: 'Como começar a ler' },
+      { href: '/quem-escreveu-a-biblia-conheca-os-40-autores/', label: 'Quem escreveu a Bíblia' },
+      { href: '/um-panorama-biblico-com-o-resumo-66-livros/', label: 'Panorama da Bíblia' },
+    ],
+  },
+  'quem-escreveu-a-biblia-conheca-os-40-autores': {
+    question: 'Quem escreveu a Bíblia?',
+    answer:
+      'A Bíblia foi escrita por cerca de 40 autores humanos, em diferentes épocas, lugares e contextos, sob a inspiração de Deus. Entre eles estão profetas, reis, pescadores, médicos, pastores e apóstolos.',
+    bullets: [
+      'O Antigo Testamento reúne livros da lei, história, poesia e profecia.',
+      'O Novo Testamento apresenta os Evangelhos, Atos, cartas apostólicas e Apocalipse.',
+      'A unidade da Bíblia aponta para a ação de Deus conduzindo a revelação ao longo da história.',
+    ],
+    links: [
+      { href: '/um-panorama-biblico-com-o-resumo-66-livros/', label: 'Resumo dos 66 livros' },
+      { href: '/por-onde-comecar-a-ler-a-biblia/', label: 'Por onde começar' },
+      { href: '/o-que-e-apologetica-crista/', label: 'Apologética cristã' },
+    ],
+  },
+  'como-explicar-o-deus-triuno': {
+    question: 'Como explicar o Deus triúno?',
+    answer:
+      'O Deus triúno é a doutrina bíblica de que há um só Deus em três pessoas: Pai, Filho e Espírito Santo. O cristianismo não ensina três deuses, mas um único Deus que se revela eternamente em comunhão trinitária.',
+    bullets: [
+      'O Pai é Deus, o Filho é Deus e o Espírito Santo é Deus, mas não são a mesma pessoa.',
+      'A Trindade aparece no batismo de Jesus, na missão da igreja e em bênçãos apostólicas.',
+      'A doutrina deve ser explicada com reverência, evitando comparações simplistas demais.',
+    ],
+    links: [
+      { href: '/significado-dos-nomes-de-deus/', label: 'Nomes de Deus' },
+      { href: '/o-papel-das-aliancas-biblicas/', label: 'Alianças bíblicas' },
+      { href: '/o-que-e-apologetica-crista/', label: 'Apologética cristã' },
+    ],
+  },
+  'o-papel-das-aliancas-biblicas': {
+    question: 'O que são alianças bíblicas?',
+    answer:
+      'Alianças bíblicas são compromissos estabelecidos por Deus ao longo da história para revelar seu plano de redenção. Elas ajudam a entender a relação entre criação, promessa, lei, reino, Cristo e nova aliança.',
+    bullets: [
+      'Alianças com Noé, Abraão, Moisés e Davi apontam para etapas importantes da revelação bíblica.',
+      'A nova aliança é cumprida em Cristo e anunciada pelos profetas.',
+      'Entender as alianças ajuda a ler a Bíblia como uma história unificada de redenção.',
+    ],
+    links: [
+      { href: '/um-panorama-biblico-com-o-resumo-66-livros/', label: 'Panorama bíblico' },
+      { href: '/profecias-messianicas-cumpridas/', label: 'Profecias messiânicas' },
+      { href: '/estudo-biblico-sobre-salvacao/', label: 'Salvação' },
+    ],
+  },
+  'o-que-sao-os-dons-espirituais': {
+    question: 'O que são dons espirituais?',
+    answer:
+      'Dons espirituais são capacidades concedidas pelo Espírito Santo para edificação da igreja e serviço ao Reino de Deus. Eles não existem para autopromoção, mas para servir com amor, ordem e maturidade.',
+    bullets: [
+      'O Novo Testamento fala de dons em textos como Romanos 12, 1 Coríntios 12 e Efésios 4.',
+      'Todo dom deve ser exercido com amor, humildade e submissão à Palavra.',
+      'A finalidade dos dons é edificar o corpo de Cristo e glorificar a Deus.',
+    ],
+    links: [
+      { href: '/historia-da-igreja-primitiva-segundo-atos/', label: 'Igreja primitiva' },
+      { href: '/discipulado-cristao-passo-a-passo/', label: 'Discipulado cristão' },
+      { href: '/lideranca-biblica-pastores-igrejas/', label: 'Liderança bíblica' },
+    ],
+  },
+  'o-que-e-apologetica-crista': {
+    question: 'O que é apologética cristã?',
+    answer:
+      'Apologética cristã é a defesa racional e bíblica da fé cristã. Ela busca responder dúvidas, objeções e críticas com mansidão, clareza e fidelidade às Escrituras.',
+    bullets: [
+      'Apologética não é briga, mas explicação responsável da esperança cristã.',
+      'Ela trata de temas como existência de Deus, confiabilidade da Bíblia, ressurreição e verdade.',
+      'Uma boa defesa da fé une conhecimento, humildade, amor e bom testemunho.',
+    ],
+    links: [
+      { href: '/quem-escreveu-a-biblia-conheca-os-40-autores/', label: 'Quem escreveu a Bíblia' },
+      { href: '/arqueologia-biblica-descobertas-recentes/', label: 'Arqueologia bíblica' },
+      { href: '/profecias-biblicas/', label: 'Profecias bíblicas' },
+    ],
+  },
+  'guia-dos-ensinamentos-do-reino': {
+    question: 'Por que Jesus falava em parábolas?',
+    answer:
+      'Jesus usava parábolas para revelar verdades do Reino de Deus de forma simples, profunda e memorável. Elas confrontavam o coração, ensinavam os discípulos e, ao mesmo tempo, expunham a dureza de quem não queria ouvir.',
+    bullets: [
+      'Parábolas usam cenas comuns para ensinar verdades espirituais profundas.',
+      'Elas mostram como é o Reino de Deus, quem é o verdadeiro discípulo e como viver pela fé.',
+      'Entender parábolas exige atenção ao contexto, ao público e ao ponto central da história.',
+    ],
+    links: [
+      { href: '/parabola-dos-talentos/', label: 'Parábola dos talentos' },
+      { href: '/o-bom-samaritano/', label: 'Bom samaritano' },
+      { href: '/o-filho-prodigo/', label: 'Filho pródigo' },
+    ],
+  },
+  'louvor-com-instrumentos': {
+    question: 'A Bíblia permite louvor com instrumentos?',
+    answer:
+      'A Bíblia mostra instrumentos sendo usados no louvor a Deus, especialmente nos Salmos e no culto de Israel. O ponto principal, porém, não é apenas o instrumento, mas a adoração sincera, reverente e centrada em Deus.',
+    bullets: [
+      'Salmos mencionam harpas, címbalos, trombetas e outros instrumentos no louvor.',
+      'Instrumentos podem servir à adoração quando usados com ordem, reverência e propósito.',
+      'O coração do adorador continua sendo mais importante do que o recurso musical.',
+    ],
+    links: [
+      { href: '/diferenca-entre-louvor-e-adoracao/', label: 'Louvor e adoração' },
+      { href: '/funcao-dos-levitas-no-templo/', label: 'Função dos levitas' },
+      { href: '/musica-no-ceu/', label: 'Música no céu' },
+    ],
+  },
+  'diferenca-entre-louvor-e-adoracao': {
+    question: 'Qual é a diferença entre louvor e adoração?',
+    answer:
+      'Louvor costuma expressar reconhecimento pelas obras de Deus, enquanto adoração envolve rendição, reverência e entrega a quem Deus é. Na prática bíblica, os dois se relacionam e devem nascer de um coração sincero.',
+    bullets: [
+      'Louvar é proclamar a grandeza, os feitos e a bondade de Deus.',
+      'Adorar é render-se a Deus com reverência, amor, obediência e verdade.',
+      'Música pode expressar louvor e adoração, mas adoração envolve toda a vida.',
+    ],
+    links: [
+      { href: '/louvor-com-instrumentos/', label: 'Louvor com instrumentos' },
+      { href: '/o-que-e-louvor-racional/', label: 'Louvor racional' },
+      { href: '/funcao-dos-levitas-no-templo/', label: 'Levitas no templo' },
+    ],
+  },
+  'o-pecado-contra-o-espirito-santo': {
+    question: 'O que é o pecado contra o Espírito Santo?',
+    answer:
+      'O pecado contra o Espírito Santo é tratado por Jesus como uma rejeição grave e consciente da obra de Deus, atribuída ao mal por um coração endurecido. O tema deve ser lido com cuidado, sem gerar desespero em quem deseja arrependimento.',
+    bullets: [
+      'O contexto está nos Evangelhos, quando líderes religiosos atribuem a obra de Jesus a Satanás.',
+      'Quem se preocupa sinceramente em buscar perdão demonstra sensibilidade espiritual, não dureza final.',
+      'A resposta bíblica ao medo é voltar-se para Cristo com arrependimento e fé.',
+    ],
+    links: [
+      { href: '/estudo-biblico-sobre-salvacao/', label: 'Salvação' },
+      { href: '/o-salario-do-pecado-e-a-morte-entenda/', label: 'Salário do pecado' },
+      { href: '/e-pecado-se-masturbar/', label: 'Pecado e consciência' },
+    ],
+  },
+  'crente-pode-ver-filme-de-terror': {
+    question: 'Crente pode ver filme de terror?',
+    answer:
+      'A Bíblia não cita filmes de terror, mas oferece princípios sobre pureza, medo, influência, consciência e domínio próprio. O cristão deve avaliar se aquilo alimenta ansiedade, fascínio pelo mal ou enfraquece sua comunhão com Deus.',
+    bullets: [
+      'Nem toda escolha de entretenimento edifica a mente e o coração.',
+      'A consciência, o fruto produzido e a influência espiritual devem ser considerados.',
+      'O princípio bíblico é buscar o que aproxima de Deus e não escraviza a mente.',
+    ],
+    links: [
+      { href: '/crente-pode-ver-novela-7-criterios-biblicos/', label: 'Crente pode ver novela?' },
+      { href: '/batalha-espiritual-digital/', label: 'Batalha espiritual digital' },
+      { href: '/ansiedade-e-fe/', label: 'Ansiedade e fé' },
+    ],
+  },
+  'crente-pode-ver-novela-7-criterios-biblicos': {
+    question: 'Crente pode ver novela?',
+    answer:
+      'A questão não é apenas se crente pode ver novela, mas quais valores, desejos e hábitos esse conteúdo alimenta. A Bíblia chama o cristão a discernir tudo pela consciência, pela santidade e pelo impacto espiritual.',
+    bullets: [
+      'Conteúdos que normalizam pecado, sensualidade ou vingança podem moldar desejos e pensamentos.',
+      'O cristão deve avaliar liberdade, consciência, influência e domínio próprio.',
+      'A pergunta mais útil é se aquilo edifica, aproxima de Deus e preserva o coração.',
+    ],
+    links: [
+      { href: '/crente-pode-ver-filme-de-terror/', label: 'Crente pode ver terror?' },
+      { href: '/crente-pode-fazer-tatuagem/', label: 'Crente pode fazer tatuagem?' },
+      { href: '/tocar-nas-partes-intimas-e-pecado/', label: 'Pureza cristã' },
+    ],
+  },
+  'crente-pode-orar-deitado': {
+    question: 'Crente pode orar deitado?',
+    answer:
+      'Crente pode orar deitado, porque a Bíblia não limita a oração a uma única postura física. O mais importante é a postura do coração: reverência, sinceridade, fé e dependência de Deus.',
+    bullets: [
+      'Na Bíblia, pessoas oram em pé, ajoelhadas, prostradas e em diferentes situações.',
+      'Orar deitado pode ser legítimo, especialmente em descanso, enfermidade ou momentos de intimidade com Deus.',
+      'A postura externa não deve substituir reverência, atenção e sinceridade diante do Senhor.',
+    ],
+    links: [
+      { href: '/estudo-biblico-sobre-oracao/', label: 'Estudo sobre oração' },
+      { href: '/descubra-como-orar-como-jesus/', label: 'Orar como Jesus' },
+      { href: '/orar-sem-cessar/', label: 'Orar sem cessar' },
+    ],
+  },
 };
