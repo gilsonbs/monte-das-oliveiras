@@ -53,15 +53,16 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'pos-e-pre-tribulacionismo': {
     question: 'Qual é a diferença entre pré e pós-tribulacionismo?',
     answer:
-      'O pré-tribulacionismo ensina que a igreja será arrebatada antes da grande tribulação. O pós-tribulacionismo entende que o arrebatamento acontecerá depois desse período, ligado à manifestação final de Cristo.',
+      'O pré-tribulacionismo ensina que a igreja será arrebatada antes da grande tribulação. O pós-tribulacionismo entende que o arrebatamento acontecerá ao final desse período, junto à manifestação visível de Cristo.',
     bullets: [
-      'As duas posições procuram harmonizar textos sobre arrebatamento, tribulação e volta de Jesus.',
-      'A diferença principal está no momento do arrebatamento em relação à tribulação.',
-      'O estudo exige cuidado com Apocalipse, Mateus 24, 1 Tessalonicenses 4 e outras passagens.',
+      'A diferença central é o momento do arrebatamento em relação aos anos de tribulação.',
+      'Há ainda visões intermediárias, como mesotribulacionismo e pré-ira, que tentam harmonizar os textos proféticos.',
+      'Os textos mais discutidos incluem Mateus 24, 1 Tessalonicenses 4, Daniel 9 e Apocalipse.',
     ],
     links: [
-      { href: '/o-absinto-do-apocalipse/', label: 'Terceira trombeta do Apocalipse' },
       { href: '/profecias-biblicas/', label: 'Profecias bíblicas' },
+      { href: '/sinais-do-fim/', label: 'Sinais do fim' },
+      { href: '/o-absinto-do-apocalipse/', label: 'Terceira trombeta do Apocalipse' },
     ],
   },
   'tocar-nas-partes-intimas-e-pecado': {
