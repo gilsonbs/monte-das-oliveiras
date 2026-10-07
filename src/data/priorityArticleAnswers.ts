@@ -65,6 +65,21 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       { href: '/mapa-das-viagens-missionarias-de-paulo/', label: 'Viagens missionárias de Paulo' },
     ],
   },
+  'mapa-das-viagens-missionarias-de-paulo': {
+    question: 'Quais foram as viagens missionárias de Paulo?',
+    answer:
+      'O livro de Atos registra três grandes viagens missionárias de Paulo e sua viagem a Roma como prisioneiro. Essas rotas partiram principalmente de Antioquia, alcançaram regiões como Chipre, Galácia, Macedônia, Acaia e Ásia Menor, e ajudaram a formar igrejas importantes do Novo Testamento.',
+    bullets: [
+      'A primeira viagem aparece em Atos 13-14 e passa por Chipre, Antioquia da Pisídia, Icônio, Listra e Derbe.',
+      'A segunda e a terceira viagens expandem a missão para Macedônia, Grécia, Corinto e Éfeso.',
+      'A viagem a Roma, em Atos 27-28, mostra Paulo pregando mesmo preso e enfrentando naufrágio.',
+    ],
+    links: [
+      { href: '/a-fe-de-paulo/', label: 'A fé de Paulo' },
+      { href: '/apoiar-missionarios/', label: 'Como apoiar missionários' },
+      { href: '/discipulado-cristao-passo-a-passo/', label: 'Discipulado cristão' },
+    ],
+  },
   'parabola-dos-talentos': {
     question: 'O que significa a parábola dos talentos em Mateus 25?',
     answer:
