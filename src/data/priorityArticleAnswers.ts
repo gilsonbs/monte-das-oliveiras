@@ -1085,4 +1085,304 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       { href: '/guia-dos-ensinamentos-do-reino/', label: 'Parábolas de Jesus' },
     ],
   },
+  'o-amor-de-deus': {
+    question: 'O que é o amor de Deus?',
+    answer:
+      'O amor de Deus é sua disposição santa, fiel e graciosa de buscar, perdoar e restaurar pecadores por meio de Cristo. Na Bíblia, esse amor não é apenas sentimento, mas ação redentora revelada na cruz.',
+    bullets: [
+      'João 3:16 apresenta o amor de Deus ligado à entrega do Filho.',
+      'O amor divino une graça, verdade, perdão, santidade e aliança.',
+      'Quem recebe o amor de Deus é chamado a amar o próximo com atitudes concretas.',
+    ],
+    links: [
+      { href: '/amar-ao-proximo/', label: 'Amar ao próximo' },
+      { href: '/estudo-biblico-sobre-salvacao/', label: 'Salvação' },
+      { href: '/a-mulher-samaritana/', label: 'Mulher samaritana' },
+    ],
+  },
+  'esperanca-crista': {
+    question: 'O que é esperança cristã?',
+    answer:
+      'Esperança cristã é a confiança nas promessas de Deus, mesmo em tempos difíceis. Ela se apoia na ressurreição de Jesus, na presença de Deus hoje e na certeza da vida eterna.',
+    bullets: [
+      'A esperança bíblica não é otimismo vazio, mas fé no caráter fiel de Deus.',
+      'A ressurreição de Cristo garante que sofrimento e morte não têm a palavra final.',
+      'Esperança cristã fortalece perseverança, consolo e fidelidade nas lutas.',
+    ],
+    links: [
+      { href: '/devocional-fe-em-meio-as-lutas/', label: 'Fé em meio às lutas' },
+      { href: '/paz-que-excede-todo-entendimento/', label: 'Paz que excede entendimento' },
+      { href: '/a-volta-de-jesus-os-sinais/', label: 'A volta de Jesus' },
+    ],
+  },
+  'salvacao-significado': {
+    question: 'Qual é o significado da salvação no cristianismo?',
+    answer:
+      'No cristianismo, salvação significa ser resgatado do pecado e reconciliado com Deus pela graça, mediante a fé em Jesus Cristo. Ela inclui perdão, nova vida, adoção espiritual e esperança eterna.',
+    bullets: [
+      'A salvação nasce da graça de Deus, não do mérito humano.',
+      'Jesus Cristo é o centro da salvação por sua morte e ressurreição.',
+      'Quem é salvo é chamado a viver em arrependimento, fé e transformação.',
+    ],
+    links: [
+      { href: '/estudo-biblico-sobre-salvacao/', label: 'Estudo sobre salvação' },
+      { href: '/o-salario-do-pecado-e-a-morte-entenda/', label: 'Salário do pecado' },
+      { href: '/o-amor-de-deus/', label: 'O amor de Deus' },
+    ],
+  },
+  'vida-de-oracao': {
+    question: 'O que é uma vida de oração?',
+    answer:
+      'Uma vida de oração é uma rotina de comunhão sincera com Deus, marcada por dependência, adoração, confissão, gratidão e intercessão. Ela transforma a oração em relacionamento contínuo, não apenas em pedidos urgentes.',
+    bullets: [
+      'Oração amadurece quando é constante, honesta e guiada pela Palavra.',
+      'Jesus é o maior exemplo de intimidade com o Pai em meio à missão.',
+      'Uma vida de oração fortalece discernimento, paz, arrependimento e perseverança.',
+    ],
+    links: [
+      { href: '/estudo-biblico-sobre-oracao/', label: 'Estudo sobre oração' },
+      { href: '/orar-sem-cessar/', label: 'Orar sem cessar' },
+      { href: '/descubra-como-orar-como-jesus/', label: 'Orar como Jesus' },
+    ],
+  },
+  'o-poder-da-oracao': {
+    question: 'Qual é o poder da oração?',
+    answer:
+      'O poder da oração está em Deus, não na força das palavras humanas. Orar é buscar o Pai com fé, alinhar o coração à sua vontade e depender da sua graça em todas as áreas da vida.',
+    bullets: [
+      'A oração bíblica envolve confiança, submissão e perseverança.',
+      'Deus responde conforme sua vontade, sabedoria e tempo perfeito.',
+      'Orar transforma quem ora, fortalece a fé e abre espaço para obediência.',
+    ],
+    links: [
+      { href: '/vida-de-oracao/', label: 'Vida de oração' },
+      { href: '/estudo-biblico-sobre-oracao/', label: 'Estudo sobre oração' },
+      { href: '/orar-e-jejuar/', label: 'Orar e jejuar' },
+    ],
+  },
+  'oracao-quanto-tempo-devo': {
+    question: 'Quanto tempo devo orar?',
+    answer:
+      'A Bíblia não determina um tempo obrigatório de oração para todos. Mais importante do que contar minutos é cultivar constância, sinceridade, reverência e comunhão real com Deus.',
+    bullets: [
+      'Jesus ensinou a evitar repetições vazias e buscar o Pai com sinceridade.',
+      'Há momentos de oração breve e momentos de oração prolongada na vida cristã.',
+      'O alvo é crescer em relacionamento com Deus, não cumprir uma métrica religiosa.',
+    ],
+    links: [
+      { href: '/vida-de-oracao/', label: 'Vida de oração' },
+      { href: '/orar-sem-cessar/', label: 'Orar sem cessar' },
+      { href: '/crente-pode-orar-deitado/', label: 'Crente pode orar deitado?' },
+    ],
+  },
+  'livros-impactantes-da-biblia': {
+    question: 'Quais livros da Bíblia mais impactam a vida cristã?',
+    answer:
+      'Todos os livros da Bíblia são importantes, mas alguns ajudam especialmente quem busca entender criação, queda, redenção, sabedoria, evangelho e vida da igreja. Gênesis, Salmos, João, Romanos e Atos são exemplos muito formativos.',
+    bullets: [
+      'Gênesis apresenta criação, queda, promessa e início da história da redenção.',
+      'João e Romanos explicam com força quem é Jesus e o significado do evangelho.',
+      'Salmos, Provérbios e Atos ajudam na oração, sabedoria e missão cristã.',
+    ],
+    links: [
+      { href: '/por-onde-comecar-a-ler-a-biblia/', label: 'Por onde começar a ler' },
+      { href: '/quem-escreveu-a-biblia-conheca-os-40-autores/', label: 'Quem escreveu a Bíblia' },
+      { href: '/um-panorama-biblico-com-o-resumo-66-livros/', label: 'Resumo dos 66 livros' },
+    ],
+  },
+  'significado-dos-nomes-de-deus': {
+    question: 'Qual é o significado dos nomes de Deus?',
+    answer:
+      'Os nomes de Deus revelam aspectos do seu caráter, sua autoridade e seu relacionamento com o povo. Nomes como Elohim, Yahweh, Adonai e El Shaddai apontam para criação, aliança, senhorio e poder.',
+    bullets: [
+      'Elohim destaca Deus como Criador poderoso.',
+      'Yahweh está ligado à aliança, fidelidade e revelação pessoal de Deus.',
+      'Conhecer os nomes de Deus ajuda a adorar com mais reverência e confiança.',
+    ],
+    links: [
+      { href: '/como-explicar-o-deus-triuno/', label: 'Deus triúno' },
+      { href: '/o-amor-de-deus/', label: 'O amor de Deus' },
+      { href: '/o-papel-das-aliancas-biblicas/', label: 'Alianças bíblicas' },
+    ],
+  },
+  'mandamentos-explicados-a-lei-moral-de-deus': {
+    question: 'O que os Dez Mandamentos ensinam hoje?',
+    answer:
+      'Os Dez Mandamentos revelam a santidade de Deus, o pecado humano e princípios morais que orientam amor a Deus e ao próximo. Para o cristão, eles não salvam, mas ensinam o caráter santo da vida que agrada ao Senhor.',
+    bullets: [
+      'A lei mostra o padrão moral de Deus e denuncia o pecado.',
+      'Jesus resumiu a lei no amor a Deus e ao próximo.',
+      'A obediência cristã nasce da graça, não da tentativa de comprar salvação.',
+    ],
+    links: [
+      { href: '/estudo-biblico-sobre-salvacao/', label: 'Salvação pela graça' },
+      { href: '/amar-ao-proximo/', label: 'Amar ao próximo' },
+      { href: '/o-que-significa-tomar-a-sua-cruz/', label: 'Tomar a cruz' },
+    ],
+  },
+  'o-significado-do-tabernaculo': {
+    question: 'Qual é o significado do tabernáculo?',
+    answer:
+      'O tabernáculo era o lugar de habitação simbólica de Deus no meio de Israel e apontava para santidade, sacrifício, mediação e comunhão. Seus elementos ajudam a entender a adoração no Antigo Testamento e a obra de Cristo.',
+    bullets: [
+      'O tabernáculo ensinava que Deus é santo e deseja habitar no meio do seu povo.',
+      'Sacrifícios, altar, véu e sacerdócio apontavam para necessidade de mediação.',
+      'No Novo Testamento, Cristo cumpre de forma superior o acesso a Deus.',
+    ],
+    links: [
+      { href: '/oferta-de-manjares/', label: 'Oferta de manjares' },
+      { href: '/o-papel-das-aliancas-biblicas/', label: 'Alianças bíblicas' },
+      { href: '/profecias-messianicas-cumpridas/', label: 'Cristo no Antigo Testamento' },
+    ],
+  },
+  'a-confirmacao-da-fe': {
+    question: 'O que significa amém?',
+    answer:
+      'Amém significa confirmação, concordância e confiança. Na Bíblia, a palavra expressa que algo é verdadeiro, firme e digno de fé, especialmente quando o povo responde às promessas, louvores e orações diante de Deus.',
+    bullets: [
+      'Amém pode significar “assim seja” ou “verdadeiramente”.',
+      'A palavra aparece em orações, louvores e declarações solenes.',
+      'Dizer amém com fé é concordar com a verdade de Deus, não apenas encerrar uma frase.',
+    ],
+    links: [
+      { href: '/estudo-biblico-sobre-oracao/', label: 'Estudo sobre oração' },
+      { href: '/expressao-de-louvor-biblica/', label: 'Aleluia' },
+      { href: '/hosana-um-pedido-de-salvacao/', label: 'Hosana' },
+    ],
+  },
+  'expressao-de-louvor-biblica': {
+    question: 'O que significa aleluia?',
+    answer:
+      'Aleluia é uma expressão bíblica de louvor que significa “louvai ao Senhor”. Ela aparece especialmente nos Salmos e comunica adoração, gratidão e exaltação ao Deus vivo.',
+    bullets: [
+      'Aleluia une convite e resposta de louvor ao Senhor.',
+      'Nos Salmos, a expressão aparece ligada à grandeza, bondade e fidelidade de Deus.',
+      'Louvar com aleluia deve envolver coração, vida e reverência, não apenas música.',
+    ],
+    links: [
+      { href: '/diferenca-entre-louvor-e-adoracao/', label: 'Louvor e adoração' },
+      { href: '/louvor-com-instrumentos/', label: 'Louvor com instrumentos' },
+      { href: '/a-confirmacao-da-fe/', label: 'Amém' },
+    ],
+  },
+  'hosana-um-pedido-de-salvacao': {
+    question: 'O que significa hosana?',
+    answer:
+      'Hosana significa originalmente um pedido de salvação, como “salva-nos, por favor”, e também se tornou expressão de louvor. No Novo Testamento, a multidão usa essa palavra na entrada triunfal de Jesus em Jerusalém.',
+    bullets: [
+      'Hosana tem ligação com clamor por salvação e reconhecimento do Rei.',
+      'Na entrada triunfal, a expressão aponta para Jesus como o Filho de Davi.',
+      'A palavra une súplica, esperança messiânica e adoração.',
+    ],
+    links: [
+      { href: '/profecias-messianicas-cumpridas/', label: 'Profecias messiânicas' },
+      { href: '/a-profecia-do-nazareno/', label: 'Profecia do Nazareno' },
+      { href: '/expressao-de-louvor-biblica/', label: 'Aleluia' },
+    ],
+  },
+  'maranata-a-senha-dos-primeiros': {
+    question: 'O que significa maranata?',
+    answer:
+      'Maranata é uma expressão usada pelos primeiros cristãos que pode ser entendida como “vem, Senhor” ou “o Senhor vem”. Ela expressa esperança, vigilância e desejo pela volta de Jesus.',
+    bullets: [
+      'Maranata aparece ligada à expectativa da vinda de Cristo.',
+      'A expressão lembra que a igreja vive entre a promessa e a consumação.',
+      'Dizer maranata é confessar esperança e fidelidade enquanto Cristo não volta.',
+    ],
+    links: [
+      { href: '/a-volta-de-jesus-os-sinais/', label: 'A volta de Jesus' },
+      { href: '/sinais-do-fim/', label: 'Sinais do fim' },
+      { href: '/preparacao-para-o-arrebatamento/', label: 'Preparação espiritual' },
+    ],
+  },
+  'profeta-elias-monte-carmelo-licoes-fe': {
+    question: 'Quais lições aprendemos com Elias no Monte Carmelo?',
+    answer:
+      'Elias no Monte Carmelo ensina sobre coragem, fidelidade a Deus e confronto contra a idolatria. A narrativa mostra que o Senhor é Deus e chama o povo a abandonar a duplicidade espiritual.',
+    bullets: [
+      'Elias confrontou a idolatria em um tempo de confusão espiritual.',
+      'O episódio mostra que Deus responde de modo soberano e revela sua glória.',
+      'A pergunta central permanece: até quando o povo ficaria dividido entre dois caminhos?',
+    ],
+    links: [
+      { href: '/licoes-de-fe-de-abraao/', label: 'Lições de fé' },
+      { href: '/o-cristao-que-satanas-mais-teme/', label: 'Firmeza espiritual' },
+      { href: '/profetas-fake-news/', label: 'Falsos profetas' },
+    ],
+  },
+  'rascunho-a-fe-de-raabe': {
+    question: 'O que aprendemos com a fé de Raabe?',
+    answer:
+      'A fé de Raabe mostra que Deus alcança pessoas improváveis e transforma histórias marcadas por pecado, medo e exclusão. Sua atitude em Jericó revelou confiança no Deus de Israel e entrou na linhagem do Messias.',
+    bullets: [
+      'Raabe ouviu sobre os feitos de Deus e respondeu com fé prática.',
+      'Sua história une graça, coragem, risco e redenção.',
+      'O Novo Testamento cita Raabe como exemplo de fé demonstrada por obras.',
+    ],
+    links: [
+      { href: '/profecias-messianicas-cumpridas/', label: 'Linhagem messiânica' },
+      { href: '/a-mulher-samaritana/', label: 'Graça para improváveis' },
+      { href: '/estudo-biblico-sobre-salvacao/', label: 'Salvação pela graça' },
+    ],
+  },
+  'quem-foi-debora-na-biblia': {
+    question: 'Quem foi Débora na Bíblia?',
+    answer:
+      'Débora foi profetisa e juíza em Israel, usada por Deus para orientar o povo em um período de opressão. Sua história em Juízes mostra coragem, sabedoria, liderança e confiança na ação do Senhor.',
+    bullets: [
+      'Débora julgava Israel e transmitia direção de Deus ao povo.',
+      'Ela encorajou Baraque em uma batalha decisiva contra Sísera.',
+      'Sua liderança destaca fé, coragem e serviço em um tempo de crise nacional.',
+    ],
+    links: [
+      { href: '/nao-haviam-mulheres-entre-os-12-apostolos/', label: 'Mulheres e os apóstolos' },
+      { href: '/a-mulher-samaritana/', label: 'Mulher samaritana' },
+      { href: '/lideranca-biblica-pastores-igrejas/', label: 'Liderança bíblica' },
+    ],
+  },
+  'davi-lider-cristao': {
+    question: 'O que Davi ensina sobre liderança cristã?',
+    answer:
+      'Davi ensina que liderança cristã envolve coragem, dependência de Deus, arrependimento e coração ensinável. Ele não foi perfeito, mas sua história mostra como Deus trabalha com líderes quebrantados e responsáveis.',
+    bullets: [
+      'Davi venceu desafios confiando no Senhor, não apenas em força humana.',
+      'Suas falhas mostram a importância de arrependimento e correção.',
+      'A liderança segundo Deus une coragem, adoração, justiça e humildade.',
+    ],
+    links: [
+      { href: '/lideranca-crista/', label: 'Liderança cristã' },
+      { href: '/lideranca-biblica-pastores-igrejas/', label: 'Liderança bíblica' },
+      { href: '/humildade/', label: 'Humildade' },
+    ],
+  },
+  'lideranca-crista': {
+    question: 'O que é liderança cristã?',
+    answer:
+      'Liderança cristã é influenciar e servir pessoas de acordo com o caráter de Cristo. Ela não se baseia apenas em cargo, carisma ou autoridade, mas em serviço, verdade, amor, exemplo e responsabilidade diante de Deus.',
+    bullets: [
+      'Jesus ensinou que o maior deve ser servo de todos.',
+      'Liderança cristã exige caráter, maturidade, humildade e fidelidade bíblica.',
+      'Um líder saudável forma pessoas, protege o rebanho e aponta para Cristo.',
+    ],
+    links: [
+      { href: '/lideranca-biblica-pastores-igrejas/', label: 'Liderança bíblica' },
+      { href: '/davi-lider-cristao/', label: 'Davi como líder' },
+      { href: '/discipulado-cristao-passo-a-passo/', label: 'Discipulado' },
+    ],
+  },
+  'vida-crista-com-proposito': {
+    question: 'Como viver uma vida cristã com propósito?',
+    answer:
+      'Viver uma vida cristã com propósito é alinhar fé, trabalho, relacionamentos e recursos ao senhorio de Cristo. O propósito bíblico envolve glorificar a Deus, servir pessoas e viver com integridade.',
+    bullets: [
+      'Propósito cristão nasce da identidade em Cristo e da missão do Reino.',
+      'Trabalho, honestidade e generosidade também fazem parte da espiritualidade diária.',
+      'Uma vida com propósito usa dons e oportunidades para servir a Deus e ao próximo.',
+    ],
+    links: [
+      { href: '/descubra-seu-proposito-de-vida/', label: 'Descobrir propósito' },
+      { href: '/parabola-dos-talentos/', label: 'Parábola dos talentos' },
+      { href: '/discipulado-cristao-passo-a-passo/', label: 'Discipulado cristão' },
+    ],
+  },
 };
