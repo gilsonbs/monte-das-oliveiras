@@ -473,11 +473,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'e-pecado-se-masturbar': {
     question: 'Afinal, é pecado se masturbar?',
     answer:
-      'A Bíblia não usa diretamente a palavra masturbação, mas ensina princípios sobre pureza, domínio próprio, desejos, consciência e santidade. A questão deve ser avaliada pelo que alimenta o coração e aproxima ou afasta a pessoa de Deus.',
+      'A Bíblia não usa diretamente a palavra masturbação, mas ensina princípios sobre pureza, domínio próprio, desejos, consciência e santidade. Por isso, a pergunta deve considerar intenção, imaginação, vício, culpa e se a prática aproxima ou afasta a pessoa de Deus.',
     bullets: [
-      'Pornografia, fantasia cultivada e escravidão do desejo tornam a prática espiritualmente perigosa.',
-      'Pureza bíblica envolve corpo, mente, intenção e vida secreta diante de Deus.',
-      'O caminho cristão inclui arrependimento, graça, domínio próprio e busca de ajuda quando há vício.',
+      'Pornografia, fantasia cultivada e compulsão tornam a prática espiritualmente nociva.',
+      'Pureza bíblica envolve corpo, mente, intenção, consciência e vida secreta diante de Deus.',
+      'Quem luta com culpa ou vício precisa de graça, arrependimento, limites práticos e ajuda madura.',
     ],
     links: [
       { href: '/tocar-nas-partes-intimas-e-pecado/', label: 'Tocar nas partes íntimas é pecado?' },
@@ -788,11 +788,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   '7-perigos-do-desigrejado': {
     question: 'Quais são os perigos de viver desigrejado?',
     answer:
-      'Viver desigrejado pode enfraquecer a comunhão, a prestação de contas, o ensino bíblico e o serviço cristão. Embora existam feridas reais em comunidades, a Bíblia apresenta a igreja como corpo, família e lugar de edificação.',
+      'Viver desigrejado pode enfraquecer a comunhão, o cuidado pastoral, a correção amorosa e o serviço cristão. Ao mesmo tempo, feridas causadas por abusos espirituais precisam ser tratadas com seriedade; a resposta bíblica é buscar uma comunidade saudável, não normalizar isolamento permanente.',
     bullets: [
-      'A vida cristã foi pensada para comunhão, mutualidade e crescimento conjunto.',
-      'Isolamento prolongado pode alimentar frieza espiritual, orgulho ou falta de correção.',
-      'O caminho saudável é buscar uma comunidade fiel, madura e centrada em Cristo.',
+      'A vida cristã foi pensada para comunhão, mutualidade, ensino e crescimento conjunto.',
+      'Isolamento prolongado pode alimentar frieza espiritual, desânimo ou falta de correção.',
+      'Quem saiu ferido de uma igreja precisa de restauração, prudência e uma comunidade centrada em Cristo.',
     ],
     links: [
       { href: '/discipulado-cristao-passo-a-passo/', label: 'Discipulado cristão' },
@@ -818,11 +818,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'o-cristao-que-satanas-mais-teme': {
     question: 'Que tipo de cristão o inimigo teme?',
     answer:
-      'O cristão firme em Cristo, cheio da Palavra, perseverante em oração e obediente a Deus é espiritualmente resistente. A força do cristão não está em si mesmo, mas na graça de Deus, na verdade bíblica e na dependência do Espírito Santo.',
+      'O cristão espiritualmente firme é aquele que permanece em Cristo, conhece a Palavra, persevera em oração e vive em obediência. A força dele não está em autoconfiança ou discurso de guerra espiritual, mas na graça de Deus e na vitória de Cristo.',
     bullets: [
-      'Maturidade espiritual envolve verdade, oração, santidade e perseverança.',
+      'Maturidade espiritual envolve verdade, oração, santidade, humildade e perseverança.',
       'A Bíblia chama o cristão a resistir ao mal e permanecer firme na fé.',
-      'O foco não deve ser medo do inimigo, mas confiança na vitória de Cristo.',
+      'O foco não deve ser fascínio pelo inimigo, mas confiança em Cristo e obediência diária.',
     ],
     links: [
       { href: '/batalha-espiritual-digital/', label: 'Batalha espiritual' },
@@ -878,11 +878,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'orar-e-jejuar': {
     question: 'Por que orar e jejuar?',
     answer:
-      'Orar e jejuar são práticas espirituais que expressam dependência de Deus, busca por direção e consagração. O jejum bíblico não é moeda de troca, mas uma forma de humilhar o coração e intensificar a oração.',
+      'Orar e jejuar são práticas espirituais que expressam dependência de Deus, busca por direção e consagração. O jejum bíblico não força Deus a agir nem serve como moeda de troca; ele ajuda a humilhar o coração e intensificar a oração.',
     bullets: [
       'Jesus ensinou sobre jejum com sinceridade, sem aparência religiosa.',
       'O jejum deve estar ligado a arrependimento, oração, compaixão e busca por Deus.',
-      'A prática precisa ser feita com sabedoria, especialmente quando há limitações de saúde.',
+      'A prática precisa de sabedoria e cuidado, especialmente quando há limitações de saúde ou histórico alimentar sensível.',
     ],
     links: [
       { href: '/estudo-biblico-sobre-oracao/', label: 'Estudo sobre oração' },
@@ -908,11 +908,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'pornografia-e-pecado': {
     question: 'Pornografia é pecado?',
     answer:
-      'Pornografia é pecado porque distorce a sexualidade criada por Deus, alimenta cobiça, objetifica pessoas e escraviza a mente. A resposta cristã envolve arrependimento, fuga da tentação, renovação da mente e busca de ajuda quando necessário.',
+      'Pornografia é pecado porque distorce a sexualidade criada por Deus, alimenta cobiça, objetifica pessoas e pode escravizar a mente. A resposta cristã une arrependimento, graça, renovação da mente, limites práticos e busca de ajuda quando a pessoa não consegue vencer sozinha.',
     bullets: [
       'Jesus ensinou que a pureza envolve também o olhar, o desejo e o coração.',
-      'Pornografia pode gerar vício, culpa, isolamento e danos relacionais profundos.',
-      'Há caminho de restauração em Cristo, com confissão, limites práticos e acompanhamento.',
+      'Pornografia pode gerar compulsão, culpa, isolamento e danos relacionais profundos.',
+      'Há caminho de restauração em Cristo, com confissão segura, limites práticos e acompanhamento maduro.',
     ],
     links: [
       { href: '/e-pecado-se-masturbar/', label: 'Masturbação e vida cristã' },
@@ -923,11 +923,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'fumar-e-pecado-entenda-o-debate': {
     question: 'Fumar é pecado?',
     answer:
-      'A Bíblia não menciona cigarro diretamente, mas oferece princípios sobre domínio próprio, cuidado com o corpo, vício e testemunho. Fumar deve ser avaliado à luz da mordomia do corpo, da consciência e da liberdade cristã.',
+      'A Bíblia não menciona cigarro diretamente, mas oferece princípios sobre domínio próprio, cuidado com o corpo, vício e testemunho. A pergunta deve ser avaliada com honestidade diante de Deus, considerando saúde, dependência, consciência e liberdade cristã.',
     bullets: [
       'O corpo do cristão deve ser tratado com responsabilidade diante de Deus.',
-      'Dependência, dano à saúde e escravidão de hábitos pesam no discernimento bíblico.',
-      'A graça de Deus também alcança quem luta para abandonar vícios.',
+      'Dependência, dano à saúde e perda de domínio próprio pesam no discernimento bíblico.',
+      'Quem luta para abandonar o vício precisa de graça, apoio prático e perseverança, não apenas condenação.',
     ],
     links: [
       { href: '/crente-pode-ver-filme-de-terror/', label: 'Discernimento cristão' },
@@ -953,11 +953,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'crente-divorciado-pode-casar-de-novo': {
     question: 'Crente divorciado pode casar de novo?',
     answer:
-      'A possibilidade de um crente divorciado casar de novo é um tema que exige cuidado pastoral e fidelidade bíblica. Textos sobre adultério, abandono, reconciliação e dureza do coração precisam ser avaliados com contexto, temor a Deus e responsabilidade.',
+      'A possibilidade de um crente divorciado casar de novo exige cuidado pastoral, contexto bíblico e responsabilidade. Textos sobre aliança, adultério, abandono, reconciliação e proteção da parte ferida precisam ser avaliados sem banalizar o casamento nem ignorar situações reais de sofrimento.',
     bullets: [
       'Jesus tratou o casamento com seriedade e apontou para o plano original de Deus.',
       'Algumas tradições cristãs reconhecem exceções bíblicas, como imoralidade sexual e abandono.',
-      'Cada caso precisa de aconselhamento pastoral maduro, sem banalizar aliança nem ignorar sofrimento.',
+      'Cada caso precisa de aconselhamento pastoral maduro, especialmente quando há abuso, abandono ou tentativa de reconciliação.',
     ],
     links: [
       { href: '/o-amor-de-deus/', label: 'O amor de Deus' },
@@ -968,11 +968,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'crente-pode-fazer-tatuagem': {
     question: 'Crente pode fazer tatuagem?',
     answer:
-      'A pergunta sobre tatuagem deve ser tratada com discernimento, não apenas com uma resposta automática. O cristão deve considerar motivação, consciência, testemunho, conteúdo da tatuagem e se a decisão glorifica a Deus.',
+      'A pergunta sobre tatuagem deve ser tratada com discernimento bíblico, não apenas com uma resposta automática. O cristão deve considerar motivação, consciência, testemunho, conteúdo da tatuagem, contexto cultural e se a decisão glorifica a Deus.',
     bullets: [
       'Levítico 19:28 precisa ser lido em seu contexto histórico e religioso.',
       'O Novo Testamento enfatiza consciência, santidade, liberdade e edificação.',
-      'Nem toda liberdade convém; a motivação e o testemunho também importam.',
+      'Nem toda liberdade convém; motivação, maturidade e impacto sobre outras pessoas também importam.',
     ],
     links: [
       { href: '/crente-pode-ver-novela-7-criterios-biblicos/', label: 'Critérios bíblicos' },
