@@ -1148,11 +1148,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'o-poder-da-oracao': {
     question: 'Qual é o poder da oração?',
     answer:
-      'O poder da oração está em Deus, não na força das palavras humanas. Orar é buscar o Pai com fé, alinhar o coração à sua vontade e depender da sua graça em todas as áreas da vida.',
+      'O poder da oração está em Deus, não na força das palavras humanas nem em fórmulas religiosas. Orar é buscar o Pai com fé, alinhar o coração à sua vontade e depender da sua graça, mesmo quando a resposta não vem como esperamos.',
     bullets: [
-      'A oração bíblica envolve confiança, submissão e perseverança.',
-      'Deus responde conforme sua vontade, sabedoria e tempo perfeito.',
-      'Orar transforma quem ora, fortalece a fé e abre espaço para obediência.',
+      'A oração bíblica envolve confiança, submissão, perseverança e arrependimento.',
+      'Nem toda oração sem resposta visível está “bloqueada”; Deus responde com sabedoria e tempo perfeito.',
+      'Orar transforma quem ora, fortalece a fé e conduz a uma vida mais obediente.',
     ],
     links: [
       { href: '/vida-de-oracao/', label: 'Vida de oração' },
@@ -1193,11 +1193,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'significado-dos-nomes-de-deus': {
     question: 'Qual é o significado dos nomes de Deus?',
     answer:
-      'Os nomes de Deus revelam aspectos do seu caráter, sua autoridade e seu relacionamento com o povo. Nomes como Elohim, Yahweh, Adonai e El Shaddai apontam para criação, aliança, senhorio e poder.',
+      'Os nomes de Deus revelam aspectos do seu caráter, sua autoridade e seu relacionamento com o povo. Nomes como Elohim, Yahweh, Adonai e El Shaddai apontam para criação, aliança, senhorio, suficiência e fidelidade.',
     bullets: [
       'Elohim destaca Deus como Criador poderoso.',
-      'Yahweh está ligado à aliança, fidelidade e revelação pessoal de Deus.',
-      'Conhecer os nomes de Deus ajuda a adorar com mais reverência e confiança.',
+      'Yahweh e Adonai revelam aliança, presença, governo e reverência diante do Senhor.',
+      'Conhecer os nomes de Deus ajuda a orar, adorar e confiar com mais profundidade bíblica.',
     ],
     links: [
       { href: '/como-explicar-o-deus-triuno/', label: 'Deus triúno' },
@@ -1223,11 +1223,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'o-significado-do-tabernaculo': {
     question: 'Qual é o significado do tabernáculo?',
     answer:
-      'O tabernáculo era o lugar de habitação simbólica de Deus no meio de Israel e apontava para santidade, sacrifício, mediação e comunhão. Seus elementos ajudam a entender a adoração no Antigo Testamento e a obra de Cristo.',
+      'O tabernáculo era o lugar de habitação simbólica de Deus no meio de Israel e apontava para santidade, sacrifício, mediação e comunhão. Do átrio ao Santo dos Santos, seus elementos ajudam a entender o culto no Antigo Testamento e a obra de Cristo.',
     bullets: [
       'O tabernáculo ensinava que Deus é santo e deseja habitar no meio do seu povo.',
-      'Sacrifícios, altar, véu e sacerdócio apontavam para necessidade de mediação.',
-      'No Novo Testamento, Cristo cumpre de forma superior o acesso a Deus.',
+      'Altar, lavatório, candelabro, mesa, incenso, véu e arca comunicavam verdades espirituais.',
+      'No Novo Testamento, Cristo cumpre de forma superior o acesso a Deus e a mediação perfeita.',
     ],
     links: [
       { href: '/oferta-de-manjares/', label: 'Oferta de manjares' },
@@ -1298,11 +1298,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'profeta-elias-monte-carmelo-licoes-fe': {
     question: 'Quais lições aprendemos com Elias no Monte Carmelo?',
     answer:
-      'Elias no Monte Carmelo ensina sobre coragem, fidelidade a Deus e confronto contra a idolatria. A narrativa mostra que o Senhor é Deus e chama o povo a abandonar a duplicidade espiritual.',
+      'Elias no Monte Carmelo ensina sobre coragem, fidelidade a Deus e confronto contra a idolatria. Mas sua história também mostra fragilidade, cansaço e cuidado divino, lembrando que até servos fiéis precisam ser restaurados pelo Senhor.',
     bullets: [
       'Elias confrontou a idolatria em um tempo de confusão espiritual.',
       'O episódio mostra que Deus responde de modo soberano e revela sua glória.',
-      'A pergunta central permanece: até quando o povo ficaria dividido entre dois caminhos?',
+      'Depois da vitória, Elias também enfrentou medo e exaustão, e Deus cuidou dele com paciência.',
     ],
     links: [
       { href: '/licoes-de-fe-de-abraao/', label: 'Lições de fé' },
@@ -1313,11 +1313,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'rascunho-a-fe-de-raabe': {
     question: 'O que aprendemos com a fé de Raabe?',
     answer:
-      'A fé de Raabe mostra que Deus alcança pessoas improváveis e transforma histórias marcadas por pecado, medo e exclusão. Sua atitude em Jericó revelou confiança no Deus de Israel e entrou na linhagem do Messias.',
+      'A fé de Raabe mostra que Deus alcança pessoas improváveis e transforma histórias marcadas por medo, risco e exclusão. Sua atitude em Jericó revelou confiança no Deus de Israel, e sua história entrou na linhagem do Messias.',
     bullets: [
       'Raabe ouviu sobre os feitos de Deus e respondeu com fé prática.',
       'Sua história une graça, coragem, risco e redenção.',
-      'O Novo Testamento cita Raabe como exemplo de fé demonstrada por obras.',
+      'O Novo Testamento apresenta Raabe como exemplo de fé demonstrada por obras.',
     ],
     links: [
       { href: '/profecias-messianicas-cumpridas/', label: 'Linhagem messiânica' },
@@ -1328,11 +1328,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'quem-foi-debora-na-biblia': {
     question: 'Quem foi Débora na Bíblia?',
     answer:
-      'Débora foi profetisa e juíza em Israel, usada por Deus para orientar o povo em um período de opressão. Sua história em Juízes mostra coragem, sabedoria, liderança e confiança na ação do Senhor.',
+      'Débora foi profetisa e juíza em Israel, usada por Deus para orientar o povo em um período de opressão. Sua história com Baraque, em Juízes 4 e 5, mostra coragem, sabedoria, liderança e confiança na ação do Senhor.',
     bullets: [
       'Débora julgava Israel e transmitia direção de Deus ao povo.',
-      'Ela encorajou Baraque em uma batalha decisiva contra Sísera.',
-      'Sua liderança destaca fé, coragem e serviço em um tempo de crise nacional.',
+      'Ela encorajou Baraque a obedecer ao chamado de Deus em uma batalha decisiva contra Sísera.',
+      'Sua liderança destaca fé, discernimento e serviço em um tempo de crise nacional.',
     ],
     links: [
       { href: '/nao-haviam-mulheres-entre-os-12-apostolos/', label: 'Mulheres e os apóstolos' },
