@@ -770,4 +770,319 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       { href: '/orar-sem-cessar/', label: 'Orar sem cessar' },
     ],
   },
+  'lideranca-biblica-pastores-igrejas': {
+    question: 'O que é liderança bíblica na igreja?',
+    answer:
+      'Liderança bíblica na igreja é serviço humilde, cuidado espiritual e fidelidade à Palavra de Deus. O líder cristão não é chamado a dominar pessoas, mas a pastorear, ensinar, proteger e servir como exemplo.',
+    bullets: [
+      'Jesus apresentou liderança como serviço, não como busca de status.',
+      'Pastores e líderes devem cuidar do rebanho com amor, verdade e responsabilidade.',
+      'A autoridade espiritual precisa estar ligada a caráter, doutrina e exemplo de vida.',
+    ],
+    links: [
+      { href: '/lideranca-crista/', label: 'Liderança cristã' },
+      { href: '/davi-lider-cristao/', label: 'Davi como líder' },
+      { href: '/discipulado-cristao-passo-a-passo/', label: 'Discipulado cristão' },
+    ],
+  },
+  '7-perigos-do-desigrejado': {
+    question: 'Quais são os perigos de viver desigrejado?',
+    answer:
+      'Viver desigrejado pode enfraquecer a comunhão, a prestação de contas, o ensino bíblico e o serviço cristão. Embora existam feridas reais em comunidades, a Bíblia apresenta a igreja como corpo, família e lugar de edificação.',
+    bullets: [
+      'A vida cristã foi pensada para comunhão, mutualidade e crescimento conjunto.',
+      'Isolamento prolongado pode alimentar frieza espiritual, orgulho ou falta de correção.',
+      'O caminho saudável é buscar uma comunidade fiel, madura e centrada em Cristo.',
+    ],
+    links: [
+      { href: '/discipulado-cristao-passo-a-passo/', label: 'Discipulado cristão' },
+      { href: '/historia-da-igreja-primitiva-segundo-atos/', label: 'Igreja primitiva' },
+      { href: '/lideranca-biblica-pastores-igrejas/', label: 'Liderança bíblica' },
+    ],
+  },
+  'o-que-significa-tomar-a-sua-cruz': {
+    question: 'O que significa tomar a sua cruz?',
+    answer:
+      'Tomar a sua cruz significa seguir Jesus com renúncia, obediência e disposição de perder o controle da própria vida por amor a Cristo. Não é apenas enfrentar dificuldades, mas submeter desejos, prioridades e identidade ao Senhor.',
+    bullets: [
+      'Jesus chamou seus discípulos a negar a si mesmos e segui-lo diariamente.',
+      'A cruz aponta para entrega, obediência e morte do ego diante de Deus.',
+      'Seguir Cristo envolve custo, mas também vida verdadeira e esperança eterna.',
+    ],
+    links: [
+      { href: '/vida-crista-com-proposito/', label: 'Vida cristã com propósito' },
+      { href: '/discipulado-cristao-passo-a-passo/', label: 'Discipulado cristão' },
+      { href: '/humildade/', label: 'Humildade' },
+    ],
+  },
+  'o-cristao-que-satanas-mais-teme': {
+    question: 'Que tipo de cristão o inimigo teme?',
+    answer:
+      'O cristão firme em Cristo, cheio da Palavra, perseverante em oração e obediente a Deus é espiritualmente resistente. A força do cristão não está em si mesmo, mas na graça de Deus, na verdade bíblica e na dependência do Espírito Santo.',
+    bullets: [
+      'Maturidade espiritual envolve verdade, oração, santidade e perseverança.',
+      'A Bíblia chama o cristão a resistir ao mal e permanecer firme na fé.',
+      'O foco não deve ser medo do inimigo, mas confiança na vitória de Cristo.',
+    ],
+    links: [
+      { href: '/batalha-espiritual-digital/', label: 'Batalha espiritual' },
+      { href: '/vida-de-oracao/', label: 'Vida de oração' },
+      { href: '/crente-cheio-da-uncao/', label: 'Crente cheio da unção' },
+    ],
+  },
+  'devocional-fe-em-meio-as-lutas': {
+    question: 'Como manter a fé em meio às lutas?',
+    answer:
+      'Manter a fé em meio às lutas envolve lembrar das promessas de Deus, orar com sinceridade e perseverar mesmo quando as circunstâncias não mudam rapidamente. A fé bíblica não nega a dor, mas confia no cuidado do Senhor.',
+    bullets: [
+      'A Bíblia apresenta sofrimento e esperança caminhando juntos na vida cristã.',
+      'Promessas de consolo fortalecem o coração em períodos de medo e cansaço.',
+      'Comunhão, oração e Palavra ajudam a sustentar a fé durante a prova.',
+    ],
+    links: [
+      { href: '/paz-que-excede-todo-entendimento/', label: 'Paz que excede entendimento' },
+      { href: '/jesus-na-tempestade-5-licoes/', label: 'Jesus na tempestade' },
+      { href: '/ansiedade-e-fe/', label: 'Ansiedade e fé' },
+    ],
+  },
+  'licoes-de-fe-de-abraao': {
+    question: 'Quais lições de fé aprendemos com Abraão?',
+    answer:
+      'Abraão ensina que fé é confiar em Deus mesmo sem ver todo o caminho. Sua história mostra obediência, espera, promessa, falhas humanas e a fidelidade de Deus conduzindo cada etapa.',
+    bullets: [
+      'Abraão saiu sem saber exatamente para onde ia, confiando na promessa de Deus.',
+      'Sua caminhada mostra que fé também amadurece em períodos de espera.',
+      'A promessa feita a Abraão aponta para o plano redentor de Deus na história.',
+    ],
+    links: [
+      { href: '/o-papel-das-aliancas-biblicas/', label: 'Alianças bíblicas' },
+      { href: '/desenvolvendo-a-fe-em-tempos-de-ansiedade/', label: 'Fé em tempos difíceis' },
+      { href: '/fe-pequena/', label: 'Fé pequena' },
+    ],
+  },
+  'descubra-seu-proposito-de-vida': {
+    question: 'Como descobrir seu propósito de vida segundo a Bíblia?',
+    answer:
+      'Segundo a Bíblia, propósito de vida começa em conhecer Deus, glorificá-lo e viver de modo fiel à vocação recebida. Propósito não é apenas carreira ou sucesso pessoal, mas uma vida orientada por amor, serviço e obediência.',
+    bullets: [
+      'O propósito cristão nasce da identidade em Cristo, não da comparação com outras pessoas.',
+      'Dons, oportunidades e responsabilidades ajudam a discernir caminhos de serviço.',
+      'Uma vida com propósito une fé, caráter, trabalho honesto e generosidade.',
+    ],
+    links: [
+      { href: '/vida-crista-com-proposito/', label: 'Vida cristã com propósito' },
+      { href: '/parabola-dos-talentos/', label: 'Parábola dos talentos' },
+      { href: '/o-ceu-te-deu-um-chamado-nao-desista/', label: 'Chamado de Deus' },
+    ],
+  },
+  'orar-e-jejuar': {
+    question: 'Por que orar e jejuar?',
+    answer:
+      'Orar e jejuar são práticas espirituais que expressam dependência de Deus, busca por direção e consagração. O jejum bíblico não é moeda de troca, mas uma forma de humilhar o coração e intensificar a oração.',
+    bullets: [
+      'Jesus ensinou sobre jejum com sinceridade, sem aparência religiosa.',
+      'O jejum deve estar ligado a arrependimento, oração, compaixão e busca por Deus.',
+      'A prática precisa ser feita com sabedoria, especialmente quando há limitações de saúde.',
+    ],
+    links: [
+      { href: '/estudo-biblico-sobre-oracao/', label: 'Estudo sobre oração' },
+      { href: '/orar-sem-cessar/', label: 'Orar sem cessar' },
+      { href: '/vida-de-oracao/', label: 'Vida de oração' },
+    ],
+  },
+  'orar-sem-cessar': {
+    question: 'O que significa orar sem cessar?',
+    answer:
+      'Orar sem cessar significa cultivar uma vida de comunhão constante com Deus. Não quer dizer repetir palavras o dia inteiro, mas viver em dependência, gratidão, vigilância e diálogo contínuo com o Senhor.',
+    bullets: [
+      'A oração constante transforma a rotina em espaço de dependência de Deus.',
+      'É possível orar em momentos breves, decisões, tentações, alegrias e lutas.',
+      'Uma vida de oração cresce com prática, sinceridade e perseverança.',
+    ],
+    links: [
+      { href: '/estudo-biblico-sobre-oracao/', label: 'Estudo sobre oração' },
+      { href: '/descubra-como-orar-como-jesus/', label: 'Orar como Jesus' },
+      { href: '/crente-pode-orar-deitado/', label: 'Orar deitado' },
+    ],
+  },
+  'pornografia-e-pecado': {
+    question: 'Pornografia é pecado?',
+    answer:
+      'Pornografia é pecado porque distorce a sexualidade criada por Deus, alimenta cobiça, objetifica pessoas e escraviza a mente. A resposta cristã envolve arrependimento, fuga da tentação, renovação da mente e busca de ajuda quando necessário.',
+    bullets: [
+      'Jesus ensinou que a pureza envolve também o olhar, o desejo e o coração.',
+      'Pornografia pode gerar vício, culpa, isolamento e danos relacionais profundos.',
+      'Há caminho de restauração em Cristo, com confissão, limites práticos e acompanhamento.',
+    ],
+    links: [
+      { href: '/e-pecado-se-masturbar/', label: 'Masturbação e vida cristã' },
+      { href: '/tocar-nas-partes-intimas-e-pecado/', label: 'Pureza cristã' },
+      { href: '/crente-pode-ver-novela-7-criterios-biblicos/', label: 'Discernimento no entretenimento' },
+    ],
+  },
+  'fumar-e-pecado-entenda-o-debate': {
+    question: 'Fumar é pecado?',
+    answer:
+      'A Bíblia não menciona cigarro diretamente, mas oferece princípios sobre domínio próprio, cuidado com o corpo, vício e testemunho. Fumar deve ser avaliado à luz da mordomia do corpo, da consciência e da liberdade cristã.',
+    bullets: [
+      'O corpo do cristão deve ser tratado com responsabilidade diante de Deus.',
+      'Dependência, dano à saúde e escravidão de hábitos pesam no discernimento bíblico.',
+      'A graça de Deus também alcança quem luta para abandonar vícios.',
+    ],
+    links: [
+      { href: '/crente-pode-ver-filme-de-terror/', label: 'Discernimento cristão' },
+      { href: '/vida-crista-com-proposito/', label: 'Vida cristã' },
+      { href: '/estudo-biblico-sobre-salvacao/', label: 'Graça e salvação' },
+    ],
+  },
+  'o-salario-do-pecado-e-a-morte-entenda': {
+    question: 'O que significa o salário do pecado é a morte?',
+    answer:
+      'A expressão “o salário do pecado é a morte”, em Romanos 6:23, ensina que o pecado produz separação, condenação e morte espiritual. Mas o mesmo versículo anuncia que o dom gratuito de Deus é a vida eterna em Cristo Jesus.',
+    bullets: [
+      'Pecado não é apenas erro moral, mas rebelião contra Deus.',
+      'A morte é apresentada como consequência justa do pecado.',
+      'O evangelho responde com graça, perdão e vida eterna em Cristo.',
+    ],
+    links: [
+      { href: '/estudo-biblico-sobre-salvacao/', label: 'Estudo sobre salvação' },
+      { href: '/o-pecado-contra-o-espirito-santo/', label: 'Pecado contra o Espírito Santo' },
+      { href: '/o-juizo-final-grande-trono-branco-biblia/', label: 'Juízo final' },
+    ],
+  },
+  'crente-divorciado-pode-casar-de-novo': {
+    question: 'Crente divorciado pode casar de novo?',
+    answer:
+      'A possibilidade de um crente divorciado casar de novo é um tema que exige cuidado pastoral e fidelidade bíblica. Textos sobre adultério, abandono, reconciliação e dureza do coração precisam ser avaliados com contexto, temor a Deus e responsabilidade.',
+    bullets: [
+      'Jesus tratou o casamento com seriedade e apontou para o plano original de Deus.',
+      'Algumas tradições cristãs reconhecem exceções bíblicas, como imoralidade sexual e abandono.',
+      'Cada caso precisa de aconselhamento pastoral maduro, sem banalizar aliança nem ignorar sofrimento.',
+    ],
+    links: [
+      { href: '/o-amor-de-deus/', label: 'O amor de Deus' },
+      { href: '/estudo-biblico-sobre-salvacao/', label: 'Graça e restauração' },
+      { href: '/vida-crista-com-proposito/', label: 'Vida cristã' },
+    ],
+  },
+  'crente-pode-fazer-tatuagem': {
+    question: 'Crente pode fazer tatuagem?',
+    answer:
+      'A pergunta sobre tatuagem deve ser tratada com discernimento, não apenas com uma resposta automática. O cristão deve considerar motivação, consciência, testemunho, conteúdo da tatuagem e se a decisão glorifica a Deus.',
+    bullets: [
+      'Levítico 19:28 precisa ser lido em seu contexto histórico e religioso.',
+      'O Novo Testamento enfatiza consciência, santidade, liberdade e edificação.',
+      'Nem toda liberdade convém; a motivação e o testemunho também importam.',
+    ],
+    links: [
+      { href: '/crente-pode-ver-novela-7-criterios-biblicos/', label: 'Critérios bíblicos' },
+      { href: '/fumar-e-pecado-entenda-o-debate/', label: 'Fumar é pecado?' },
+      { href: '/vida-crista-com-proposito/', label: 'Vida cristã com propósito' },
+    ],
+  },
+  'humildade': {
+    question: 'O que é humildade segundo a Bíblia?',
+    answer:
+      'Humildade, segundo a Bíblia, é reconhecer a grandeza de Deus, depender da sua graça e servir sem orgulho. Ela não é baixa autoestima, mas uma postura de verdade, mansidão e submissão ao Senhor.',
+    bullets: [
+      'Jesus é o maior exemplo de humildade, serviço e obediência ao Pai.',
+      'A humildade combate orgulho, comparação e desejo de autopromoção.',
+      'Deus resiste aos soberbos, mas concede graça aos humildes.',
+    ],
+    links: [
+      { href: '/o-exemplo-de-humildade-de-jesus/', label: 'Humildade de Jesus' },
+      { href: '/o-que-significa-tomar-a-sua-cruz/', label: 'Tomar a cruz' },
+      { href: '/o-bom-samaritano/', label: 'Serviço ao próximo' },
+    ],
+  },
+  'a-justica-de-deus': {
+    question: 'O que é a justiça de Deus?',
+    answer:
+      'A justiça de Deus revela que ele age com retidão, julga o mal e cumpre suas promessas. Na Bíblia, a justiça divina também aparece na salvação, porque Deus justifica pecadores por meio de Cristo.',
+    bullets: [
+      'Deus não ignora o pecado nem age com parcialidade.',
+      'A cruz mostra ao mesmo tempo a justiça e a misericórdia de Deus.',
+      'Quem foi alcançado pela justiça de Deus é chamado a praticar justiça no cotidiano.',
+    ],
+    links: [
+      { href: '/estudo-biblico-sobre-salvacao/', label: 'Salvação' },
+      { href: '/o-salario-do-pecado-e-a-morte-entenda/', label: 'Salário do pecado' },
+      { href: '/o-poder-da-misericordia/', label: 'Misericórdia' },
+    ],
+  },
+  'o-reino-de-deus': {
+    question: 'O que é o Reino de Deus?',
+    answer:
+      'O Reino de Deus é o governo soberano de Deus revelado em Cristo e vivido por seus discípulos. Ele já se manifesta na vida transformada pela fé, mas será consumado plenamente na volta de Jesus.',
+    bullets: [
+      'Jesus anunciou o Reino como centro de sua mensagem.',
+      'Viver o Reino envolve arrependimento, justiça, amor, serviço e obediência.',
+      'O Reino já começou em Cristo, mas ainda aguarda sua consumação final.',
+    ],
+    links: [
+      { href: '/guia-dos-ensinamentos-do-reino/', label: 'Ensinamentos do Reino' },
+      { href: '/parabola-dos-talentos/', label: 'Parábola dos talentos' },
+      { href: '/a-volta-de-jesus-os-sinais/', label: 'Volta de Jesus' },
+    ],
+  },
+  'o-poder-da-misericordia': {
+    question: 'O que a Bíblia ensina sobre misericórdia?',
+    answer:
+      'A Bíblia ensina que misericórdia é compaixão em ação diante da miséria, culpa ou sofrimento do outro. Deus é rico em misericórdia, e quem foi alcançado por ele deve tratar pessoas com graça, perdão e compaixão.',
+    bullets: [
+      'A misericórdia de Deus aparece no perdão, no cuidado e na paciência com pecadores.',
+      'Jesus ensinou misericórdia por meio de parábolas, curas e acolhimento.',
+      'Praticar misericórdia não nega a verdade, mas expressa o caráter de Deus.',
+    ],
+    links: [
+      { href: '/o-bom-samaritano/', label: 'Bom samaritano' },
+      { href: '/a-mulher-samaritana/', label: 'Mulher samaritana' },
+      { href: '/a-justica-de-deus/', label: 'Justiça de Deus' },
+    ],
+  },
+  'a-cura-de-bartimeu': {
+    question: 'Quais lições aprendemos com a cura de Bartimeu?',
+    answer:
+      'A cura de Bartimeu ensina sobre fé perseverante, clamor por misericórdia e resposta de Jesus ao necessitado. Mesmo repreendido pela multidão, Bartimeu continuou clamando e recebeu de Cristo visão e restauração.',
+    bullets: [
+      'Bartimeu reconheceu Jesus como Filho de Davi e clamou por misericórdia.',
+      'A multidão tentou silenciá-lo, mas sua fé perseverou.',
+      'Depois de curado, Bartimeu seguiu Jesus pelo caminho.',
+    ],
+    links: [
+      { href: '/o-poder-da-misericordia/', label: 'Misericórdia' },
+      { href: '/fe-pequena/', label: 'Fé' },
+      { href: '/amar-ao-proximo/', label: 'Amar ao próximo' },
+    ],
+  },
+  'o-filho-prodigo': {
+    question: 'Qual é a mensagem da parábola do filho pródigo?',
+    answer:
+      'A parábola do filho pródigo revela a graça do Pai, o arrependimento do filho perdido e o perigo do orgulho religioso do irmão mais velho. A mensagem central é que Deus recebe com misericórdia quem volta arrependido.',
+    bullets: [
+      'O filho mais novo representa afastamento, queda e retorno arrependido.',
+      'O pai revela compaixão, perdão e alegria pela restauração.',
+      'O irmão mais velho alerta contra religiosidade sem misericórdia.',
+    ],
+    links: [
+      { href: '/o-poder-da-misericordia/', label: 'Misericórdia' },
+      { href: '/estudo-biblico-sobre-salvacao/', label: 'Salvação' },
+      { href: '/guia-dos-ensinamentos-do-reino/', label: 'Parábolas de Jesus' },
+    ],
+  },
+  'o-bom-samaritano': {
+    question: 'O que ensina a parábola do bom samaritano?',
+    answer:
+      'A parábola do bom samaritano ensina que amar o próximo exige compaixão prática, não apenas discurso religioso. Jesus mostra que o verdadeiro próximo é aquele que age com misericórdia diante da dor do outro.',
+    bullets: [
+      'O sacerdote e o levita viram a necessidade, mas passaram de largo.',
+      'O samaritano se aproximou, cuidou, pagou o custo e demonstrou amor concreto.',
+      'Jesus encerra chamando seus ouvintes a praticarem a mesma misericórdia.',
+    ],
+    links: [
+      { href: '/amar-ao-proximo/', label: 'Amar ao próximo' },
+      { href: '/o-poder-da-misericordia/', label: 'Poder da misericórdia' },
+      { href: '/guia-dos-ensinamentos-do-reino/', label: 'Parábolas de Jesus' },
+    ],
+  },
 };
