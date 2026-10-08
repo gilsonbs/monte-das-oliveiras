@@ -156,6 +156,21 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       { href: '/pos-e-pre-tribulacionismo/', label: 'Pré e pós-tribulacionismo' },
     ],
   },
+  'anticristo-quem-e-e-como-identifica-lo-um-guia-completo-para-entender-esta-figura-apocaliptica': {
+    question: 'Quem é o anticristo segundo a Bíblia?',
+    answer:
+      'A Bíblia usa a palavra anticristo nas cartas de João para falar de todo espírito que se opõe a Cristo, e também apresenta figuras associadas ao fim dos tempos, como o homem da iniquidade em 2 Tessalonicenses e a besta em Apocalipse. Por isso, o tema deve ser estudado com discernimento, sem marcar nomes ou datas de forma precipitada.',
+    bullets: [
+      'Em 1 João, anticristo envolve oposição a Cristo e negação da verdade sobre Jesus.',
+      '2 Tessalonicenses fala do homem da iniquidade, associado a engano, rebelião e exaltação contra Deus.',
+      'Apocalipse apresenta imagens de poder, perseguição e sedução espiritual que exigem perseverança dos santos.',
+    ],
+    links: [
+      { href: '/sinais-do-anticristo/', label: 'Sinais do anticristo' },
+      { href: '/a-grande-tribulacao/', label: 'A grande tribulação' },
+      { href: '/terceiro-templo-anticristo-neste-ano/', label: 'Terceiro templo e anticristo' },
+    ],
+  },
   'tocar-nas-partes-intimas-e-pecado': {
     question: 'Tocar nas partes íntimas é pecado?',
     answer:
