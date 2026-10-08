@@ -471,17 +471,18 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
     ],
   },
   'e-pecado-se-masturbar': {
-    question: 'Afinal, é pecado se masturbar?',
+    question: 'É pecado se masturbar segundo a Bíblia?',
     answer:
-      'A Bíblia não usa diretamente a palavra masturbação, mas ensina princípios sobre pureza, domínio próprio, desejos, consciência e santidade. Por isso, a pergunta deve considerar intenção, imaginação, vício, culpa e se a prática aproxima ou afasta a pessoa de Deus.',
+      'A Bíblia não cita a palavra masturbação diretamente, mas ensina sobre pureza sexual, domínio próprio, santidade, consciência e desejos do coração. Por isso, a resposta depende do que acompanha a prática: pornografia, fantasia alimentada, vício, culpa, fuga emocional ou afastamento de Deus tornam o assunto espiritualmente sério.',
     bullets: [
-      'Pornografia, fantasia cultivada e compulsão tornam a prática espiritualmente nociva.',
-      'Pureza bíblica envolve corpo, mente, intenção, consciência e vida secreta diante de Deus.',
-      'Quem luta com culpa ou vício precisa de graça, arrependimento, limites práticos e ajuda madura.',
+      'Quando envolve pornografia, fantasia impura ou compulsão, fere princípios bíblicos de pureza e domínio próprio.',
+      'A avaliação cristã não olha só para o ato, mas para intenção, mente, consciência e frutos espirituais.',
+      'Quem luta com culpa ou vício precisa buscar graça, arrependimento, limites práticos e ajuda cristã madura.',
     ],
     links: [
-      { href: '/tocar-nas-partes-intimas-e-pecado/', label: 'Tocar nas partes íntimas é pecado?' },
       { href: '/pornografia-e-pecado/', label: 'Pornografia é pecado?' },
+      { href: '/tocar-nas-partes-intimas-e-pecado/', label: 'Tocar nas partes íntimas é pecado?' },
+      { href: '/fumar-e-pecado-entenda-o-debate/', label: 'Como avaliar hábitos e vícios' },
       { href: '/o-pecado-contra-o-espirito-santo/', label: 'Pecado contra o Espírito Santo' },
     ],
   },
