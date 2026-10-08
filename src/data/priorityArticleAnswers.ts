@@ -471,6 +471,36 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       { href: '/sinais-do-anticristo/', label: 'Sinais do anticristo' },
     ],
   },
+  'a-marca-da-besta': {
+    question: 'O que é a marca da besta em Apocalipse?',
+    answer:
+      'A marca da besta, em Apocalipse 13, representa submissão a um sistema contrário a Deus e ligado ao poder da besta. O tema exige discernimento bíblico, porque a passagem fala de adoração, fidelidade e oposição a Cristo, não apenas de tecnologia ou sinais externos.',
+    bullets: [
+      'Apocalipse associa a marca à lealdade espiritual e à adoração da besta.',
+      'O texto contrasta os seguidores da besta com os que pertencem ao Cordeiro.',
+      'A aplicação cristã é permanecer fiel a Cristo diante de pressão, engano e idolatria.',
+    ],
+    links: [
+      { href: '/anticristo-quem-e-e-como-identifica-lo-um-guia-completo-para-entender-esta-figura-apocaliptica/', label: 'Quem é o anticristo?' },
+      { href: '/a-grande-tribulacao/', label: 'A grande tribulação' },
+      { href: '/sete-cabecas-e-dez-chifres-o-que-nos-reserva/', label: 'Sete cabeças e dez chifres' },
+    ],
+  },
+  'marca-da-besta': {
+    question: 'O que é a marca da besta em Apocalipse?',
+    answer:
+      'A marca da besta, em Apocalipse 13, representa submissão a um sistema contrário a Deus e ligado ao poder da besta. O tema exige discernimento bíblico, porque a passagem fala de adoração, fidelidade e oposição a Cristo, não apenas de tecnologia ou sinais externos.',
+    bullets: [
+      'Apocalipse associa a marca à lealdade espiritual e à adoração da besta.',
+      'O texto contrasta os seguidores da besta com os que pertencem ao Cordeiro.',
+      'A aplicação cristã é permanecer fiel a Cristo diante de pressão, engano e idolatria.',
+    ],
+    links: [
+      { href: '/anticristo-quem-e-e-como-identifica-lo-um-guia-completo-para-entender-esta-figura-apocaliptica/', label: 'Quem é o anticristo?' },
+      { href: '/a-grande-tribulacao/', label: 'A grande tribulação' },
+      { href: '/sete-cabecas-e-dez-chifres-o-que-nos-reserva/', label: 'Sete cabeças e dez chifres' },
+    ],
+  },
   'sermao-profetico-do-monte-das-oliveiras': {
     question: 'O que é o sermão profético do Monte das Oliveiras?',
     answer:
