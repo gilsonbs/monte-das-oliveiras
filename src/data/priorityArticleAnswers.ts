@@ -126,6 +126,21 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       { href: '/o-absinto-do-apocalipse/', label: 'Terceira trombeta do Apocalipse' },
     ],
   },
+  'o-arrebatamento': {
+    question: 'O que é o arrebatamento segundo a Bíblia?',
+    answer:
+      'O arrebatamento é a esperança bíblica de que os salvos serão reunidos com Cristo em sua vinda. Os textos mais usados nesse estudo são 1 Tessalonicenses 4:16-17 e 1 Coríntios 15:51-52, que falam da ressurreição dos mortos em Cristo, da transformação dos vivos e do encontro com o Senhor.',
+    bullets: [
+      '1 Tessalonicenses 4 apresenta o consolo da igreja: os mortos em Cristo ressuscitarão primeiro.',
+      '1 Coríntios 15 fala da transformação dos salvos, em um momento, ao som da última trombeta.',
+      'As diferenças entre pré, pós e outras visões tratam principalmente do momento do arrebatamento em relação à tribulação.',
+    ],
+    links: [
+      { href: '/a-volta-de-jesus-os-sinais/', label: 'A volta de Jesus' },
+      { href: '/pos-e-pre-tribulacionismo/', label: 'Pré e pós-tribulacionismo' },
+      { href: '/preparacao-para-o-arrebatamento/', label: 'Preparação para o arrebatamento' },
+    ],
+  },
   'tocar-nas-partes-intimas-e-pecado': {
     question: 'Tocar nas partes íntimas é pecado?',
     answer:
