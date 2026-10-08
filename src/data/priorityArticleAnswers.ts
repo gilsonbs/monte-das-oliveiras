@@ -141,18 +141,18 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
     ],
   },
   'sinais-do-fim': {
-    question: 'Quais são os sinais do fim dos tempos?',
+    question: 'Quais são os sinais do fim dos tempos segundo Jesus?',
     answer:
-      'Os sinais do fim dos tempos, segundo Jesus em Mateus 24, incluem engano religioso, guerras, fome, terremotos, perseguição, esfriamento do amor e a pregação do evangelho a todas as nações. Eles não servem para marcar datas, mas para chamar a igreja à vigilância, santidade e perseverança.',
+      'Em Mateus 24, Jesus cita sinais como falsos cristos, engano religioso, guerras, rumores de guerras, fome, terremotos, perseguição, esfriamento do amor e a pregação do evangelho a todas as nações. Esses sinais não servem para marcar datas, mas para chamar a igreja à vigilância, santidade, discernimento e perseverança.',
     bullets: [
-      'Mateus 24 organiza o tema em sinais, princípio das dores, tribulação e vigilância.',
-      'A Bíblia adverte contra falsos cristos, falsas profecias e interpretações alarmistas.',
+      'Mateus 24 organiza o tema em sinais, princípio das dores, tribulação, engano espiritual e vigilância.',
+      'Guerras, fomes, terremotos e perseguições são sinais de alerta, não um calendário exato para marcar datas.',
       'O centro da esperança cristã não é o medo do fim, mas a volta de Cristo e a fidelidade até o fim.',
     ],
     links: [
       { href: '/a-volta-de-jesus-os-sinais/', label: 'A volta de Jesus' },
+      { href: '/mateus-24/', label: 'Mateus 24 explicado' },
       { href: '/pos-e-pre-tribulacionismo/', label: 'Pré e pós-tribulacionismo' },
-      { href: '/profecias-biblicas/', label: 'Profecias bíblicas' },
     ],
   },
   'a-volta-de-jesus-os-sinais': {
