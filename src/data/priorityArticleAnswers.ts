@@ -141,6 +141,21 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       { href: '/preparacao-para-o-arrebatamento/', label: 'Preparação para o arrebatamento' },
     ],
   },
+  'a-grande-tribulacao': {
+    question: 'O que é a grande tribulação na Bíblia?',
+    answer:
+      'A grande tribulação é entendida por muitos cristãos como um período de intensa aflição, perseguição, juízo e engano espiritual associado aos últimos tempos. Textos como Mateus 24, Daniel e Apocalipse são usados para estudar esse tema, mas as interpretações variam entre diferentes linhas escatológicas.',
+    bullets: [
+      'Jesus fala em grande aflição em Mateus 24, ligada a vigilância, perseverança e cuidado contra o engano.',
+      'Daniel e Apocalipse são textos centrais para estudar juízo, perseguição, impérios e livramento final.',
+      'As visões pré, pós e outras diferem sobre a relação entre igreja, arrebatamento e tribulação.',
+    ],
+    links: [
+      { href: '/sinais-do-fim/', label: 'Sinais do fim' },
+      { href: '/o-arrebatamento/', label: 'O arrebatamento' },
+      { href: '/pos-e-pre-tribulacionismo/', label: 'Pré e pós-tribulacionismo' },
+    ],
+  },
   'tocar-nas-partes-intimas-e-pecado': {
     question: 'Tocar nas partes íntimas é pecado?',
     answer:
