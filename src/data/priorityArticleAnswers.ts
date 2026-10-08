@@ -7,16 +7,17 @@ export interface PriorityArticleAnswer {
 
 export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'o-absinto-do-apocalipse': {
-    question: 'O que significa Absinto no Apocalipse?',
+    question: 'O que significa a estrela Absinto em Apocalipse?',
     answer:
-      'Absinto, em Apocalipse 8, é o nome da estrela ligada à terceira trombeta. A passagem aponta para um juízo que torna parte das águas amarga e mortal, podendo ser entendido de forma literal, simbólica ou como um alerta espiritual sobre a amargura do pecado.',
+      'Absinto aparece em Apocalipse 8:10-11 como o nome da estrela ligada à terceira trombeta. A passagem descreve um juízo em que parte das águas se torna amarga e mortal, e costuma ser interpretada como evento literal, símbolo de juízo ou alerta espiritual sobre amargura, corrupção e afastamento de Deus.',
     bullets: [
-      'A profecia aparece em Apocalipse 8:10-11, durante a terceira trombeta.',
-      'No Antigo Testamento, absinto costuma simbolizar amargura, juízo e afastamento de Deus.',
-      'As interpretações variam entre evento cósmico, desastre humano e corrupção espiritual.',
+      'A profecia aparece durante a terceira trombeta, quando uma grande estrela cai sobre rios e fontes de água.',
+      'Na Bíblia, absinto aparece associado a amargura, juízo, idolatria e afastamento do Senhor.',
+      'As interpretações variam entre evento cósmico, desastre histórico, símbolo espiritual e linguagem apocalíptica.',
     ],
     links: [
       { href: '/profecias-biblicas/', label: 'Profecias bíblicas cumpridas' },
+      { href: '/sinais-do-fim/', label: 'Sinais do fim dos tempos' },
       { href: '/pos-e-pre-tribulacionismo/', label: 'Pré e pós-tribulacionismo' },
     ],
   },
