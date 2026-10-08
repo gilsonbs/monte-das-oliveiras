@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import AdSlot from '../components/AdSlot.astro';
 import ArticleAnswerBox from '../components/ArticleAnswerBox.astro';
 import PriorityStudies from '../components/PriorityStudies.astro';
+import TopicClusterLinks from '../components/TopicClusterLinks.astro';
 import { priorityArticleAnswers } from '../data/priorityArticleAnswers';
 import { supabase, getPostBySlug, getRelatedPosts, getTagsByPostId, getApprovedComments } from '../lib/supabase';
 
@@ -553,6 +554,7 @@ const jsonLd = [
         <Fragment set:html={before} />
         <AdSlot slotKey="in_article" />
         <Fragment set:html={after} />
+        <TopicClusterLinks currentSlug={post.slug} />
 
         <div class="share-block">
           <span class="share-label">Compartilhar</span>
