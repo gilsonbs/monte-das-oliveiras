@@ -157,18 +157,18 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
     ],
   },
   'a-volta-de-jesus-os-sinais': {
-    question: 'Quais sinais apontam para a volta de Jesus?',
+    question: 'Quais sinais apontam para a volta de Jesus segundo a Bíblia?',
     answer:
-      'A Bíblia apresenta a volta de Jesus como certa, visível e gloriosa. Os sinais que antecedem esse dia apontam para vigilância espiritual, não para especulação: o cristão deve viver preparado, fiel ao evangelho e atento ao engano.',
+      'A Bíblia apresenta a volta de Jesus como certa, visível e gloriosa. Em Mateus 24, Jesus fala de engano religioso, guerras, perseguição, esfriamento do amor e anúncio do evangelho, mas também afirma que ninguém sabe o dia nem a hora. Por isso, os sinais chamam à vigilância, não à marcação de datas.',
     bullets: [
-      'Jesus disse que ninguém sabe o dia nem a hora, por isso a ordem é vigiar.',
-      'Os sinais incluem engano religioso, conflitos, perseguição, apostasia e anúncio do evangelho.',
+      'Jesus ensinou que a volta será real e visível, mas o dia e a hora pertencem somente ao Pai.',
+      'Os sinais incluem engano religioso, conflitos, perseguição, apostasia, esfriamento do amor e anúncio do evangelho.',
       'A esperança da volta de Cristo fortalece a fé, consola a igreja e chama à santidade.',
     ],
     links: [
       { href: '/sinais-do-fim/', label: 'Sinais do fim' },
+      { href: '/mateus-24/', label: 'Mateus 24 explicado' },
       { href: '/sermao-profetico-do-monte-das-oliveiras/', label: 'Sermão profético' },
-      { href: '/preparacao-para-o-arrebatamento/', label: 'Preparação espiritual' },
     ],
   },
   '5-sinais-que-guerra-em-israel-nao-e-acidente': {
