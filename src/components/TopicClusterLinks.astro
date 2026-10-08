@@ -119,6 +119,105 @@ const clusters: TopicCluster[] = [
       },
     ],
   },
+  {
+    id: 'doutrina-biblica',
+    label: 'Doutrina bíblica',
+    title: 'Continue estudando doutrina bíblica',
+    description: 'Uma trilha para entender melhor Deus, as Escrituras, alianças, mandamentos e fundamentos da fé cristã.',
+    items: [
+      {
+        slug: 'significado-dos-nomes-de-deus',
+        title: 'Nomes de Deus',
+        description: 'Elohim, Yahweh, Adonai e outros nomes que revelam o caráter divino.',
+      },
+      {
+        slug: 'mandamentos-explicados-a-lei-moral-de-deus',
+        title: 'Os 10 mandamentos explicados',
+        description: 'A lei moral de Deus e sua aplicação na vida cristã.',
+      },
+      {
+        slug: 'quem-escreveu-a-biblia-conheca-os-40-autores',
+        title: 'Quem escreveu a Bíblia?',
+        description: 'Autores humanos, inspiração divina e formação das Escrituras.',
+      },
+      {
+        slug: 'como-explicar-o-deus-triuno',
+        title: 'Deus triúno',
+        description: 'Como entender Pai, Filho e Espírito Santo com cuidado bíblico.',
+      },
+      {
+        slug: 'o-significado-do-tabernaculo',
+        title: 'Significado do tabernáculo',
+        description: 'Símbolos, culto e apontamentos para Cristo no Antigo Testamento.',
+      },
+    ],
+  },
+  {
+    id: 'louvor-adoracao',
+    label: 'Louvor e adoração',
+    title: 'Aprofunde seus estudos sobre louvor e adoração',
+    description: 'Estudos conectados sobre culto, música, levitas, hinários e expressões bíblicas de adoração.',
+    items: [
+      {
+        slug: 'diferenca-entre-louvor-e-adoracao',
+        title: 'Louvor e adoração',
+        description: 'Entenda a diferença bíblica entre louvar e adorar.',
+      },
+      {
+        slug: 'louvor-com-instrumentos',
+        title: 'Louvor com instrumentos',
+        description: 'Instrumentos musicais na Bíblia e sua relação com o culto.',
+      },
+      {
+        slug: 'musica-no-ceu',
+        title: 'Música no céu',
+        description: 'Como a Bíblia descreve a adoração celestial.',
+      },
+      {
+        slug: 'funcao-dos-levitas-no-templo',
+        title: 'Função dos levitas',
+        description: 'Serviço, guarda, ensino e louvor no templo.',
+      },
+      {
+        slug: 'a-origem-do-hinario-evangelico',
+        title: 'Hinário evangélico',
+        description: 'A história dos hinos e da Harpa Cristã no culto evangélico.',
+      },
+    ],
+  },
+  {
+    id: 'profecias',
+    label: 'Profecias',
+    title: 'Continue estudando profecias bíblicas',
+    description: 'Uma sequência para ligar profecias cumpridas, promessas messiânicas e temas proféticos do Apocalipse.',
+    items: [
+      {
+        slug: 'profecias-biblicas',
+        title: 'Profecias bíblicas',
+        description: 'Exemplos de profecias cumpridas e sua importância para a fé.',
+      },
+      {
+        slug: 'profecias-messianicas-cumpridas',
+        title: 'Profecias messiânicas',
+        description: 'Como o Antigo Testamento aponta para Jesus Cristo.',
+      },
+      {
+        slug: 'o-absinto-do-apocalipse',
+        title: 'Absinto no Apocalipse',
+        description: 'O significado da terceira trombeta em Apocalipse.',
+      },
+      {
+        slug: 'as-70-semanas-de-daniel',
+        title: 'As 70 semanas de Daniel',
+        description: 'Uma das profecias mais estudadas sobre tempos e cumprimento.',
+      },
+      {
+        slug: 'a-volta-de-jesus-os-sinais',
+        title: 'A volta de Jesus',
+        description: 'Sinais, esperança cristã e expectativa pela volta de Cristo.',
+      },
+    ],
+  },
 ];
 
 const cluster = clusters.find((candidate) => candidate.items.some((item) => item.slug === currentSlug));
