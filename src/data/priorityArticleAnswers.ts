@@ -171,6 +171,21 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       { href: '/terceiro-templo-anticristo-neste-ano/', label: 'Terceiro templo e anticristo' },
     ],
   },
+  'sinais-do-anticristo': {
+    question: 'Quais são os sinais do anticristo segundo a Bíblia?',
+    answer:
+      'Os sinais associados ao anticristo envolvem oposição a Cristo, engano espiritual, exaltação contra Deus, perseguição aos santos e sedução por poder religioso ou político. A Bíblia chama a igreja ao discernimento, mas não autoriza transformar suspeitas, líderes ou notícias em identificação definitiva.',
+    bullets: [
+      '1 João fala do espírito do anticristo como oposição à verdade sobre Jesus Cristo.',
+      '2 Tessalonicenses destaca engano, rebelião e exaltação contra Deus.',
+      'Apocalipse apresenta poder perseguidor, idolatria e sedução que exigem perseverança e fidelidade.',
+    ],
+    links: [
+      { href: '/anticristo-quem-e-e-como-identifica-lo-um-guia-completo-para-entender-esta-figura-apocaliptica/', label: 'Quem é o anticristo?' },
+      { href: '/a-grande-tribulacao/', label: 'A grande tribulação' },
+      { href: '/escatologia-sinais-dos-tempos/', label: 'Escatologia e sinais dos tempos' },
+    ],
+  },
   'tocar-nas-partes-intimas-e-pecado': {
     question: 'Tocar nas partes íntimas é pecado?',
     answer:
