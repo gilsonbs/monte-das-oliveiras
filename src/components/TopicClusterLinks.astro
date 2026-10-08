@@ -1,0 +1,186 @@
+---
+interface ClusterItem {
+  slug: string;
+  title: string;
+  description: string;
+}
+
+interface TopicCluster {
+  id: string;
+  label: string;
+  title: string;
+  description: string;
+  items: ClusterItem[];
+}
+
+interface Props {
+  currentSlug: string;
+}
+
+const { currentSlug } = Astro.props;
+
+const clusters: TopicCluster[] = [
+  {
+    id: 'escatologia',
+    label: 'Escatologia',
+    title: 'Continue estudando o fim dos tempos',
+    description: 'Leia estes estudos em sequência para entender profecias, arrebatamento, tribulação e sinais bíblicos com mais contexto.',
+    items: [
+      {
+        slug: 'sinais-do-fim',
+        title: 'Sinais do fim',
+        description: 'Uma visão geral dos sinais bíblicos e do chamado à vigilância.',
+      },
+      {
+        slug: 'o-arrebatamento',
+        title: 'O que é o arrebatamento?',
+        description: 'Entenda as principais passagens e interpretações sobre o arrebatamento.',
+      },
+      {
+        slug: 'a-grande-tribulacao',
+        title: 'A grande tribulação',
+        description: 'Veja o que a Bíblia ensina sobre esse período final.',
+      },
+      {
+        slug: 'anticristo-quem-e-e-como-identifica-lo-um-guia-completo-para-entender-esta-figura-apocaliptica',
+        title: 'Quem é o anticristo?',
+        description: 'Um estudo para reconhecer o tema com discernimento bíblico.',
+      },
+      {
+        slug: 'marca-da-besta',
+        title: 'A marca da besta',
+        description: 'Entenda Apocalipse 13 e as principais leituras cristãs.',
+      },
+    ],
+  },
+  {
+    id: 'oracao',
+    label: 'Oração',
+    title: 'Aprofunde sua vida de oração',
+    description: 'Estes estudos se conectam para formar uma trilha prática sobre oração, fé, perseverança e comunhão com Deus.',
+    items: [
+      {
+        slug: 'o-poder-da-oracao',
+        title: 'O poder da oração',
+        description: 'Como orar com fé, perseverança e discernimento.',
+      },
+      {
+        slug: 'vida-de-oracao',
+        title: 'Vida de oração',
+        description: 'Como fortalecer a comunhão com Deus no cotidiano.',
+      },
+      {
+        slug: 'orar-sem-cessar',
+        title: 'Orar sem cessar',
+        description: 'O sentido bíblico de manter comunhão constante com Deus.',
+      },
+      {
+        slug: 'estudo-biblico-sobre-oracao',
+        title: 'Estudo bíblico sobre oração',
+        description: 'Uma base bíblica para crescer em oração.',
+      },
+      {
+        slug: 'oracao-quanto-tempo-devo',
+        title: 'Quanto tempo devo orar?',
+        description: 'Uma resposta equilibrada sobre tempo, constância e sinceridade.',
+      },
+    ],
+  },
+  {
+    id: 'vida-crista',
+    label: 'Vida cristã',
+    title: 'Continue estudando vida cristã prática',
+    description: 'Uma seleção para amadurecer fé, caráter, pureza, humildade e relacionamento com Deus no dia a dia.',
+    items: [
+      {
+        slug: 'humildade',
+        title: 'Humildade na Bíblia',
+        description: 'Lições práticas para serviço, liderança e crescimento espiritual.',
+      },
+      {
+        slug: 'amar-ao-proximo',
+        title: 'Amar ao próximo',
+        description: 'O mandamento de Jesus aplicado à vida cristã.',
+      },
+      {
+        slug: 'pornografia-e-pecado',
+        title: 'Pornografia é pecado?',
+        description: 'Caminhos bíblicos para pureza, restauração e proteção da mente.',
+      },
+      {
+        slug: '7-perigos-do-desigrejado',
+        title: 'Cristão desigrejado',
+        description: 'Riscos espirituais do isolamento e valor da comunhão.',
+      },
+      {
+        slug: 'o-filho-prodigo',
+        title: 'O filho pródigo',
+        description: 'O amor do Pai, o arrependimento e o coração do irmão mais velho.',
+      },
+    ],
+  },
+];
+
+const cluster = clusters.find((candidate) => candidate.items.some((item) => item.slug === currentSlug));
+const links = cluster?.items.filter((item) => item.slug !== currentSlug).slice(0, 4) ?? [];
+---
+
+{cluster && links.length > 0 && (
+  <nav class="topic-cluster" aria-labelledby={`topic-cluster-${cluster.id}`}>
+    <div class="cluster-label">{cluster.label}</div>
+    <h2 id={`topic-cluster-${cluster.id}`}>{cluster.title}</h2>
+    <p>{cluster.description}</p>
+    <div class="cluster-links">
+      {links.map((item) => (
+        <a href={`/${item.slug}/`}>
+          <strong>{item.title}</strong>
+          <span>{item.description}</span>
+        </a>
+      ))}
+    </div>
+  </nav>
+)}
+
+<style>
+  .topic-cluster {
+    margin: 38px 0 0; padding: 24px;
+    border: 1px solid var(--clay-line); border-radius: var(--radius);
+    background: var(--card-bg);
+  }
+  .cluster-label {
+    font-family: var(--font-ui); font-size: 11px; font-weight: 700;
+    letter-spacing: .07em; text-transform: uppercase; color: var(--olive-deep);
+    margin-bottom: 8px;
+  }
+  .topic-cluster h2 {
+    font-family: var(--font-display); font-size: 22px; font-weight: 500;
+    line-height: 1.25; margin: 0 0 8px;
+  }
+  .topic-cluster p {
+    font-size: 14px; line-height: 1.55; color: var(--ink-soft);
+    margin: 0 0 18px;
+  }
+  .cluster-links {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 12px 18px;
+  }
+  .cluster-links a {
+    display: block; padding-top: 12px;
+    border-top: 1px solid var(--clay-line);
+    color: var(--ink); text-decoration: none;
+  }
+  .cluster-links a:hover strong { color: var(--ember-deep); }
+  .cluster-links strong {
+    display: block; font-family: var(--font-display); font-size: 16px;
+    font-weight: 500; line-height: 1.3; margin-bottom: 5px;
+  }
+  .cluster-links span {
+    display: block; font-size: 13px; line-height: 1.45;
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 560px) {
+    .topic-cluster { padding: 20px; }
+    .cluster-links { grid-template-columns: 1fr; }
+  }
+</style>
