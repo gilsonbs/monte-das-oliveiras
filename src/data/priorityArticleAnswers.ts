@@ -517,18 +517,18 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
     ],
   },
   'tensao-pre-guerra-o-reordenamento-geo': {
-    question: 'O reordenamento geopolítico tem relação com profecia bíblica?',
+    question: 'Guerras e tensões mundiais são sinais do fim?',
     answer:
-      'Mudanças entre nações, alianças e blocos de poder podem ser observadas à luz dos temas proféticos de Daniel e Apocalipse. Ainda assim, a Bíblia exige discernimento para não confundir tendências históricas com afirmações definitivas sobre o fim.',
+      'Guerras, alianças e mudanças entre potências podem lembrar temas proféticos de Daniel, Mateus 24 e Apocalipse, mas não devem ser tratadas automaticamente como cumprimento final. A leitura cristã precisa unir vigilância, prudência e confiança na soberania de Deus.',
     bullets: [
-      'Daniel apresenta impérios e reinos dentro do plano soberano de Deus.',
-      'Apocalipse usa imagens de poder, domínio e oposição a Deus.',
-      'O artigo ajuda a pensar geopolítica com prudência espiritual.',
+      'Jesus falou de guerras e rumores de guerras sem incentivar pânico ou marcação de datas.',
+      'Daniel e Apocalipse mostram que impérios humanos continuam debaixo do governo de Deus.',
+      'O cristão observa o mundo com discernimento, oração e esperança, não com medo.',
     ],
     links: [
+      { href: '/sinais-do-fim/', label: 'Sinais do fim' },
       { href: '/governo-unico/', label: 'Governo único' },
-      { href: '/sete-cabecas-e-dez-chifres-o-que-nos-reserva/', label: 'Sete cabeças e dez chifres' },
-      { href: '/lideres-mundiais-e-o-cenario-do-fim-dos-tempos/', label: 'Líderes mundiais' },
+      { href: '/a-volta-de-jesus-os-sinais/', label: 'A volta de Jesus' },
     ],
   },
   'sete-cabecas-e-dez-chifres-o-que-nos-reserva': {
