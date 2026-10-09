@@ -546,6 +546,21 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       { href: '/profecias-biblicas/', label: 'Profecias bíblicas' },
     ],
   },
+  'dias-de-noe': {
+    question: 'O que significa “como nos dias de Noé” na Bíblia?',
+    answer:
+      'Quando Jesus compara sua volta aos dias de Noé, ele destaca a indiferença espiritual de uma geração que vivia normalmente enquanto ignorava o juízo anunciado. O alerta principal é vigilância: a igreja deve viver preparada, fiel e atenta à Palavra de Deus.',
+    bullets: [
+      'A comparação aparece no ensino de Jesus sobre sua vinda e o fim.',
+      'O ponto central não é marcar datas, mas reconhecer descuido espiritual e falta de arrependimento.',
+      'A aplicação cristã é vigiar, perseverar e viver em obediência enquanto Cristo não volta.',
+    ],
+    links: [
+      { href: '/mateus-24/', label: 'Mateus 24' },
+      { href: '/sinais-do-fim/', label: 'Sinais do fim' },
+      { href: '/a-volta-de-jesus-os-sinais/', label: 'A volta de Jesus' },
+    ],
+  },
   'sermao-profetico-do-monte-das-oliveiras': {
     question: 'O que é o sermão profético do Monte das Oliveiras?',
     answer:
