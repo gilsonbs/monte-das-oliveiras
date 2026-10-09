@@ -502,18 +502,18 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
     ],
   },
   'estudos-biblicos-profeticos': {
-    question: 'Por que estudar profecias bíblicas?',
+    question: 'Como estudar profecias bíblicas com equilíbrio?',
     answer:
-      'Estudar profecias bíblicas ajuda o cristão a compreender a soberania de Deus, a fidelidade das Escrituras e a esperança da volta de Cristo. O objetivo não é curiosidade sensacionalista, mas preparo espiritual e confiança no plano de Deus.',
+      'O estudo das profecias bíblicas deve começar pelo texto das Escrituras, considerar o contexto histórico e apontar para Cristo. O objetivo não é alimentar medo ou curiosidade sensacionalista, mas fortalecer a fé, a vigilância e a esperança na volta de Jesus.',
     bullets: [
-      'Profecias cumpridas fortalecem a confiança na Palavra de Deus.',
-      'Profecias futuras chamam a igreja à vigilância, santidade e perseverança.',
-      'O estudo profético precisa estar ligado ao evangelho e à vida cristã prática.',
+      'Compare profecias cumpridas, profecias messiânicas e promessas ainda futuras.',
+      'Evite marcar datas ou transformar notícias em cumprimento definitivo sem base bíblica.',
+      'Use o tema para crescer em santidade, perseverança e confiança na soberania de Deus.',
     ],
     links: [
       { href: '/profecias-biblicas/', label: 'Profecias bíblicas' },
       { href: '/profecias-messianicas-cumpridas/', label: 'Profecias messiânicas' },
-      { href: '/sinais-do-fim/', label: 'Sinais do fim' },
+      { href: '/a-volta-de-jesus-os-sinais/', label: 'A volta de Jesus' },
     ],
   },
   'tensao-pre-guerra-o-reordenamento-geo': {
