@@ -20,9 +20,12 @@ const env = {
 
 function run(command, args, options = {}) {
   console.log(`\n> ${command} ${args.join(' ')}`);
+  const useShell = process.platform === 'win32' && command === 'npm';
+
   return execFileSync(resolveCommand(command), args, {
     stdio: 'inherit',
     env,
+    shell: useShell,
     ...options,
   });
 }
@@ -36,7 +39,6 @@ function output(command, args) {
 
 function resolveCommand(command) {
   if (process.platform !== 'win32') return command;
-  if (command === 'npm') return 'npm.cmd';
   if (command === 'git') return 'git.exe';
   return command;
 }
