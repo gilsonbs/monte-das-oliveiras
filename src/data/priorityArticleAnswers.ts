@@ -534,16 +534,16 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'sete-cabecas-e-dez-chifres-o-que-nos-reserva': {
     question: 'O que significam as sete cabeças e dez chifres em Apocalipse?',
     answer:
-      'As sete cabeças e dez chifres em Apocalipse estão ligados a imagens de poder, reinos e oposição a Deus. A interpretação varia entre escolas escatológicas, mas o ponto central é que todo poder contrário a Cristo será julgado por Deus.',
+      'As sete cabeças e dez chifres em Apocalipse representam imagens simbólicas de poder, reinos e oposição organizada contra Deus. A interpretação exige comparar Apocalipse com Daniel, sem perder o ponto central: Cristo vence todo sistema que se levanta contra o Reino de Deus.',
     bullets: [
-      'Apocalipse usa linguagem simbólica para revelar realidades espirituais e históricas.',
-      'Daniel ajuda a entender a relação entre chifres, reinos e poderes humanos.',
-      'A mensagem final é a vitória de Cristo sobre sistemas que se levantam contra Deus.',
+      'As cabeças e chifres apontam para autoridade, domínio e estruturas de poder.',
+      'Daniel ajuda a entender a relação entre chifres, impérios e poderes humanos.',
+      'O foco bíblico não é curiosidade, mas discernimento e fidelidade a Cristo.',
     ],
     links: [
       { href: '/as-70-semanas-de-daniel/', label: 'As 70 semanas de Daniel' },
       { href: '/a-marca-da-besta/', label: 'A marca da besta' },
-      { href: '/sinais-do-anticristo/', label: 'Sinais do anticristo' },
+      { href: '/governo-unico/', label: 'Governo único' },
     ],
   },
   'a-marca-da-besta': {
