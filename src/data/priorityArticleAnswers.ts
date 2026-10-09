@@ -426,6 +426,21 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       { href: '/profecias-biblicas/', label: 'Profecias bíblicas' },
     ],
   },
+  'a-nova-ordem-mundial-chegando': {
+    question: 'Nova ordem mundial tem relação com profecia bíblica?',
+    answer:
+      'O tema da nova ordem mundial pode ser analisado à luz das passagens bíblicas sobre impérios, sistemas de poder e oposição a Deus. Ainda assim, a leitura cristã precisa ser prudente: a Bíblia chama ao discernimento, mas não autoriza tratar toda mudança geopolítica como cumprimento profético definitivo.',
+    bullets: [
+      'Daniel e Apocalipse falam de poderes humanos que tentam dominar e se opor a Deus.',
+      'O cristão deve observar o mundo com sobriedade, sem medo paralisante ou teorias sem base.',
+      'A esperança bíblica permanece na soberania de Cristo sobre todos os reinos humanos.',
+    ],
+    links: [
+      { href: '/governo-unico/', label: 'Governo único' },
+      { href: '/lideres-mundiais-e-o-cenario-do-fim-dos-tempos/', label: 'Líderes mundiais' },
+      { href: '/sinais-do-anticristo/', label: 'Sinais do anticristo' },
+    ],
+  },
   'estudos-biblicos-profeticos': {
     question: 'Por que estudar profecias bíblicas?',
     answer:
