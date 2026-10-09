@@ -486,6 +486,21 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       { href: '/o-que-e-apologetica-crista/', label: 'Apologética cristã' },
     ],
   },
+  'ia-tecnologia': {
+    question: 'Inteligência artificial tem relação com profecia bíblica?',
+    answer:
+      'A inteligência artificial pode levantar perguntas importantes sobre poder, controle, ética e discernimento cristão, mas a Bíblia não cita IA diretamente. Por isso, o cristão deve avaliar a tecnologia com sabedoria bíblica, sem medo automático e sem transformar cada avanço em cumprimento profético definitivo.',
+    bullets: [
+      'Tecnologia pode servir ao bem ou ao mal, dependendo de valores, usos e sistemas de poder.',
+      'Temas como controle, vigilância e idolatria precisam ser avaliados à luz das Escrituras.',
+      'A resposta cristã é discernimento, responsabilidade e confiança na soberania de Cristo.',
+    ],
+    links: [
+      { href: '/a-marca-da-besta/', label: 'A marca da besta' },
+      { href: '/a-nova-ordem-mundial-chegando/', label: 'Nova ordem mundial' },
+      { href: '/o-que-e-apologetica-crista/', label: 'Apologética cristã' },
+    ],
+  },
   'estudos-biblicos-profeticos': {
     question: 'Por que estudar profecias bíblicas?',
     answer:
