@@ -20,20 +20,25 @@ const env = {
 
 function run(command, args, options = {}) {
   console.log(`\n> ${command} ${args.join(' ')}`);
-  return execFileSync(command, args, {
+  return execFileSync(resolveCommand(command), args, {
     stdio: 'inherit',
     env,
-    shell: process.platform === 'win32',
     ...options,
   });
 }
 
 function output(command, args) {
-  return execFileSync(command, args, {
+  return execFileSync(resolveCommand(command), args, {
     encoding: 'utf8',
     env,
-    shell: process.platform === 'win32',
   }).trim();
+}
+
+function resolveCommand(command) {
+  if (process.platform !== 'win32') return command;
+  if (command === 'npm') return 'npm.cmd';
+  if (command === 'git') return 'git.exe';
+  return command;
 }
 
 const branch = output('git', ['branch', '--show-current']);
