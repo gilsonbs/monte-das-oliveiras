@@ -669,26 +669,26 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'sermao-profetico-do-monte-das-oliveiras': {
     question: 'O que é o sermão profético do Monte das Oliveiras?',
     answer:
-      'O sermão profético do Monte das Oliveiras é o ensino de Jesus, em Mateus 24 e textos paralelos, sobre a destruição do templo, sinais, tribulação, vigilância e sua volta. É uma das bases mais importantes da escatologia cristã.',
+      'O sermão profético do Monte das Oliveiras é o ensino de Jesus sobre sinais, tribulação, engano espiritual, vigilância e sua volta. Registrado em Mateus 24 e textos paralelos, ele é uma das bases mais importantes para estudar escatologia com equilíbrio bíblico.',
     bullets: [
-      'Jesus respondeu às perguntas dos discípulos sobre o templo, sua vinda e o fim.',
-      'O sermão inclui alertas contra engano, perseguição e esfriamento espiritual.',
-      'A aplicação principal é vigiar, perseverar e não ser enganado.',
+      'Jesus respondeu sobre o templo, sua vinda e o fim, mas também corrigiu expectativas apressadas.',
+      'O sermão alerta contra falsos cristos, perseguição, esfriamento espiritual e distração.',
+      'A aplicação principal é vigiar, perseverar e esperar Cristo com fidelidade.',
     ],
     links: [
       { href: '/mateus-24/', label: 'Mateus 24' },
       { href: '/sinais-do-fim/', label: 'Sinais do fim' },
-      { href: '/a-volta-de-jesus-os-sinais/', label: 'A volta de Jesus' },
+      { href: '/7-sinais-do-fim/', label: '7 sinais do fim' },
     ],
   },
   'arrebatamento-o-que-acontece': {
     question: 'O que acontece no arrebatamento segundo a Bíblia?',
     answer:
-      'No arrebatamento, os cristãos entendem que Cristo reunirá os seus, vivos e ressuscitados, para estarem com ele. Há diferenças entre as interpretações sobre o momento desse evento, mas o ponto central é a esperança da volta de Jesus, a ressurreição e o consolo da igreja.',
+      'No arrebatamento, os cristãos entendem que Cristo reunirá os seus, vivos e ressuscitados, para estarem com ele. Há diferenças sobre o momento desse evento, mas o centro bíblico é a volta de Jesus, a ressurreição, o consolo da igreja e a esperança eterna.',
     bullets: [
       '1 Tessalonicenses 4 associa o arrebatamento à volta de Cristo e à ressurreição dos mortos em Cristo.',
-      'As posições pré, midi e pós-tribulacionistas divergem sobre o momento do evento.',
-      'A aplicação bíblica é viver em santidade, consolo e vigilância, não em medo ou especulação.',
+      'As posições pré, midi e pós-tribulacionistas divergem sobre o momento, não sobre a esperança em Cristo.',
+      'A aplicação bíblica é viver em santidade, consolo e vigilância, sem medo ou especulação.',
     ],
     links: [
       { href: '/o-arrebatamento/', label: 'O arrebatamento' },
@@ -699,31 +699,31 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'preparacao-para-o-arrebatamento': {
     question: 'Como se preparar para o arrebatamento?',
     answer:
-      'A preparação para o arrebatamento envolve fé em Cristo, arrependimento, vigilância, santidade e perseverança. A Bíblia não chama o cristão a viver obcecado por datas, mas pronto para encontrar o Senhor.',
+      'A preparação para o arrebatamento começa com fé em Cristo e continua em arrependimento, vigilância, santidade e perseverança. A Bíblia não chama o cristão a viver obcecado por datas, mas a permanecer pronto para encontrar o Senhor.',
     bullets: [
       'Jesus ensinou que seus discípulos devem vigiar porque não sabem o dia nem a hora.',
-      'Preparação espiritual inclui vida de oração, obediência e fidelidade diária.',
-      'A esperança do arrebatamento deve produzir consolo, não medo paralisante.',
+      'Preparação espiritual envolve oração, obediência, comunhão, serviço e fidelidade diária.',
+      'A esperança do arrebatamento deve produzir consolo, santidade e perseverança, não medo paralisante.',
     ],
     links: [
       { href: '/pos-e-pre-tribulacionismo/', label: 'Pré e pós-tribulacionismo' },
       { href: '/pronto-para-o-arrebatamento/', label: 'Pronto para o arrebatamento' },
-      { href: '/a-volta-de-jesus-os-sinais/', label: 'A volta de Jesus' },
+      { href: '/estudo-biblico-sobre-salvacao/', label: 'Estudo sobre salvação' },
     ],
   },
   'estudo-biblico-sobre-salvacao': {
     question: 'O que é salvação segundo a Bíblia?',
     answer:
-      'Salvação, segundo a Bíblia, é a obra de Deus que resgata o pecador pela graça, mediante a fé em Jesus Cristo. Ela envolve perdão, reconciliação com Deus, nova vida e esperança eterna.',
+      'Salvação, segundo a Bíblia, é a obra de Deus que resgata o pecador pela graça, mediante a fé em Jesus Cristo. Ela envolve perdão, reconciliação com Deus, nova vida, perseverança e esperança eterna na presença do Senhor.',
     bullets: [
-      'A salvação não é conquistada por mérito humano, mas recebida pela graça de Deus.',
+      'A salvação não é conquistada por mérito humano, mas recebida pela graça de Deus em Cristo.',
       'Jesus é apresentado como o único caminho para reconciliação com o Pai.',
-      'A fé verdadeira produz arrependimento, transformação e perseverança.',
+      'A fé verdadeira produz arrependimento, transformação, perseverança e fruto espiritual.',
     ],
     links: [
       { href: '/salvacao-significado/', label: 'Significado de salvação' },
       { href: '/o-juizo-final-grande-trono-branco-biblia/', label: 'Juízo final' },
-      { href: '/vida-crista-com-proposito/', label: 'Vida cristã com propósito' },
+      { href: '/preparacao-para-o-arrebatamento/', label: 'Preparação para o arrebatamento' },
     ],
   },
   'a-mulher-samaritana': {
