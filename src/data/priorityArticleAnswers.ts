@@ -561,6 +561,21 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       { href: '/a-volta-de-jesus-os-sinais/', label: 'A volta de Jesus' },
     ],
   },
+  'mateus-24': {
+    question: 'Qual é a mensagem principal de Mateus 24?',
+    answer:
+      'Mateus 24 reúne o ensino de Jesus sobre sinais, tribulação, engano espiritual, vigilância e sua volta. A mensagem central é que os discípulos não devem viver dominados por medo ou especulação, mas preparados, fiéis e atentos à Palavra de Cristo.',
+    bullets: [
+      'Jesus alerta contra falsos cristos, falsos profetas e interpretações apressadas dos acontecimentos.',
+      'O capítulo chama a igreja à perseverança em meio a perseguições, crises e esfriamento espiritual.',
+      'A aplicação prática é vigiar, permanecer fiel e esperar a volta de Cristo com esperança.',
+    ],
+    links: [
+      { href: '/sinais-do-fim/', label: 'Sinais do fim' },
+      { href: '/dias-de-noe/', label: 'Dias de Noé' },
+      { href: '/sermao-profetico-do-monte-das-oliveiras/', label: 'Sermão profético' },
+    ],
+  },
   'sermao-profetico-do-monte-das-oliveiras': {
     question: 'O que é o sermão profético do Monte das Oliveiras?',
     answer:
