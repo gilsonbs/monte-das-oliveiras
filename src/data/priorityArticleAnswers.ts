@@ -516,6 +516,21 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       { href: '/escatologia-sinais-dos-tempos/', label: 'Escatologia e sinais dos tempos' },
     ],
   },
+  'milenio-o-que-a-biblia-diz': {
+    question: 'O que é o milênio na Bíblia?',
+    answer:
+      'O milênio é o período de mil anos mencionado em Apocalipse 20, associado ao reino de Cristo e ao juízo sobre o mal. Cristãos interpretam esse texto de formas diferentes, mas todos concordam que a esperança final está na vitória de Cristo e na consumação do Reino de Deus.',
+    bullets: [
+      'Pré-milenismo, amilenismo e pós-milenismo são as principais leituras cristãs sobre o tema.',
+      'Apocalipse 20 deve ser lido junto com a esperança bíblica de ressurreição, juízo e nova criação.',
+      'O foco do texto não é curiosidade cronológica, mas perseverança e confiança no reinado de Cristo.',
+    ],
+    links: [
+      { href: '/a-grande-tribulacao/', label: 'A grande tribulação' },
+      { href: '/gogue-e-magogue/', label: 'Gogue e Magogue' },
+      { href: '/nova-jerusalem/', label: 'Nova Jerusalém' },
+    ],
+  },
   'sermao-profetico-do-monte-das-oliveiras': {
     question: 'O que é o sermão profético do Monte das Oliveiras?',
     answer:
