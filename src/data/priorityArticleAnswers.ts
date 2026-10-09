@@ -414,70 +414,70 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'lideres-mundiais-e-o-cenario-do-fim-dos-tempos': {
     question: 'Qual o papel dos líderes mundiais no cenário do fim dos tempos?',
     answer:
-      'A Bíblia mostra que poderes políticos, alianças e sistemas humanos podem se levantar contra Deus no cenário final. Por isso, observar líderes mundiais pode ajudar no discernimento, desde que a análise não substitua a centralidade de Cristo.',
+      'A Bíblia mostra que líderes, impérios e sistemas políticos podem participar de cenários de oposição a Deus, mas não autoriza identificar cada governante atual como personagem profético definitivo. O cristão observa os acontecimentos com discernimento, sem tirar Cristo do centro da esperança.',
     bullets: [
-      'Daniel e Apocalipse falam de reinos, governantes e sistemas de poder.',
-      'O cristão deve evitar medo excessivo e manter fidelidade ao Reino de Deus.',
-      'O artigo organiza sinais políticos e espirituais dentro de uma leitura bíblica.',
+      'Daniel e Apocalipse tratam de reinos, governantes e estruturas de poder humano.',
+      'A leitura bíblica evita medo político, idolatria de líderes e teorias sem base sólida.',
+      'O foco cristão é fidelidade ao Reino de Deus acima de qualquer poder terreno.',
     ],
     links: [
       { href: '/governo-unico/', label: 'Governo único' },
       { href: '/sinais-do-anticristo/', label: 'Sinais do anticristo' },
-      { href: '/profecias-biblicas/', label: 'Profecias bíblicas' },
+      { href: '/a-nova-ordem-mundial-chegando/', label: 'Nova ordem mundial' },
     ],
   },
   'a-nova-ordem-mundial-chegando': {
     question: 'Nova ordem mundial tem relação com profecia bíblica?',
     answer:
-      'O tema da nova ordem mundial pode ser analisado à luz das passagens bíblicas sobre impérios, sistemas de poder e oposição a Deus. Ainda assim, a leitura cristã precisa ser prudente: a Bíblia chama ao discernimento, mas não autoriza tratar toda mudança geopolítica como cumprimento profético definitivo.',
+      'A ideia de nova ordem mundial pode ser comparada com temas bíblicos sobre impérios, domínio humano e sistemas contrários a Deus. Ainda assim, a leitura cristã precisa ser prudente: nem toda mudança política ou econômica é cumprimento profético final.',
     bullets: [
-      'Daniel e Apocalipse falam de poderes humanos que tentam dominar e se opor a Deus.',
-      'O cristão deve observar o mundo com sobriedade, sem medo paralisante ou teorias sem base.',
-      'A esperança bíblica permanece na soberania de Cristo sobre todos os reinos humanos.',
+      'Daniel e Apocalipse mostram poderes humanos tentando ocupar o lugar de Deus.',
+      'O cristão deve distinguir vigilância bíblica de especulação conspiratória.',
+      'A esperança final não está em governos humanos, mas na soberania de Cristo.',
     ],
     links: [
       { href: '/governo-unico/', label: 'Governo único' },
       { href: '/lideres-mundiais-e-o-cenario-do-fim-dos-tempos/', label: 'Líderes mundiais' },
-      { href: '/sinais-do-anticristo/', label: 'Sinais do anticristo' },
+      { href: '/sete-cabecas-e-dez-chifres-o-que-nos-reserva/', label: 'Sete cabeças e dez chifres' },
     ],
   },
   'perguntas-sobre-armagedom': {
     question: 'O que é Armagedom na Bíblia?',
     answer:
-      'Armagedom aparece em Apocalipse como o cenário ligado ao conflito final entre os poderes rebeldes e o juízo de Deus. O ponto principal não é alimentar medo ou curiosidade sobre guerras modernas, mas afirmar que Cristo vence e que Deus julgará todo poder contrário ao seu Reino.',
+      'Armagedom aparece em Apocalipse ligado ao conflito final entre poderes rebeldes e o juízo de Deus. O ponto principal não é alimentar medo sobre guerras modernas, mas afirmar que Cristo vence e que todo poder contrário ao Reino de Deus será julgado.',
     bullets: [
-      'Apocalipse usa linguagem simbólica e profética para revelar o conflito final.',
-      'Armagedom deve ser lido junto com os temas de juízo, perseverança e vitória de Cristo.',
-      'A aplicação cristã é permanecer fiel, sem transformar cada guerra em certeza profética.',
+      'Apocalipse usa linguagem profética para revelar conflito, juízo e vitória final.',
+      'O tema deve ser lido junto com perseverança, fidelidade e esperança cristã.',
+      'A aplicação prática é vigiar sem transformar cada guerra em certeza profética.',
     ],
     links: [
       { href: '/o-juizo-final-grande-trono-branco-biblia/', label: 'O juízo final' },
+      { href: '/a-grande-tribulacao/', label: 'A grande tribulação' },
       { href: '/a-volta-de-jesus-os-sinais/', label: 'A volta de Jesus' },
-      { href: '/profecias-biblicas/', label: 'Profecias bíblicas' },
     ],
   },
   'profecias-sobre-o-brasil': {
     question: 'Existem profecias bíblicas específicas sobre o Brasil?',
     answer:
-      'A Bíblia não apresenta profecias específicas citando o Brasil. Por isso, mensagens sobre profecias para a nação devem ser avaliadas com discernimento, submissão às Escrituras e cuidado pastoral. O foco bíblico permanece em arrependimento, fidelidade a Cristo e esperança no Reino de Deus.',
+      'A Bíblia não apresenta profecias específicas citando o Brasil. Por isso, qualquer mensagem sobre profecia para a nação precisa ser avaliada com submissão às Escrituras, discernimento espiritual e cuidado pastoral, sem substituir o evangelho por expectativas nacionais.',
     bullets: [
-      'Profecias modernas precisam ser testadas pela Palavra e pelo fruto espiritual.',
+      'Profecias modernas devem ser testadas pela Palavra, pelo fruto e pela centralidade de Cristo.',
       'O cristão deve evitar sensacionalismo, nacionalismo religioso e promessas sem base bíblica.',
-      'A esperança da igreja não está no destino de uma nação, mas na soberania de Cristo.',
+      'A missão da igreja é anunciar arrependimento, salvação e esperança no Reino de Deus.',
     ],
     links: [
       { href: '/profecias-biblicas/', label: 'Profecias bíblicas' },
       { href: '/estudos-biblicos-profeticos/', label: 'Estudos bíblicos proféticos' },
-      { href: '/sinais-do-fim/', label: 'Sinais do fim' },
+      { href: '/o-que-e-apologetica-crista/', label: 'Apologética cristã' },
     ],
   },
   'fenomenos-sobrenaturais': {
     question: 'Fenômenos sobrenaturais são sinais de Deus?',
     answer:
-      'Fenômenos sobrenaturais devem ser avaliados com discernimento bíblico, prudência e oração. A Bíblia reconhece sinais e maravilhas, mas também alerta contra engano espiritual; por isso, nenhum relato deve substituir a centralidade de Cristo, a autoridade das Escrituras e o fruto de uma vida fiel a Deus.',
+      'Fenômenos sobrenaturais devem ser avaliados com discernimento bíblico, prudência e oração. A Bíblia reconhece sinais e maravilhas, mas também alerta contra engano espiritual; por isso, nenhum relato deve ficar acima de Cristo, das Escrituras e do fruto de uma vida fiel a Deus.',
     bullets: [
-      'Nem todo fenômeno incomum deve ser tratado como sinal profético.',
-      'Jesus e os apóstolos alertam contra enganos, falsos sinais e fascínio sem discernimento.',
+      'Nem todo acontecimento incomum deve ser tratado como sinal profético.',
+      'Jesus e os apóstolos alertam contra falsos sinais, engano e fascínio espiritual sem critério.',
       'A resposta cristã é examinar tudo à luz da Palavra e permanecer firme em Cristo.',
     ],
     links: [
