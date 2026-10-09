@@ -606,6 +606,21 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       { href: '/a-volta-de-jesus-os-sinais/', label: 'A volta de Jesus' },
     ],
   },
+  'arrebatamento-o-que-acontece': {
+    question: 'O que acontece no arrebatamento segundo a Bíblia?',
+    answer:
+      'No arrebatamento, os cristãos entendem que Cristo reunirá os seus, vivos e ressuscitados, para estarem com ele. Há diferenças entre as interpretações sobre o momento desse evento, mas o ponto central é a esperança da volta de Jesus, a ressurreição e o consolo da igreja.',
+    bullets: [
+      '1 Tessalonicenses 4 associa o arrebatamento à volta de Cristo e à ressurreição dos mortos em Cristo.',
+      'As posições pré, midi e pós-tribulacionistas divergem sobre o momento do evento.',
+      'A aplicação bíblica é viver em santidade, consolo e vigilância, não em medo ou especulação.',
+    ],
+    links: [
+      { href: '/o-arrebatamento/', label: 'O arrebatamento' },
+      { href: '/pos-e-pre-tribulacionismo/', label: 'Pré e pós-tribulacionismo' },
+      { href: '/preparacao-para-o-arrebatamento/', label: 'Preparação para o arrebatamento' },
+    ],
+  },
   'preparacao-para-o-arrebatamento': {
     question: 'Como se preparar para o arrebatamento?',
     answer:
