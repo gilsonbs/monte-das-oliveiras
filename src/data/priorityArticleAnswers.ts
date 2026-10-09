@@ -850,11 +850,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'por-onde-comecar-a-ler-a-biblia': {
     question: 'Por onde começar a ler a Bíblia?',
     answer:
-      'Uma boa forma de começar a ler a Bíblia é pelos Evangelhos, especialmente Marcos ou João, porque apresentam a vida, os ensinos, a morte e a ressurreição de Jesus. Depois, Atos e algumas cartas ajudam a entender a igreja e a vida cristã.',
+      'Uma boa forma de começar a ler a Bíblia é pelos Evangelhos, especialmente Marcos ou João, porque apresentam a vida, os ensinos, a morte e a ressurreição de Jesus. Depois, Atos e algumas cartas ajudam a entender a igreja, a salvação e a vida cristã.',
     bullets: [
-      'Evangelhos mostram quem é Jesus e por que ele é o centro da fé cristã.',
+      'Os Evangelhos mostram quem é Jesus e por que ele é o centro da fé cristã.',
       'Atos mostra a expansão da igreja e a missão dos primeiros discípulos.',
-      'Salmos e Provérbios também ajudam na oração, sabedoria e vida devocional.',
+      'Salmos e Provérbios ajudam na oração, sabedoria e vida devocional diária.',
     ],
     links: [
       { href: '/7-passos-como-comecar-a-ler-a-biblia/', label: 'Como começar a ler' },
@@ -865,11 +865,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'quem-escreveu-a-biblia-conheca-os-40-autores': {
     question: 'Quem escreveu a Bíblia?',
     answer:
-      'A Bíblia foi escrita por cerca de 40 autores humanos, em diferentes épocas, lugares e contextos, sob a inspiração de Deus. Entre eles estão profetas, reis, pescadores, médicos, pastores e apóstolos.',
+      'A Bíblia foi escrita por cerca de 40 autores humanos, em diferentes épocas, lugares e contextos, sob a inspiração de Deus. Entre eles estão profetas, reis, pescadores, médicos, pastores e apóstolos, mas a mensagem central aponta para o plano redentor do Senhor.',
     bullets: [
       'O Antigo Testamento reúne livros da lei, história, poesia e profecia.',
       'O Novo Testamento apresenta os Evangelhos, Atos, cartas apostólicas e Apocalipse.',
-      'A unidade da Bíblia aponta para a ação de Deus conduzindo a revelação ao longo da história.',
+      'A unidade bíblica revela Deus conduzindo a história em direção a Cristo e à redenção.',
     ],
     links: [
       { href: '/um-panorama-biblico-com-o-resumo-66-livros/', label: 'Resumo dos 66 livros' },
@@ -880,26 +880,26 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'como-explicar-o-deus-triuno': {
     question: 'Como explicar o Deus triúno?',
     answer:
-      'O Deus triúno é a doutrina bíblica de que há um só Deus em três pessoas: Pai, Filho e Espírito Santo. O cristianismo não ensina três deuses, mas um único Deus que se revela eternamente em comunhão trinitária.',
+      'O Deus triúno é a doutrina bíblica de que há um só Deus em três pessoas: Pai, Filho e Espírito Santo. O cristianismo não ensina três deuses, mas um único Deus eterno que se revela em comunhão, amor e redenção.',
     bullets: [
       'O Pai é Deus, o Filho é Deus e o Espírito Santo é Deus, mas não são a mesma pessoa.',
       'A Trindade aparece no batismo de Jesus, na missão da igreja e em bênçãos apostólicas.',
-      'A doutrina deve ser explicada com reverência, evitando comparações simplistas demais.',
+      'A doutrina deve ser explicada com reverência, evitando analogias simplistas que distorcem o mistério.',
     ],
     links: [
       { href: '/significado-dos-nomes-de-deus/', label: 'Nomes de Deus' },
-      { href: '/o-papel-das-aliancas-biblicas/', label: 'Alianças bíblicas' },
+      { href: '/o-que-sao-os-dons-espirituais/', label: 'Dons espirituais' },
       { href: '/o-que-e-apologetica-crista/', label: 'Apologética cristã' },
     ],
   },
   'o-papel-das-aliancas-biblicas': {
     question: 'O que são alianças bíblicas?',
     answer:
-      'Alianças bíblicas são compromissos estabelecidos por Deus ao longo da história para revelar seu plano de redenção. Elas ajudam a entender a relação entre criação, promessa, lei, reino, Cristo e nova aliança.',
+      'Alianças bíblicas são compromissos estabelecidos por Deus ao longo da história para revelar seu plano de redenção. Elas ajudam a entender a relação entre criação, promessa, lei, reino, Cristo e a nova aliança no evangelho.',
     bullets: [
       'Alianças com Noé, Abraão, Moisés e Davi apontam para etapas importantes da revelação bíblica.',
       'A nova aliança é cumprida em Cristo e anunciada pelos profetas.',
-      'Entender as alianças ajuda a ler a Bíblia como uma história unificada de redenção.',
+      'Entender as alianças ajuda a ler a Bíblia como uma história unificada de promessa e cumprimento.',
     ],
     links: [
       { href: '/um-panorama-biblico-com-o-resumo-66-livros/', label: 'Panorama bíblico' },
@@ -910,11 +910,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'o-que-sao-os-dons-espirituais': {
     question: 'O que são dons espirituais?',
     answer:
-      'Dons espirituais são capacidades concedidas pelo Espírito Santo para edificação da igreja e serviço ao Reino de Deus. Eles não existem para autopromoção, mas para servir com amor, ordem e maturidade.',
+      'Dons espirituais são capacidades concedidas pelo Espírito Santo para edificação da igreja e serviço ao Reino de Deus. Eles não existem para autopromoção, mas para servir com amor, ordem, humildade e maturidade espiritual.',
     bullets: [
       'O Novo Testamento fala de dons em textos como Romanos 12, 1 Coríntios 12 e Efésios 4.',
-      'Todo dom deve ser exercido com amor, humildade e submissão à Palavra.',
-      'A finalidade dos dons é edificar o corpo de Cristo e glorificar a Deus.',
+      'Todo dom deve ser exercido com amor, discernimento e submissão à Palavra.',
+      'A finalidade dos dons é edificar o corpo de Cristo, servir pessoas e glorificar a Deus.',
     ],
     links: [
       { href: '/historia-da-igreja-primitiva-segundo-atos/', label: 'Igreja primitiva' },
