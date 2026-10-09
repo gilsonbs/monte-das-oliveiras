@@ -471,6 +471,21 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       { href: '/sinais-do-fim/', label: 'Sinais do fim' },
     ],
   },
+  'fenomenos-sobrenaturais': {
+    question: 'Fenômenos sobrenaturais são sinais de Deus?',
+    answer:
+      'Fenômenos sobrenaturais devem ser avaliados com discernimento bíblico, prudência e oração. A Bíblia reconhece sinais e maravilhas, mas também alerta contra engano espiritual; por isso, nenhum relato deve substituir a centralidade de Cristo, a autoridade das Escrituras e o fruto de uma vida fiel a Deus.',
+    bullets: [
+      'Nem todo fenômeno incomum deve ser tratado como sinal profético.',
+      'Jesus e os apóstolos alertam contra enganos, falsos sinais e fascínio sem discernimento.',
+      'A resposta cristã é examinar tudo à luz da Palavra e permanecer firme em Cristo.',
+    ],
+    links: [
+      { href: '/sinais-do-fim/', label: 'Sinais do fim' },
+      { href: '/mateus-24/', label: 'Mateus 24' },
+      { href: '/o-que-e-apologetica-crista/', label: 'Apologética cristã' },
+    ],
+  },
   'estudos-biblicos-profeticos': {
     question: 'Por que estudar profecias bíblicas?',
     answer:
