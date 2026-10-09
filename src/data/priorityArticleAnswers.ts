@@ -501,6 +501,21 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       { href: '/sete-cabecas-e-dez-chifres-o-que-nos-reserva/', label: 'Sete cabeças e dez chifres' },
     ],
   },
+  'gogue-e-magogue': {
+    question: 'Quem são Gogue e Magogue na profecia bíblica?',
+    answer:
+      'Gogue e Magogue aparecem em Ezequiel 38-39 e Apocalipse 20 como imagens ligadas à oposição das nações contra o povo de Deus. As interpretações variam, mas o centro da profecia é a soberania divina: Deus julga os poderes que se levantam contra ele e preserva seu povo.',
+    bullets: [
+      'Ezequiel apresenta uma coalizão inimiga que se levanta contra Israel.',
+      'Apocalipse retoma Gogue e Magogue como símbolo de rebelião final contra Deus.',
+      'O estudo pede cautela para não transformar cada conflito atual em cumprimento definitivo.',
+    ],
+    links: [
+      { href: '/as-70-semanas-de-daniel/', label: 'As 70 semanas de Daniel' },
+      { href: '/a-grande-tribulacao/', label: 'A grande tribulação' },
+      { href: '/escatologia-sinais-dos-tempos/', label: 'Escatologia e sinais dos tempos' },
+    ],
+  },
   'sermao-profetico-do-monte-das-oliveiras': {
     question: 'O que é o sermão profético do Monte das Oliveiras?',
     answer:
