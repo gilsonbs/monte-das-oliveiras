@@ -576,6 +576,21 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       { href: '/sermao-profetico-do-monte-das-oliveiras/', label: 'Sermão profético' },
     ],
   },
+  '7-sinais-do-fim': {
+    question: 'Quais são os sinais do fim dos tempos segundo a Bíblia?',
+    answer:
+      'A Bíblia fala de sinais como engano espiritual, guerras, perseguição, esfriamento do amor, falsos profetas e expansão do evangelho. Esses sinais chamam a igreja à vigilância e à fidelidade, mas não autorizam marcar datas ou transformar cada notícia em prova definitiva do fim.',
+    bullets: [
+      'Jesus ensina que sinais devem produzir discernimento, não pânico.',
+      'Mateus 24 destaca engano, perseverança, tribulação e proclamação do evangelho.',
+      'A resposta cristã é viver preparado, fiel e esperançoso até a volta de Cristo.',
+    ],
+    links: [
+      { href: '/sinais-do-fim/', label: 'Sinais do fim' },
+      { href: '/mateus-24/', label: 'Mateus 24' },
+      { href: '/a-volta-de-jesus-os-sinais/', label: 'A volta de Jesus' },
+    ],
+  },
   'sermao-profetico-do-monte-das-oliveiras': {
     question: 'O que é o sermão profético do Monte das Oliveiras?',
     answer:
