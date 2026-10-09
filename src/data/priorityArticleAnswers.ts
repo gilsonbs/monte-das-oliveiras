@@ -775,11 +775,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'a-vida-do-apostolo-paulo': {
     question: 'Quem foi o apóstolo Paulo?',
     answer:
-      'Paulo foi um dos principais líderes da igreja primitiva. Antes perseguidor dos cristãos, ele foi alcançado por Cristo, tornou-se missionário, plantou igrejas e escreveu cartas fundamentais do Novo Testamento.',
+      'Paulo foi um dos principais líderes da igreja primitiva. Antes perseguidor dos cristãos, ele foi alcançado por Cristo, tornou-se missionário, plantou igrejas e escreveu cartas fundamentais do Novo Testamento sobre graça, fé, santidade e missão.',
     bullets: [
-      'Sua conversão aparece em Atos 9 e marca uma mudança radical de vida.',
+      'Sua conversão em Atos 9 mostra o poder de Cristo para transformar vidas.',
       'Paulo levou o evangelho a judeus e gentios em várias regiões do Império Romano.',
-      'Suas cartas explicam temas como graça, fé, igreja, santidade e esperança cristã.',
+      'Sua história une doutrina, sofrimento, plantação de igrejas e perseverança missionária.',
     ],
     links: [
       { href: '/a-fe-de-paulo/', label: 'A fé de Paulo' },
@@ -790,25 +790,25 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'historia-da-igreja-primitiva-segundo-atos': {
     question: 'Como começou a igreja primitiva em Atos?',
     answer:
-      'A igreja primitiva começou em Jerusalém após a ascensão de Jesus e o derramamento do Espírito Santo em Pentecostes. O livro de Atos mostra a expansão do evangelho, a comunhão dos discípulos e a formação das primeiras comunidades cristãs.',
+      'A igreja primitiva começou em Jerusalém após a ascensão de Jesus e o derramamento do Espírito Santo em Pentecostes. Atos mostra como o evangelho se espalhou por meio da pregação, oração, comunhão, discipulado e coragem diante da perseguição.',
     bullets: [
       'Pentecostes marca o início público da missão da igreja no poder do Espírito Santo.',
-      'A igreja crescia por meio da pregação, oração, comunhão e perseverança.',
-      'Atos mostra o evangelho saindo de Jerusalém para Judeia, Samaria e até os confins da terra.',
+      'A igreja crescia por meio da Palavra, oração, comunhão, serviço e perseverança.',
+      'Atos mostra o evangelho indo de Jerusalém para Judeia, Samaria e até os confins da terra.',
     ],
     links: [
       { href: '/a-vida-do-apostolo-paulo/', label: 'Vida de Paulo' },
       { href: '/discipulado-cristao-passo-a-passo/', label: 'Discipulado cristão' },
-      { href: '/o-que-sao-os-dons-espirituais/', label: 'Dons espirituais' },
+      { href: '/estudo-biblico-sobre-oracao/', label: 'Estudo sobre oração' },
     ],
   },
   'discipulado-cristao-passo-a-passo': {
     question: 'O que é discipulado cristão?',
     answer:
-      'Discipulado cristão é o processo de seguir Jesus, aprender seus ensinamentos e ajudar outras pessoas a crescerem na fé. Ele envolve relacionamento, ensino bíblico, exemplo de vida, oração e compromisso com a missão.',
+      'Discipulado cristão é o processo de seguir Jesus, aprender seus ensinamentos e ajudar outras pessoas a amadurecerem na fé. Ele envolve Palavra, relacionamento, exemplo de vida, oração, serviço e compromisso com a missão.',
     bullets: [
       'Jesus mandou fazer discípulos, não apenas reunir ouvintes.',
-      'O discipulado combina Palavra, convivência, correção, serviço e maturidade espiritual.',
+      'O discipulado combina ensino bíblico, convivência, correção amorosa e prática obediente.',
       'Uma igreja saudável forma pessoas que seguem Cristo e ajudam outros a segui-lo.',
     ],
     links: [
@@ -820,26 +820,26 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'estudo-biblico-sobre-oracao': {
     question: 'O que a Bíblia ensina sobre oração?',
     answer:
-      'A Bíblia ensina que oração é relacionamento com Deus, expressão de fé, dependência e adoração. Orar não é apenas pedir coisas, mas buscar a vontade do Pai, confessar pecados, agradecer e interceder.',
+      'A Bíblia ensina que oração é relacionamento com Deus, expressão de fé, dependência e adoração. Orar não é apenas pedir coisas, mas buscar a vontade do Pai, confessar pecados, agradecer, interceder e crescer em intimidade com o Senhor.',
     bullets: [
       'Jesus ensinou seus discípulos a orar com simplicidade, reverência e confiança.',
       'A oração bíblica inclui adoração, confissão, gratidão, petição e intercessão.',
-      'Uma vida de oração amadurece quando é constante, sincera e alinhada à Palavra.',
+      'Uma vida de oração amadurece quando é constante, sincera e alinhada à Palavra de Deus.',
     ],
     links: [
       { href: '/descubra-como-orar-como-jesus/', label: 'Como orar como Jesus' },
       { href: '/vida-de-oracao/', label: 'Vida de oração' },
-      { href: '/orar-sem-cessar/', label: 'Orar sem cessar' },
+      { href: '/discipulado-cristao-passo-a-passo/', label: 'Discipulado cristão' },
     ],
   },
   '7-passos-como-comecar-a-ler-a-biblia': {
     question: 'Como começar a ler a Bíblia?',
     answer:
-      'Para começar a ler a Bíblia, escolha um plano simples, ore antes da leitura e comece por livros que apresentam claramente Jesus e a vida cristã, como Marcos, João, Atos ou Filipenses. O importante é constância e entendimento, não pressa.',
+      'Para começar a ler a Bíblia, escolha um plano simples, ore antes da leitura e comece por livros que apresentam claramente Jesus e a vida cristã, como Marcos, João, Atos ou Filipenses. O mais importante é constância, entendimento e aplicação, não pressa.',
     bullets: [
       'Comece com pequenas porções diárias e anote dúvidas, promessas e aplicações.',
       'Leia o texto dentro do contexto, evitando frases isoladas sem sentido completo.',
-      'Combine leitura bíblica com oração e prática obediente do que foi aprendido.',
+      'Combine leitura bíblica com oração, discipulado e prática obediente do que foi aprendido.',
     ],
     links: [
       { href: '/por-onde-comecar-a-ler-a-biblia/', label: 'Por onde começar' },
