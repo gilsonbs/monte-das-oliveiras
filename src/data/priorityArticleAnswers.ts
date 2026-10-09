@@ -456,6 +456,21 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       { href: '/profecias-biblicas/', label: 'Profecias bíblicas' },
     ],
   },
+  'profecias-sobre-o-brasil': {
+    question: 'Existem profecias bíblicas específicas sobre o Brasil?',
+    answer:
+      'A Bíblia não apresenta profecias específicas citando o Brasil. Por isso, mensagens sobre profecias para a nação devem ser avaliadas com discernimento, submissão às Escrituras e cuidado pastoral. O foco bíblico permanece em arrependimento, fidelidade a Cristo e esperança no Reino de Deus.',
+    bullets: [
+      'Profecias modernas precisam ser testadas pela Palavra e pelo fruto espiritual.',
+      'O cristão deve evitar sensacionalismo, nacionalismo religioso e promessas sem base bíblica.',
+      'A esperança da igreja não está no destino de uma nação, mas na soberania de Cristo.',
+    ],
+    links: [
+      { href: '/profecias-biblicas/', label: 'Profecias bíblicas' },
+      { href: '/estudos-biblicos-profeticos/', label: 'Estudos bíblicos proféticos' },
+      { href: '/sinais-do-fim/', label: 'Sinais do fim' },
+    ],
+  },
   'estudos-biblicos-profeticos': {
     question: 'Por que estudar profecias bíblicas?',
     answer:
