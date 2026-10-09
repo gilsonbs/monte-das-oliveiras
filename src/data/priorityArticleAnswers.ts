@@ -441,6 +441,21 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       { href: '/sinais-do-anticristo/', label: 'Sinais do anticristo' },
     ],
   },
+  'perguntas-sobre-armagedom': {
+    question: 'O que é Armagedom na Bíblia?',
+    answer:
+      'Armagedom aparece em Apocalipse como o cenário ligado ao conflito final entre os poderes rebeldes e o juízo de Deus. O ponto principal não é alimentar medo ou curiosidade sobre guerras modernas, mas afirmar que Cristo vence e que Deus julgará todo poder contrário ao seu Reino.',
+    bullets: [
+      'Apocalipse usa linguagem simbólica e profética para revelar o conflito final.',
+      'Armagedom deve ser lido junto com os temas de juízo, perseverança e vitória de Cristo.',
+      'A aplicação cristã é permanecer fiel, sem transformar cada guerra em certeza profética.',
+    ],
+    links: [
+      { href: '/o-juizo-final-grande-trono-branco-biblia/', label: 'O juízo final' },
+      { href: '/a-volta-de-jesus-os-sinais/', label: 'A volta de Jesus' },
+      { href: '/profecias-biblicas/', label: 'Profecias bíblicas' },
+    ],
+  },
   'estudos-biblicos-profeticos': {
     question: 'Por que estudar profecias bíblicas?',
     answer:
