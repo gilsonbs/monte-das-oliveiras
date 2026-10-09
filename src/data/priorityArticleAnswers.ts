@@ -531,6 +531,21 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       { href: '/nova-jerusalem/', label: 'Nova Jerusalém' },
     ],
   },
+  'nova-jerusalem': {
+    question: 'O que é a Nova Jerusalém em Apocalipse?',
+    answer:
+      'A Nova Jerusalém é a cidade celestial descrita em Apocalipse 21-22, símbolo da morada final de Deus com seu povo. Ela aponta para a consumação da redenção, quando não haverá mais morte, dor, pecado ou separação entre Deus e os salvos.',
+    bullets: [
+      'Apocalipse apresenta a Nova Jerusalém como a realidade final da esperança cristã.',
+      'A cidade revela comunhão plena com Deus, restauração da criação e vitória definitiva de Cristo.',
+      'O foco da passagem é consolo, santidade e perseverança enquanto a igreja aguarda a consumação.',
+    ],
+    links: [
+      { href: '/milenio-o-que-a-biblia-diz/', label: 'O milênio na Bíblia' },
+      { href: '/o-juizo-final-grande-trono-branco-biblia/', label: 'O juízo final' },
+      { href: '/profecias-biblicas/', label: 'Profecias bíblicas' },
+    ],
+  },
   'sermao-profetico-do-monte-das-oliveiras': {
     question: 'O que é o sermão profético do Monte das Oliveiras?',
     answer:
