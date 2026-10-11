@@ -940,11 +940,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'guia-dos-ensinamentos-do-reino': {
     question: 'Por que Jesus falava em parábolas?',
     answer:
-      'Jesus usava parábolas para revelar verdades do Reino de Deus de forma simples, profunda e memorável. Elas confrontavam o coração, ensinavam os discípulos e, ao mesmo tempo, expunham a dureza de quem não queria ouvir.',
+      'Jesus usava parábolas para revelar verdades do Reino de Deus de forma simples, profunda e memorável. Elas ensinavam os discípulos, confrontavam o coração e também expunham a resistência de quem ouvia sem desejar obedecer.',
     bullets: [
       'Parábolas usam cenas comuns para ensinar verdades espirituais profundas.',
-      'Elas mostram como é o Reino de Deus, quem é o verdadeiro discípulo e como viver pela fé.',
-      'Entender parábolas exige atenção ao contexto, ao público e ao ponto central da história.',
+      'Elas mostram como é o Reino, quem é o verdadeiro discípulo e como viver pela fé.',
+      'Entender parábolas exige observar contexto, público e o ponto principal da história.',
     ],
     links: [
       { href: '/parabola-dos-talentos/', label: 'Parábola dos talentos' },
@@ -955,10 +955,10 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'louvor-com-instrumentos': {
     question: 'A Bíblia permite louvor com instrumentos?',
     answer:
-      'A Bíblia mostra instrumentos sendo usados no louvor a Deus, especialmente nos Salmos e no culto de Israel. O ponto principal, porém, não é apenas o instrumento, mas a adoração sincera, reverente e centrada em Deus.',
+      'A Bíblia mostra instrumentos sendo usados no louvor a Deus, especialmente nos Salmos e no culto de Israel. O ponto principal, porém, não é apenas o instrumento, mas a adoração sincera, reverente, ordenada e centrada no Senhor.',
     bullets: [
       'Salmos mencionam harpas, címbalos, trombetas e outros instrumentos no louvor.',
-      'Instrumentos podem servir à adoração quando usados com ordem, reverência e propósito.',
+      'Instrumentos podem servir à adoração quando usados com ordem, reverência e propósito espiritual.',
       'O coração do adorador continua sendo mais importante do que o recurso musical.',
     ],
     links: [
@@ -970,7 +970,7 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'diferenca-entre-louvor-e-adoracao': {
     question: 'Qual é a diferença entre louvor e adoração?',
     answer:
-      'Louvor costuma expressar reconhecimento pelas obras de Deus, enquanto adoração envolve rendição, reverência e entrega a quem Deus é. Na prática bíblica, os dois se relacionam e devem nascer de um coração sincero.',
+      'Louvor costuma expressar reconhecimento pelas obras de Deus, enquanto adoração envolve rendição, reverência e entrega a quem Deus é. Na prática bíblica, louvor e adoração se relacionam e devem nascer de um coração sincero.',
     bullets: [
       'Louvar é proclamar a grandeza, os feitos e a bondade de Deus.',
       'Adorar é render-se a Deus com reverência, amor, obediência e verdade.',
@@ -979,7 +979,7 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
     links: [
       { href: '/louvor-com-instrumentos/', label: 'Louvor com instrumentos' },
       { href: '/o-que-e-louvor-racional/', label: 'Louvor racional' },
-      { href: '/funcao-dos-levitas-no-templo/', label: 'Levitas no templo' },
+      { href: '/musica-no-ceu/', label: 'Música no céu' },
     ],
   },
   'o-pecado-contra-o-espirito-santo': {
@@ -1030,26 +1030,26 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'crente-pode-orar-deitado': {
     question: 'Crente pode orar deitado?',
     answer:
-      'Crente pode orar deitado, porque a Bíblia não limita a oração a uma única postura física. O mais importante é a postura do coração: reverência, sinceridade, fé e dependência de Deus.',
+      'Crente pode orar deitado, porque a Bíblia não limita a oração a uma única postura física. O mais importante é a postura do coração: reverência, sinceridade, fé, atenção e dependência de Deus.',
     bullets: [
       'Na Bíblia, pessoas oram em pé, ajoelhadas, prostradas e em diferentes situações.',
-      'Orar deitado pode ser legítimo, especialmente em descanso, enfermidade ou momentos de intimidade com Deus.',
+      'Orar deitado pode ser legítimo em descanso, enfermidade ou momentos de intimidade com Deus.',
       'A postura externa não deve substituir reverência, atenção e sinceridade diante do Senhor.',
     ],
     links: [
       { href: '/estudo-biblico-sobre-oracao/', label: 'Estudo sobre oração' },
       { href: '/descubra-como-orar-como-jesus/', label: 'Orar como Jesus' },
-      { href: '/orar-sem-cessar/', label: 'Orar sem cessar' },
+      { href: '/vida-de-oracao/', label: 'Vida de oração' },
     ],
   },
   'lideranca-biblica-pastores-igrejas': {
     question: 'O que é liderança bíblica na igreja?',
     answer:
-      'Liderança bíblica na igreja é serviço humilde, cuidado espiritual e fidelidade à Palavra de Deus. O líder cristão não é chamado a dominar pessoas, mas a pastorear, ensinar, proteger e servir como exemplo.',
+      'Liderança bíblica na igreja é serviço humilde, cuidado espiritual e fidelidade à Palavra de Deus. O líder cristão não é chamado a dominar pessoas, mas a pastorear, ensinar, proteger e servir como exemplo para o rebanho.',
     bullets: [
       'Jesus apresentou liderança como serviço, não como busca de status.',
-      'Pastores e líderes devem cuidar do rebanho com amor, verdade e responsabilidade.',
-      'A autoridade espiritual precisa estar ligada a caráter, doutrina e exemplo de vida.',
+      'Pastores e líderes devem cuidar do rebanho com amor, verdade, zelo e responsabilidade.',
+      'Autoridade espiritual precisa estar ligada a caráter, doutrina, serviço e exemplo de vida.',
     ],
     links: [
       { href: '/lideranca-crista/', label: 'Liderança cristã' },
