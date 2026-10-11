@@ -1180,11 +1180,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'pornografia-e-pecado': {
     question: 'Pornografia é pecado?',
     answer:
-      'Pornografia é pecado porque distorce a sexualidade criada por Deus, alimenta cobiça, objetifica pessoas e pode escravizar a mente. A resposta cristã une arrependimento, graça, renovação da mente, limites práticos e busca de ajuda quando a pessoa não consegue vencer sozinha.',
+      'Pornografia é pecado porque distorce a sexualidade criada por Deus, alimenta cobiça, objetifica pessoas e pode escravizar a mente. A resposta cristã une arrependimento, graça, renovação da mente, limites práticos e ajuda madura quando a pessoa não consegue vencer sozinha.',
     bullets: [
       'Jesus ensinou que a pureza envolve também o olhar, o desejo e o coração.',
       'Pornografia pode gerar compulsão, culpa, isolamento e danos relacionais profundos.',
-      'Há caminho de restauração em Cristo, com confissão segura, limites práticos e acompanhamento maduro.',
+      'Há caminho de restauração em Cristo, com confissão segura, limites práticos e acompanhamento cristão.',
     ],
     links: [
       { href: '/e-pecado-se-masturbar/', label: 'Masturbação e vida cristã' },
@@ -1195,11 +1195,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'fumar-e-pecado-entenda-o-debate': {
     question: 'Fumar é pecado?',
     answer:
-      'A Bíblia não menciona cigarro diretamente, mas oferece princípios sobre domínio próprio, cuidado com o corpo, vício e testemunho. A pergunta deve ser avaliada com honestidade diante de Deus, considerando saúde, dependência, consciência e liberdade cristã.',
+      'A Bíblia não menciona cigarro diretamente, mas oferece princípios sobre domínio próprio, cuidado com o corpo, vício e testemunho. A pergunta deve ser avaliada com honestidade diante de Deus, considerando saúde, dependência, consciência, liberdade cristã e amor ao próximo.',
     bullets: [
       'O corpo do cristão deve ser tratado com responsabilidade diante de Deus.',
       'Dependência, dano à saúde e perda de domínio próprio pesam no discernimento bíblico.',
-      'Quem luta para abandonar o vício precisa de graça, apoio prático e perseverança, não apenas condenação.',
+      'Quem luta para abandonar o vício precisa de graça, apoio prático, perseverança e ajuda quando necessário.',
     ],
     links: [
       { href: '/crente-pode-ver-filme-de-terror/', label: 'Discernimento cristão' },
@@ -1210,10 +1210,10 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'o-salario-do-pecado-e-a-morte-entenda': {
     question: 'O que significa o salário do pecado é a morte?',
     answer:
-      'A expressão “o salário do pecado é a morte”, em Romanos 6:23, ensina que o pecado produz separação, condenação e morte espiritual. Mas o mesmo versículo anuncia que o dom gratuito de Deus é a vida eterna em Cristo Jesus.',
+      'A expressão “o salário do pecado é a morte”, em Romanos 6:23, ensina que o pecado produz separação, condenação e morte espiritual. Mas o mesmo versículo anuncia a boa notícia: o dom gratuito de Deus é a vida eterna em Cristo Jesus.',
     bullets: [
       'Pecado não é apenas erro moral, mas rebelião contra Deus.',
-      'A morte é apresentada como consequência justa do pecado.',
+      'A morte é apresentada como consequência justa do pecado e da separação de Deus.',
       'O evangelho responde com graça, perdão e vida eterna em Cristo.',
     ],
     links: [
@@ -1225,11 +1225,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'crente-divorciado-pode-casar-de-novo': {
     question: 'Crente divorciado pode casar de novo?',
     answer:
-      'A possibilidade de um crente divorciado casar de novo exige cuidado pastoral, contexto bíblico e responsabilidade. Textos sobre aliança, adultério, abandono, reconciliação e proteção da parte ferida precisam ser avaliados sem banalizar o casamento nem ignorar situações reais de sofrimento.',
+      'A possibilidade de um crente divorciado casar de novo exige cuidado pastoral, contexto bíblico e responsabilidade. Textos sobre aliança, adultério, abandono, reconciliação e proteção da parte ferida precisam ser avaliados sem banalizar o casamento nem ignorar sofrimento real.',
     bullets: [
       'Jesus tratou o casamento com seriedade e apontou para o plano original de Deus.',
       'Algumas tradições cristãs reconhecem exceções bíblicas, como imoralidade sexual e abandono.',
-      'Cada caso precisa de aconselhamento pastoral maduro, especialmente quando há abuso, abandono ou tentativa de reconciliação.',
+      'Cada caso precisa de aconselhamento maduro, especialmente quando há abuso, abandono ou tentativa de reconciliação.',
     ],
     links: [
       { href: '/o-amor-de-deus/', label: 'O amor de Deus' },
@@ -1244,7 +1244,7 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
     bullets: [
       'Levítico 19:28 precisa ser lido em seu contexto histórico e religioso.',
       'O Novo Testamento enfatiza consciência, santidade, liberdade e edificação.',
-      'Nem toda liberdade convém; motivação, maturidade e impacto sobre outras pessoas também importam.',
+      'Nem toda liberdade convém; motivação, maturidade e impacto sobre outras pessoas também precisam ser avaliados.',
     ],
     links: [
       { href: '/crente-pode-ver-novela-7-criterios-biblicos/', label: 'Critérios bíblicos' },
