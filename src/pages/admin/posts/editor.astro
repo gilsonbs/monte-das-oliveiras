@@ -98,6 +98,28 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
           </div>
         </div>
 
+        <div class="panel seo-assistant" id="seo-assistant">
+          <div class="seo-assistant-head">
+            <div>
+              <label>Checklist de publicação</label>
+              <div class="seo-score" id="seo-score">0 de 8 pontos prontos</div>
+            </div>
+            <span class="seo-badge" id="seo-badge">Rascunho</span>
+          </div>
+          <div class="seo-progress"><span id="seo-progress-bar"></span></div>
+          <ul class="seo-checklist" id="seo-checklist">
+            <li data-check="title"><span></span>Título com 35 a 70 caracteres</li>
+            <li data-check="slug"><span></span>URL curta e legível</li>
+            <li data-check="excerpt"><span></span>Resumo preenchido</li>
+            <li data-check="seoTitle"><span></span>Título SEO preenchido</li>
+            <li data-check="meta"><span></span>Meta descrição com 120 a 160 caracteres</li>
+            <li data-check="cover"><span></span>Imagem de capa definida</li>
+            <li data-check="headings"><span></span>Conteúdo com subtítulos H2/H3</li>
+            <li data-check="internalLinks"><span></span>Pelo menos 2 links internos</li>
+          </ul>
+          <div class="seo-tip" id="seo-tip">Preencha o título para começar a acompanhar a qualidade do post.</div>
+        </div>
+
         <div class="panel">
           <div class="toggle-row">
             <div>
@@ -142,12 +164,17 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
   const titleInput = document.getElementById('title') as HTMLInputElement;
   const slugInput = document.getElementById('slug') as HTMLInputElement;
   const slugPreview = document.getElementById('slug-preview') as HTMLElement;
+  const excerptInput = document.getElementById('excerpt') as HTMLTextAreaElement;
+  const seoTitleInput = document.getElementById('seo_title') as HTMLInputElement;
+  const metaDescriptionInput = document.getElementById('meta_description') as HTMLTextAreaElement;
+  const coverMediaInput = document.getElementById('cover_media_id') as HTMLInputElement;
 
   if (isNew) {
     titleInput.addEventListener('input', () => {
       const slug = slugify(titleInput.value);
       slugInput.value = slug;
       slugPreview.textContent = slug;
+      updateSeoChecklist();
     });
   }
 
@@ -167,6 +194,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     content: '<p></p>',
     onUpdate: ({ editor }) => {
       contentHidden.value = editor.getHTML();
+      updateSeoChecklist();
     },
     onTransaction: () => {
       updateToolbarActiveStates();
@@ -298,6 +326,71 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
   const formatsGrid = document.getElementById('formats-grid')!;
   const uploadTitle = document.getElementById('upload-title')!;
 
+  function textLength(value: string) {
+    return value.trim().replace(/\s+/g, ' ').length;
+  }
+
+  function countInternalLinks() {
+    const html = contentHidden.value || editor.getHTML();
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return Array.from(doc.querySelectorAll('a[href]')).filter((link) => {
+      const href = link.getAttribute('href') || '';
+      return href.startsWith('/') || href.includes('montedasoliveiras.com');
+    }).length;
+  }
+
+  function updateSeoChecklist() {
+    const html = contentHidden.value || editor.getHTML();
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const titleLength = textLength(titleInput.value);
+    const metaLength = textLength(metaDescriptionInput.value);
+    const slug = slugInput.value.trim();
+    const checks: Record<string, boolean> = {
+      title: titleLength >= 35 && titleLength <= 70,
+      slug: slug.length >= 8 && slug.length <= 75 && !slug.includes('--'),
+      excerpt: textLength(excerptInput.value) >= 80,
+      seoTitle: textLength(seoTitleInput.value) >= 35,
+      meta: metaLength >= 120 && metaLength <= 160,
+      cover: !!coverMediaInput.value || !!pendingCoverFile,
+      headings: doc.querySelectorAll('h2, h3').length >= 2,
+      internalLinks: countInternalLinks() >= 2,
+    };
+
+    const entries = Object.entries(checks);
+    const passed = entries.filter(([, ok]) => ok).length;
+    const total = entries.length;
+    const percent = Math.round((passed / total) * 100);
+
+    for (const [key, ok] of entries) {
+      const item = document.querySelector(`[data-check="${key}"]`);
+      item?.classList.toggle('done', ok);
+    }
+
+    document.getElementById('seo-score')!.textContent = `${passed} de ${total} pontos prontos`;
+    (document.getElementById('seo-progress-bar') as HTMLElement).style.width = `${percent}%`;
+
+    const badge = document.getElementById('seo-badge')!;
+    badge.textContent = percent >= 85 ? 'Pronto' : percent >= 60 ? 'Quase' : 'Rascunho';
+    badge.className = `seo-badge ${percent >= 85 ? 'ready' : percent >= 60 ? 'almost' : ''}`;
+
+    const next = entries.find(([, ok]) => !ok)?.[0];
+    const tips: Record<string, string> = {
+      title: 'Ajuste o título para ficar claro, pesquisável e nem curto nem longo demais.',
+      slug: 'Use uma URL curta, sem palavras sobrando, separada por hífens.',
+      excerpt: 'Escreva um resumo objetivo para orientar o leitor e ajudar na listagem do site.',
+      seoTitle: 'Preencha o título SEO com a promessa principal do artigo.',
+      meta: `A meta descrição está com ${metaLength} caracteres; mire entre 120 e 160.`,
+      cover: 'Adicione uma imagem de capa antes de publicar.',
+      headings: 'Divida o conteúdo com pelo menos dois subtítulos H2 ou H3.',
+      internalLinks: 'Inclua pelo menos dois links para outros artigos do próprio site.',
+    };
+    document.getElementById('seo-tip')!.textContent = next ? tips[next] : 'Checklist pronto para publicação. Faça uma última leitura antes de publicar.';
+  }
+
+  [excerptInput, seoTitleInput, metaDescriptionInput].forEach((input) => {
+    input.addEventListener('input', updateSeoChecklist);
+  });
+
   uploadZone.addEventListener('click', () => fileInput.click());
   fileInput.addEventListener('change', async () => {
     const file = fileInput.files?.[0];
@@ -322,6 +415,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     }
     formatsGenerated.hidden = false;
     uploadTitle.textContent = 'Trocar imagem';
+    updateSeoChecklist();
   });
 
   async function uploadCoverImage(slug: string): Promise<string | null> {
@@ -489,11 +583,11 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       slugPreview.textContent = post.slug;
       editor.commands.setContent(post.content || '<p></p>');
       contentHidden.value = post.content || '';
-      (document.getElementById('excerpt') as HTMLTextAreaElement).value = post.excerpt || '';
-      (document.getElementById('seo_title') as HTMLInputElement).value = post.seo_title || '';
-      (document.getElementById('meta_description') as HTMLTextAreaElement).value = post.meta_description || '';
+      excerptInput.value = post.excerpt || '';
+      seoTitleInput.value = post.seo_title || '';
+      metaDescriptionInput.value = post.meta_description || '';
       (document.getElementById('is_featured') as HTMLInputElement).checked = !!post.is_featured;
-      (document.getElementById('cover_media_id') as HTMLInputElement).value = post.cover_media_id || '';
+      coverMediaInput.value = post.cover_media_id || '';
       if (post.category_id) categorySelect.value = post.category_id;
 
       if (post.media?.card_url) {
@@ -507,6 +601,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     } else {
       document.getElementById('page-title')!.textContent = 'Novo post';
     }
+    updateSeoChecklist();
   }
 
   init();
@@ -574,4 +669,33 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
   .switch::after { content: ""; position: absolute; width: 16px; height: 16px; border-radius: 50%; background: #fff; top: 2px; left: 2px; transition: .2s; }
   .switch-wrap input:checked + .switch { background: var(--olive); }
   .switch-wrap input:checked + .switch::after { left: 18px; }
+
+  .seo-assistant { padding: 18px; }
+  .seo-assistant-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+  .seo-score { font-size: 12px; color: #5F5E5A; margin-top: -1px; }
+  .seo-badge {
+    border: 1px solid #E4E0D3; border-radius: 999px; color: #8A8367; background: #FAF8F1;
+    display: inline-flex; align-items: center; flex: 0 0 auto; font-size: 11px; font-weight: 600; padding: 4px 9px;
+  }
+  .seo-badge.almost { border-color: #D8C27A; color: #7A6418; background: #FFF8DA; }
+  .seo-badge.ready { border-color: #9EB16B; color: var(--olive-deep); background: #F0F5E4; }
+  .seo-progress { height: 6px; border-radius: 999px; background: #EEE9DA; overflow: hidden; margin: 14px 0 14px; }
+  .seo-progress span { display: block; height: 100%; width: 0; border-radius: inherit; background: var(--olive); transition: width .2s ease; }
+  .seo-checklist { display: grid; gap: 9px; list-style: none; margin: 0; padding: 0; }
+  .seo-checklist li { display: flex; align-items: flex-start; gap: 8px; color: #5F5E5A; font-size: 12px; line-height: 1.35; }
+  .seo-checklist li span {
+    width: 14px; height: 14px; border-radius: 50%; border: 1px solid #D9D1BC; flex: 0 0 auto; margin-top: 1px; background: #fff;
+  }
+  .seo-checklist li.done { color: #2F4D2D; }
+  .seo-checklist li.done span { border-color: var(--olive); background: var(--olive); position: relative; }
+  .seo-checklist li.done span::after {
+    content: ""; position: absolute; left: 4px; top: 2px; width: 4px; height: 7px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg);
+  }
+  .seo-tip { margin-top: 14px; border-top: 1px solid #EEE9DA; padding-top: 12px; color: #8A6B2E; font-size: 12px; line-height: 1.45; }
+
+  @media (max-width: 980px) {
+    .topbar { display: block; }
+    .topbar-actions { margin-top: 16px; flex-wrap: wrap; }
+    .editor-layout { grid-template-columns: 1fr; }
+  }
 </style>
