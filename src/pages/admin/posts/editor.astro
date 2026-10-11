@@ -70,6 +70,18 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         </div>
 
         <div class="panel">
+          <div class="seo-tools">
+            <div>
+              <label>Assistente de SEO</label>
+              <div class="hint">Gere sugestões editáveis a partir do título e do conteúdo.</div>
+            </div>
+            <button type="button" class="mini-btn" id="btn-fill-all-seo">Preencher tudo</button>
+          </div>
+          <div class="seo-tool-actions">
+            <button type="button" class="mini-btn" id="btn-suggest-excerpt">Resumo</button>
+            <button type="button" class="mini-btn" id="btn-suggest-seo-title">Título SEO</button>
+            <button type="button" class="mini-btn" id="btn-suggest-meta">Meta descrição</button>
+          </div>
           <div class="field">
             <label>Resumo (excerpt)</label>
             <textarea id="excerpt" rows="2"></textarea>
@@ -433,6 +445,65 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     return value.trim().replace(/\s+/g, ' ').length;
   }
 
+  function getPlainArticleParts() {
+    const html = contentHidden.value || editor.getHTML();
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const paragraphs = Array.from(doc.querySelectorAll('p'))
+      .map((node) => node.textContent?.trim().replace(/\s+/g, ' ') || '')
+      .filter((text) => text.length > 35);
+    const headings = Array.from(doc.querySelectorAll('h2, h3'))
+      .map((node) => node.textContent?.trim().replace(/\s+/g, ' ') || '')
+      .filter(Boolean);
+    const allText = [titleInput.value, ...headings, ...paragraphs].join(' ').trim().replace(/\s+/g, ' ');
+    return { paragraphs, headings, allText };
+  }
+
+  function limitText(value: string, max: number) {
+    const clean = value.trim().replace(/\s+/g, ' ');
+    if (clean.length <= max) return clean;
+    const sliced = clean.slice(0, max + 1);
+    const lastSpace = sliced.lastIndexOf(' ');
+    return `${sliced.slice(0, lastSpace > 60 ? lastSpace : max).replace(/[,.!?;:]$/, '')}...`;
+  }
+
+  function buildExcerptSuggestion() {
+    const { paragraphs, headings } = getPlainArticleParts();
+    const firstParagraph = paragraphs[0] || '';
+    const support = headings[0] ? ` O artigo também aborda ${headings[0].toLowerCase()}.` : '';
+    const fallback = titleInput.value
+      ? `Entenda ${titleInput.value.toLowerCase()} com uma explicação bíblica clara, prática e organizada para fortalecer sua fé.`
+      : 'Escreva um resumo claro do artigo, destacando o tema principal e o benefício para o leitor.';
+    return limitText(`${firstParagraph || fallback}${support}`, 220);
+  }
+
+  function buildSeoTitleSuggestion() {
+    const base = titleInput.value.trim() || 'Estudo bíblico';
+    const withoutSite = base.replace(/\s*\|\s*Monte das Oliveiras$/i, '').replace(/\s+-\s+Monte das Oliveiras$/i, '');
+    if (withoutSite.length >= 35 && withoutSite.length <= 58) return withoutSite;
+    if (withoutSite.length < 35) return limitText(`${withoutSite}: estudo bíblico completo`, 58);
+    return limitText(withoutSite, 58);
+  }
+
+  function buildMetaDescriptionSuggestion() {
+    const excerpt = buildExcerptSuggestion();
+    const base = excerpt.length >= 120
+      ? excerpt
+      : `${excerpt} Veja uma explicação bíblica clara, com aplicações práticas e orientação para a vida cristã.`;
+    return limitText(base, 158);
+  }
+
+  function applySeoSuggestion(target: 'excerpt' | 'seoTitle' | 'meta' | 'all') {
+    if (target === 'excerpt' || target === 'all') excerptInput.value = buildExcerptSuggestion();
+    if (target === 'seoTitle' || target === 'all') seoTitleInput.value = buildSeoTitleSuggestion();
+    if (target === 'meta' || target === 'all') metaDescriptionInput.value = buildMetaDescriptionSuggestion();
+    updateSeoChecklist();
+  }
+
+  document.getElementById('btn-suggest-excerpt')?.addEventListener('click', () => applySeoSuggestion('excerpt'));
+  document.getElementById('btn-suggest-seo-title')?.addEventListener('click', () => applySeoSuggestion('seoTitle'));
+  document.getElementById('btn-suggest-meta')?.addEventListener('click', () => applySeoSuggestion('meta'));
+  document.getElementById('btn-fill-all-seo')?.addEventListener('click', () => applySeoSuggestion('all'));
+
   function countInternalLinks() {
     const html = contentHidden.value || editor.getHTML();
     const doc = new DOMParser().parseFromString(html, 'text/html');
@@ -737,6 +808,14 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
   input[type=text], input[type=email], textarea, select {
     width: 100%; font-family: var(--font-ui); font-size: 14px; padding: 10px 12px; border: 1px solid #E4E0D3; border-radius: 6px; background: #fff; box-sizing: border-box;
   }
+  .seo-tools { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; border-bottom: 1px solid #EEE9DA; padding-bottom: 14px; margin-bottom: 14px; }
+  .seo-tools label { display: block; font-size: 12px; font-weight: 600; color: var(--olive-deep); margin-bottom: 3px; }
+  .seo-tool-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+  .mini-btn {
+    border: 1px solid #D9D1BC; border-radius: 6px; background: #FAF8F1; color: #4F4A3E; cursor: pointer;
+    font-family: var(--font-ui); font-size: 12px; font-weight: 600; padding: 8px 10px;
+  }
+  .mini-btn:hover { background: #F1EBD7; border-color: #C9B98F; color: var(--olive-deep); }
   .title-input { font-family: var(--font-display); font-size: 22px; font-weight: 600; border: none; padding: 0; width: 100%; }
   .title-input:focus { outline: none; }
   .slug { font-size: 12px; color: #8A8367; margin-top: 6px; }
