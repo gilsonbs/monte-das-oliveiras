@@ -107,6 +107,17 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
           </div>
           <input type="file" id="file-input" accept="image/*" hidden />
           <input type="hidden" id="cover_media_id" />
+          <div class="cover-guidance">
+            <div class="field">
+              <label>Texto alternativo da capa</label>
+              <input type="text" id="cover_alt_text" placeholder="Descreva a imagem para acessibilidade e SEO" />
+            </div>
+            <button type="button" class="mini-btn" id="btn-suggest-cover-alt">Sugerir alt text</button>
+            <div class="cover-checklist">
+              <div class="cover-check" id="cover-size-check"><span></span>Imagem com pelo menos 1200px de largura</div>
+              <div class="cover-check" id="cover-alt-check"><span></span>Alt text claro e preenchido</div>
+            </div>
+          </div>
 
           <div class="formats-generated" id="formats-generated" hidden>
             <div class="formats-label"><span class="check">✓</span>4 formatos gerados</div>
@@ -145,7 +156,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
           <div class="seo-assistant-head">
             <div>
               <label>Checklist de publicação</label>
-              <div class="seo-score" id="seo-score">0 de 8 pontos prontos</div>
+              <div class="seo-score" id="seo-score">0 de 9 pontos prontos</div>
             </div>
             <span class="seo-badge" id="seo-badge">Rascunho</span>
           </div>
@@ -157,6 +168,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
             <li data-check="seoTitle"><span></span>Título SEO preenchido</li>
             <li data-check="meta"><span></span>Meta descrição com 120 a 160 caracteres</li>
             <li data-check="cover"><span></span>Imagem de capa definida</li>
+            <li data-check="coverAlt"><span></span>Texto alternativo da capa preenchido</li>
             <li data-check="headings"><span></span>Conteúdo com subtítulos H2/H3</li>
             <li data-check="internalLinks"><span></span>Pelo menos 2 links internos</li>
           </ul>
@@ -211,12 +223,15 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
   const seoTitleInput = document.getElementById('seo_title') as HTMLInputElement;
   const metaDescriptionInput = document.getElementById('meta_description') as HTMLTextAreaElement;
   const coverMediaInput = document.getElementById('cover_media_id') as HTMLInputElement;
+  const coverAltInput = document.getElementById('cover_alt_text') as HTMLInputElement;
+  let coverMeetsSizeGuidance = false;
 
   if (isNew) {
     titleInput.addEventListener('input', () => {
       const slug = slugify(titleInput.value);
       slugInput.value = slug;
       slugPreview.textContent = slug;
+      if (!coverAltInput.value.trim()) coverAltInput.value = buildCoverAltSuggestion();
       updateSeoChecklist();
     });
   }
@@ -492,6 +507,12 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     return limitText(base, 158);
   }
 
+  function buildCoverAltSuggestion() {
+    const title = titleInput.value.trim();
+    if (!title) return '';
+    return limitText(`Imagem ilustrativa do artigo sobre ${title.toLowerCase()}`, 120);
+  }
+
   function applySeoSuggestion(target: 'excerpt' | 'seoTitle' | 'meta' | 'all') {
     if (target === 'excerpt' || target === 'all') excerptInput.value = buildExcerptSuggestion();
     if (target === 'seoTitle' || target === 'all') seoTitleInput.value = buildSeoTitleSuggestion();
@@ -503,6 +524,11 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
   document.getElementById('btn-suggest-seo-title')?.addEventListener('click', () => applySeoSuggestion('seoTitle'));
   document.getElementById('btn-suggest-meta')?.addEventListener('click', () => applySeoSuggestion('meta'));
   document.getElementById('btn-fill-all-seo')?.addEventListener('click', () => applySeoSuggestion('all'));
+  document.getElementById('btn-suggest-cover-alt')?.addEventListener('click', () => {
+    coverAltInput.value = buildCoverAltSuggestion();
+    updateSeoChecklist();
+  });
+  coverAltInput.addEventListener('input', updateSeoChecklist);
 
   function countInternalLinks() {
     const html = contentHidden.value || editor.getHTML();
@@ -526,6 +552,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       seoTitle: textLength(seoTitleInput.value) >= 35,
       meta: metaLength >= 120 && metaLength <= 160,
       cover: !!coverMediaInput.value || !!pendingCoverFile,
+      coverAlt: textLength(coverAltInput.value) >= 25,
       headings: doc.querySelectorAll('h2, h3').length >= 2,
       internalLinks: countInternalLinks() >= 2,
     };
@@ -555,10 +582,14 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       seoTitle: 'Preencha o título SEO com a promessa principal do artigo.',
       meta: `A meta descrição está com ${metaLength} caracteres; mire entre 120 e 160.`,
       cover: 'Adicione uma imagem de capa antes de publicar.',
+      coverAlt: 'Preencha um texto alternativo claro para a imagem de capa.',
       headings: 'Divida o conteúdo com pelo menos dois subtítulos H2 ou H3.',
       internalLinks: 'Inclua pelo menos dois links para outros artigos do próprio site.',
     };
     document.getElementById('seo-tip')!.textContent = next ? tips[next] : 'Checklist pronto para publicação. Faça uma última leitura antes de publicar.';
+
+    document.getElementById('cover-alt-check')?.classList.toggle('done', checks.coverAlt);
+    document.getElementById('cover-size-check')?.classList.toggle('done', coverMeetsSizeGuidance || !!coverMediaInput.value);
   }
 
   [excerptInput, seoTitleInput, metaDescriptionInput].forEach((input) => {
@@ -575,6 +606,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     const img = new Image();
     img.src = URL.createObjectURL(file);
     await img.decode();
+    coverMeetsSizeGuidance = img.width >= 1200;
 
     formatsGrid.innerHTML = '';
     for (const [name, { w, h }] of Object.entries(VARIANTS)) {
@@ -589,6 +621,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     }
     formatsGenerated.hidden = false;
     uploadTitle.textContent = 'Trocar imagem';
+    if (!coverAltInput.value.trim()) coverAltInput.value = buildCoverAltSuggestion();
     updateSeoChecklist();
   });
 
@@ -621,7 +654,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         card_url: urls.card,
         thumb_url: urls.thumb,
         share_url: urls.share,
-        alt_text: titleInput.value,
+        alt_text: coverAltInput.value.trim() || titleInput.value,
       })
       .select('id')
       .single();
@@ -750,7 +783,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     if (!isNew) {
       const { data: post } = await supabase
         .from('posts')
-        .select('*, media(cover_url, card_url, thumb_url, share_url)')
+        .select('*, media(cover_url, card_url, thumb_url, share_url, alt_text)')
         .eq('id', postId)
         .maybeSingle();
 
@@ -771,6 +804,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       metaDescriptionInput.value = post.meta_description || '';
       (document.getElementById('is_featured') as HTMLInputElement).checked = !!post.is_featured;
       coverMediaInput.value = post.cover_media_id || '';
+      coverAltInput.value = post.media?.alt_text || post.title || '';
       if (post.category_id) categorySelect.value = post.category_id;
 
       if (post.media?.card_url) {
@@ -860,6 +894,19 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
   .upload-zone .icon { font-size: 22px; margin-bottom: 8px; color: var(--ember); }
   .upload-zone .title { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
   .upload-zone .hint { font-size: 12px; color: #8A8367; margin: 0; }
+  .cover-guidance { border-top: 1px solid #EEE9DA; margin-top: 14px; padding-top: 14px; }
+  .cover-guidance .field { margin-bottom: 10px; }
+  .cover-guidance .mini-btn { width: 100%; margin-bottom: 12px; }
+  .cover-checklist { display: grid; gap: 7px; }
+  .cover-check { display: flex; align-items: flex-start; gap: 8px; color: #8A8367; font-size: 12px; line-height: 1.35; }
+  .cover-check span {
+    width: 14px; height: 14px; border-radius: 50%; border: 1px solid #D9D1BC; background: #fff; flex: 0 0 auto; margin-top: 1px;
+  }
+  .cover-check.done { color: #2F4D2D; }
+  .cover-check.done span { border-color: var(--olive); background: var(--olive); position: relative; }
+  .cover-check.done span::after {
+    content: ""; position: absolute; left: 4px; top: 2px; width: 4px; height: 7px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg);
+  }
 
   .formats-generated { margin-top: 16px; }
   .formats-label { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--olive-deep); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
