@@ -1255,10 +1255,10 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'humildade': {
     question: 'O que é humildade segundo a Bíblia?',
     answer:
-      'Humildade, segundo a Bíblia, é reconhecer a grandeza de Deus, depender da sua graça e servir sem orgulho. Ela não é baixa autoestima, mas uma postura de verdade, mansidão e submissão ao Senhor.',
+      'Humildade, segundo a Bíblia, é reconhecer a grandeza de Deus, depender da sua graça e servir sem orgulho. Ela não é baixa autoestima, mas uma postura de verdade, mansidão, obediência e submissão ao Senhor.',
     bullets: [
       'Jesus é o maior exemplo de humildade, serviço e obediência ao Pai.',
-      'A humildade combate orgulho, comparação e desejo de autopromoção.',
+      'A humildade combate orgulho, comparação, vaidade e desejo de autopromoção.',
       'Deus resiste aos soberbos, mas concede graça aos humildes.',
     ],
     links: [
@@ -1270,10 +1270,10 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'a-justica-de-deus': {
     question: 'O que é a justiça de Deus?',
     answer:
-      'A justiça de Deus revela que ele age com retidão, julga o mal e cumpre suas promessas. Na Bíblia, a justiça divina também aparece na salvação, porque Deus justifica pecadores por meio de Cristo.',
+      'A justiça de Deus revela que ele age com retidão, julga o mal e cumpre suas promessas. Na Bíblia, a justiça divina também aparece na salvação, porque Deus justifica pecadores arrependidos por meio de Cristo.',
     bullets: [
       'Deus não ignora o pecado nem age com parcialidade.',
-      'A cruz mostra ao mesmo tempo a justiça e a misericórdia de Deus.',
+      'A cruz mostra ao mesmo tempo a justiça, a santidade e a misericórdia de Deus.',
       'Quem foi alcançado pela justiça de Deus é chamado a praticar justiça no cotidiano.',
     ],
     links: [
@@ -1285,10 +1285,10 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'o-reino-de-deus': {
     question: 'O que é o Reino de Deus?',
     answer:
-      'O Reino de Deus é o governo soberano de Deus revelado em Cristo e vivido por seus discípulos. Ele já se manifesta na vida transformada pela fé, mas será consumado plenamente na volta de Jesus.',
+      'O Reino de Deus é o governo soberano de Deus revelado em Cristo e vivido por seus discípulos. Ele já se manifesta na vida transformada pela fé, mas será consumado plenamente quando Jesus voltar.',
     bullets: [
       'Jesus anunciou o Reino como centro de sua mensagem.',
-      'Viver o Reino envolve arrependimento, justiça, amor, serviço e obediência.',
+      'Viver o Reino envolve arrependimento, justiça, amor, serviço, santidade e obediência.',
       'O Reino já começou em Cristo, mas ainda aguarda sua consumação final.',
     ],
     links: [
@@ -1300,11 +1300,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'o-poder-da-misericordia': {
     question: 'O que a Bíblia ensina sobre misericórdia?',
     answer:
-      'A Bíblia ensina que misericórdia é compaixão em ação diante da miséria, culpa ou sofrimento do outro. Deus é rico em misericórdia, e quem foi alcançado por ele deve tratar pessoas com graça, perdão e compaixão.',
+      'A Bíblia ensina que misericórdia é compaixão em ação diante da culpa, dor ou sofrimento do outro. Deus é rico em misericórdia, e quem foi alcançado por ele deve tratar pessoas com graça, perdão e compaixão.',
     bullets: [
       'A misericórdia de Deus aparece no perdão, no cuidado e na paciência com pecadores.',
       'Jesus ensinou misericórdia por meio de parábolas, curas e acolhimento.',
-      'Praticar misericórdia não nega a verdade, mas expressa o caráter de Deus.',
+      'Praticar misericórdia não nega a verdade, mas revela o caráter de Deus em atitudes concretas.',
     ],
     links: [
       { href: '/o-bom-samaritano/', label: 'Bom samaritano' },
@@ -1315,10 +1315,10 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'a-cura-de-bartimeu': {
     question: 'Quais lições aprendemos com a cura de Bartimeu?',
     answer:
-      'A cura de Bartimeu ensina sobre fé perseverante, clamor por misericórdia e resposta de Jesus ao necessitado. Mesmo repreendido pela multidão, Bartimeu continuou clamando e recebeu de Cristo visão e restauração.',
+      'A cura de Bartimeu ensina sobre fé perseverante, clamor por misericórdia e resposta de Jesus ao necessitado. Mesmo repreendido pela multidão, Bartimeu continuou clamando e recebeu de Cristo visão, restauração e direção.',
     bullets: [
       'Bartimeu reconheceu Jesus como Filho de Davi e clamou por misericórdia.',
-      'A multidão tentou silenciá-lo, mas sua fé perseverou.',
+      'A multidão tentou silenciá-lo, mas ele perseverou em fé.',
       'Depois de curado, Bartimeu seguiu Jesus pelo caminho.',
     ],
     links: [
@@ -1330,9 +1330,9 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'o-filho-prodigo': {
     question: 'Qual é a mensagem da parábola do filho pródigo?',
     answer:
-      'A parábola do filho pródigo revela a graça do Pai, o arrependimento do filho perdido e o perigo do orgulho religioso do irmão mais velho. A mensagem central é que Deus recebe com misericórdia quem volta arrependido.',
+      'A parábola do filho pródigo revela a graça do Pai, o arrependimento do filho perdido e o perigo do orgulho religioso do irmão mais velho. A mensagem central é que Deus recebe com misericórdia quem se arrepende e volta para ele.',
     bullets: [
-      'O filho mais novo representa afastamento, queda e retorno arrependido.',
+      'O filho mais novo representa afastamento, queda, arrependimento e retorno.',
       'O pai revela compaixão, perdão e alegria pela restauração.',
       'O irmão mais velho alerta contra religiosidade sem misericórdia.',
     ],
@@ -1345,10 +1345,10 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'o-bom-samaritano': {
     question: 'O que ensina a parábola do bom samaritano?',
     answer:
-      'A parábola do bom samaritano ensina que amar o próximo exige compaixão prática, não apenas discurso religioso. Jesus mostra que o verdadeiro próximo é aquele que age com misericórdia diante da dor do outro.',
+      'A parábola do bom samaritano ensina que amar o próximo exige compaixão prática, não apenas discurso religioso. Jesus mostra que o verdadeiro próximo é aquele que se aproxima e age com misericórdia diante da dor do outro.',
     bullets: [
       'O sacerdote e o levita viram a necessidade, mas passaram de largo.',
-      'O samaritano se aproximou, cuidou, pagou o custo e demonstrou amor concreto.',
+      'O samaritano se aproximou, cuidou, assumiu o custo e demonstrou amor concreto.',
       'Jesus encerra chamando seus ouvintes a praticarem a mesma misericórdia.',
     ],
     links: [
