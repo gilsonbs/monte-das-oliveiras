@@ -1570,11 +1570,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'profeta-elias-monte-carmelo-licoes-fe': {
     question: 'Quais lições aprendemos com Elias no Monte Carmelo?',
     answer:
-      'Elias no Monte Carmelo ensina sobre coragem, fidelidade a Deus e confronto contra a idolatria. Mas sua história também mostra fragilidade, cansaço e cuidado divino, lembrando que até servos fiéis precisam ser restaurados pelo Senhor.',
+      'Elias no Monte Carmelo ensina sobre coragem, fidelidade a Deus e confronto contra a idolatria. Sua história também mostra fragilidade, cansaço e cuidado divino, lembrando que até servos fiéis precisam ser sustentados pelo Senhor.',
     bullets: [
       'Elias confrontou a idolatria em um tempo de confusão espiritual.',
       'O episódio mostra que Deus responde de modo soberano e revela sua glória.',
-      'Depois da vitória, Elias também enfrentou medo e exaustão, e Deus cuidou dele com paciência.',
+      'Depois da vitória, Elias enfrentou medo e exaustão, e Deus cuidou dele com paciência.',
     ],
     links: [
       { href: '/licoes-de-fe-de-abraao/', label: 'Lições de fé' },
@@ -1587,7 +1587,7 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
     answer:
       'A fé de Raabe mostra que Deus alcança pessoas improváveis e transforma histórias marcadas por medo, risco e exclusão. Sua atitude em Jericó revelou confiança no Deus de Israel, e sua história entrou na linhagem do Messias.',
     bullets: [
-      'Raabe ouviu sobre os feitos de Deus e respondeu com fé prática.',
+      'Raabe ouviu sobre os feitos de Deus e respondeu com fé prática e coragem.',
       'Sua história une graça, coragem, risco e redenção.',
       'O Novo Testamento apresenta Raabe como exemplo de fé demonstrada por obras.',
     ],
@@ -1604,7 +1604,7 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
     bullets: [
       'Débora julgava Israel e transmitia direção de Deus ao povo.',
       'Ela encorajou Baraque a obedecer ao chamado de Deus em uma batalha decisiva contra Sísera.',
-      'Sua liderança destaca fé, discernimento e serviço em um tempo de crise nacional.',
+      'Sua liderança destaca fé, discernimento, serviço e coragem em um tempo de crise nacional.',
     ],
     links: [
       { href: '/nao-haviam-mulheres-entre-os-12-apostolos/', label: 'Mulheres e os apóstolos' },
@@ -1615,11 +1615,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'davi-lider-cristao': {
     question: 'O que Davi ensina sobre liderança cristã?',
     answer:
-      'Davi ensina que liderança cristã envolve coragem, dependência de Deus, arrependimento e coração ensinável. Ele não foi perfeito, mas sua história mostra como Deus trabalha com líderes quebrantados e responsáveis.',
+      'Davi ensina que liderança cristã envolve coragem, dependência de Deus, arrependimento e coração ensinável. Ele não foi perfeito, mas sua história mostra como Deus trabalha com líderes quebrantados, responsáveis e corrigíveis.',
     bullets: [
       'Davi venceu desafios confiando no Senhor, não apenas em força humana.',
       'Suas falhas mostram a importância de arrependimento e correção.',
-      'A liderança segundo Deus une coragem, adoração, justiça e humildade.',
+      'A liderança segundo Deus une coragem, adoração, justiça, humildade e prestação de contas.',
     ],
     links: [
       { href: '/lideranca-crista/', label: 'Liderança cristã' },
@@ -1634,7 +1634,7 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
     bullets: [
       'Jesus ensinou que o maior deve ser servo de todos.',
       'Liderança cristã exige caráter, maturidade, humildade e fidelidade bíblica.',
-      'Um líder saudável forma pessoas, protege o rebanho e aponta para Cristo.',
+      'Um líder saudável forma pessoas, protege o rebanho, presta contas e aponta para Cristo.',
     ],
     links: [
       { href: '/lideranca-biblica-pastores-igrejas/', label: 'Liderança bíblica' },
@@ -1645,11 +1645,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'vida-crista-com-proposito': {
     question: 'Como viver uma vida cristã com propósito?',
     answer:
-      'Viver uma vida cristã com propósito é alinhar fé, trabalho, relacionamentos e recursos ao senhorio de Cristo. O propósito bíblico envolve glorificar a Deus, servir pessoas e viver com integridade.',
+      'Viver uma vida cristã com propósito é alinhar fé, trabalho, relacionamentos e recursos ao senhorio de Cristo. O propósito bíblico envolve glorificar a Deus, servir pessoas e viver com integridade no cotidiano.',
     bullets: [
       'Propósito cristão nasce da identidade em Cristo e da missão do Reino.',
       'Trabalho, honestidade e generosidade também fazem parte da espiritualidade diária.',
-      'Uma vida com propósito usa dons e oportunidades para servir a Deus e ao próximo.',
+      'Uma vida com propósito usa dons, tempo e oportunidades para servir a Deus e ao próximo.',
     ],
     links: [
       { href: '/descubra-seu-proposito-de-vida/', label: 'Descobrir propósito' },
