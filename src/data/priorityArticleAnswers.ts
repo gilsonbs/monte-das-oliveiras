@@ -1060,11 +1060,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   '7-perigos-do-desigrejado': {
     question: 'Quais são os perigos de viver desigrejado?',
     answer:
-      'Viver desigrejado pode enfraquecer a comunhão, o cuidado pastoral, a correção amorosa e o serviço cristão. Ao mesmo tempo, feridas causadas por abusos espirituais precisam ser tratadas com seriedade; a resposta bíblica é buscar uma comunidade saudável, não normalizar isolamento permanente.',
+      'Viver desigrejado pode enfraquecer a comunhão, o cuidado pastoral, a correção amorosa e o serviço cristão. Feridas causadas por abusos espirituais precisam ser tratadas com seriedade, mas a resposta bíblica não é normalizar isolamento permanente; é buscar restauração e uma comunidade saudável.',
     bullets: [
       'A vida cristã foi pensada para comunhão, mutualidade, ensino e crescimento conjunto.',
       'Isolamento prolongado pode alimentar frieza espiritual, desânimo ou falta de correção.',
-      'Quem saiu ferido de uma igreja precisa de restauração, prudência e uma comunidade centrada em Cristo.',
+      'Quem saiu ferido precisa de prudência, cuidado pastoral e uma igreja centrada em Cristo.',
     ],
     links: [
       { href: '/discipulado-cristao-passo-a-passo/', label: 'Discipulado cristão' },
@@ -1075,7 +1075,7 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'o-que-significa-tomar-a-sua-cruz': {
     question: 'O que significa tomar a sua cruz?',
     answer:
-      'Tomar a sua cruz significa seguir Jesus com renúncia, obediência e disposição de perder o controle da própria vida por amor a Cristo. Não é apenas enfrentar dificuldades, mas submeter desejos, prioridades e identidade ao Senhor.',
+      'Tomar a sua cruz significa seguir Jesus com renúncia, obediência e disposição de entregar o controle da própria vida por amor a Cristo. Não é apenas enfrentar dificuldades, mas submeter desejos, prioridades e identidade ao Senhor.',
     bullets: [
       'Jesus chamou seus discípulos a negar a si mesmos e segui-lo diariamente.',
       'A cruz aponta para entrega, obediência e morte do ego diante de Deus.',
@@ -1084,13 +1084,13 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
     links: [
       { href: '/vida-crista-com-proposito/', label: 'Vida cristã com propósito' },
       { href: '/discipulado-cristao-passo-a-passo/', label: 'Discipulado cristão' },
-      { href: '/humildade/', label: 'Humildade' },
+      { href: '/o-exemplo-de-humildade-de-jesus/', label: 'Humildade de Jesus' },
     ],
   },
   'o-cristao-que-satanas-mais-teme': {
     question: 'Que tipo de cristão o inimigo teme?',
     answer:
-      'O cristão espiritualmente firme é aquele que permanece em Cristo, conhece a Palavra, persevera em oração e vive em obediência. A força dele não está em autoconfiança ou discurso de guerra espiritual, mas na graça de Deus e na vitória de Cristo.',
+      'O cristão espiritualmente firme é aquele que permanece em Cristo, conhece a Palavra, persevera em oração e vive em obediência. Sua força não está em autoconfiança ou discurso de guerra espiritual, mas na graça de Deus e na vitória de Cristo.',
     bullets: [
       'Maturidade espiritual envolve verdade, oração, santidade, humildade e perseverança.',
       'A Bíblia chama o cristão a resistir ao mal e permanecer firme na fé.',
@@ -1099,13 +1099,13 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
     links: [
       { href: '/batalha-espiritual-digital/', label: 'Batalha espiritual' },
       { href: '/vida-de-oracao/', label: 'Vida de oração' },
-      { href: '/crente-cheio-da-uncao/', label: 'Crente cheio da unção' },
+      { href: '/o-que-significa-tomar-a-sua-cruz/', label: 'Tomar a cruz' },
     ],
   },
   'devocional-fe-em-meio-as-lutas': {
     question: 'Como manter a fé em meio às lutas?',
     answer:
-      'Manter a fé em meio às lutas envolve lembrar das promessas de Deus, orar com sinceridade e perseverar mesmo quando as circunstâncias não mudam rapidamente. A fé bíblica não nega a dor, mas confia no cuidado do Senhor.',
+      'Manter a fé em meio às lutas envolve lembrar das promessas de Deus, orar com sinceridade e perseverar mesmo quando as circunstâncias não mudam rapidamente. A fé bíblica não nega a dor; ela leva a dor para Deus e confia no cuidado do Senhor.',
     bullets: [
       'A Bíblia apresenta sofrimento e esperança caminhando juntos na vida cristã.',
       'Promessas de consolo fortalecem o coração em períodos de medo e cansaço.',
@@ -1135,11 +1135,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'descubra-seu-proposito-de-vida': {
     question: 'Como descobrir seu propósito de vida segundo a Bíblia?',
     answer:
-      'Segundo a Bíblia, propósito de vida começa em conhecer Deus, glorificá-lo e viver de modo fiel à vocação recebida. Propósito não é apenas carreira ou sucesso pessoal, mas uma vida orientada por amor, serviço e obediência.',
+      'Segundo a Bíblia, propósito de vida começa em conhecer Deus, glorificá-lo e viver de modo fiel à vocação recebida. Propósito não é apenas carreira ou sucesso pessoal, mas uma vida orientada por amor, serviço, obediência e generosidade.',
     bullets: [
       'O propósito cristão nasce da identidade em Cristo, não da comparação com outras pessoas.',
       'Dons, oportunidades e responsabilidades ajudam a discernir caminhos de serviço.',
-      'Uma vida com propósito une fé, caráter, trabalho honesto e generosidade.',
+      'Uma vida com propósito une fé, caráter, trabalho honesto, serviço e generosidade.',
     ],
     links: [
       { href: '/vida-crista-com-proposito/', label: 'Vida cristã com propósito' },
