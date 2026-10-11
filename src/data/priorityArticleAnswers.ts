@@ -1450,10 +1450,10 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'livros-impactantes-da-biblia': {
     question: 'Quais livros da Bíblia mais impactam a vida cristã?',
     answer:
-      'Todos os livros da Bíblia são importantes, mas alguns ajudam especialmente quem busca entender criação, queda, redenção, sabedoria, evangelho e vida da igreja. Gênesis, Salmos, João, Romanos e Atos são exemplos muito formativos.',
+      'Todos os livros da Bíblia são importantes, mas alguns ajudam especialmente quem busca entender criação, queda, redenção, sabedoria, evangelho e vida da igreja. Gênesis, Salmos, João, Romanos e Atos são exemplos muito formativos para começar.',
     bullets: [
       'Gênesis apresenta criação, queda, promessa e início da história da redenção.',
-      'João e Romanos explicam com força quem é Jesus e o significado do evangelho.',
+      'João e Romanos explicam com clareza quem é Jesus e o significado do evangelho.',
       'Salmos, Provérbios e Atos ajudam na oração, sabedoria e missão cristã.',
     ],
     links: [
@@ -1465,7 +1465,7 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'significado-dos-nomes-de-deus': {
     question: 'Qual é o significado dos nomes de Deus?',
     answer:
-      'Os nomes de Deus revelam aspectos do seu caráter, sua autoridade e seu relacionamento com o povo. Nomes como Elohim, Yahweh, Adonai e El Shaddai apontam para criação, aliança, senhorio, suficiência e fidelidade.',
+      'Os nomes de Deus revelam aspectos do seu caráter, sua autoridade e seu relacionamento com o povo. Nomes como Elohim, Yahweh, Adonai e El Shaddai apontam para criação, aliança, senhorio, suficiência, presença e fidelidade.',
     bullets: [
       'Elohim destaca Deus como Criador poderoso.',
       'Yahweh e Adonai revelam aliança, presença, governo e reverência diante do Senhor.',
@@ -1484,7 +1484,7 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
     bullets: [
       'A lei mostra o padrão moral de Deus e denuncia o pecado.',
       'Jesus resumiu a lei no amor a Deus e ao próximo.',
-      'A obediência cristã nasce da graça, não da tentativa de comprar salvação.',
+      'A obediência cristã nasce da graça e da fé, não da tentativa de comprar salvação.',
     ],
     links: [
       { href: '/estudo-biblico-sobre-salvacao/', label: 'Salvação pela graça' },
@@ -1499,7 +1499,7 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
     bullets: [
       'O tabernáculo ensinava que Deus é santo e deseja habitar no meio do seu povo.',
       'Altar, lavatório, candelabro, mesa, incenso, véu e arca comunicavam verdades espirituais.',
-      'No Novo Testamento, Cristo cumpre de forma superior o acesso a Deus e a mediação perfeita.',
+      'No Novo Testamento, Cristo cumpre de modo superior o acesso a Deus, o sacrifício e a mediação perfeita.',
     ],
     links: [
       { href: '/oferta-de-manjares/', label: 'Oferta de manjares' },
@@ -1514,7 +1514,7 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
     bullets: [
       'Amém pode significar “assim seja” ou “verdadeiramente”.',
       'A palavra aparece em orações, louvores e declarações solenes.',
-      'Dizer amém com fé é concordar com a verdade de Deus, não apenas encerrar uma frase.',
+      'Dizer amém com fé é concordar com a verdade de Deus, não apenas encerrar uma oração.',
     ],
     links: [
       { href: '/estudo-biblico-sobre-oracao/', label: 'Estudo sobre oração' },
@@ -1529,7 +1529,7 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
     bullets: [
       'Aleluia une convite e resposta de louvor ao Senhor.',
       'Nos Salmos, a expressão aparece ligada à grandeza, bondade e fidelidade de Deus.',
-      'Louvar com aleluia deve envolver coração, vida e reverência, não apenas música.',
+      'Louvar com aleluia deve envolver coração, vida, reverência e obediência, não apenas música.',
     ],
     links: [
       { href: '/diferenca-entre-louvor-e-adoracao/', label: 'Louvor e adoração' },
@@ -1543,7 +1543,7 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       'Hosana significa originalmente um pedido de salvação, como “salva-nos, por favor”, e também se tornou expressão de louvor. No Novo Testamento, a multidão usa essa palavra na entrada triunfal de Jesus em Jerusalém.',
     bullets: [
       'Hosana tem ligação com clamor por salvação e reconhecimento do Rei.',
-      'Na entrada triunfal, a expressão aponta para Jesus como o Filho de Davi.',
+      'Na entrada triunfal, a expressão aponta para Jesus como o Filho de Davi e Messias prometido.',
       'A palavra une súplica, esperança messiânica e adoração.',
     ],
     links: [
@@ -1559,7 +1559,7 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
     bullets: [
       'Maranata aparece ligada à expectativa da vinda de Cristo.',
       'A expressão lembra que a igreja vive entre a promessa e a consumação.',
-      'Dizer maranata é confessar esperança e fidelidade enquanto Cristo não volta.',
+      'Dizer maranata é confessar esperança, perseverança e fidelidade enquanto Cristo não volta.',
     ],
     links: [
       { href: '/a-volta-de-jesus-os-sinais/', label: 'A volta de Jesus' },
