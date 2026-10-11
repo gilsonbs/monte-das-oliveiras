@@ -1360,10 +1360,10 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'o-amor-de-deus': {
     question: 'O que é o amor de Deus?',
     answer:
-      'O amor de Deus é sua disposição santa, fiel e graciosa de buscar, perdoar e restaurar pecadores por meio de Cristo. Na Bíblia, esse amor não é apenas sentimento, mas ação redentora revelada na cruz.',
+      'O amor de Deus é sua disposição santa, fiel e graciosa de buscar, perdoar e restaurar pecadores por meio de Cristo. Na Bíblia, esse amor não é apenas sentimento, mas ação redentora revelada especialmente na cruz.',
     bullets: [
       'João 3:16 apresenta o amor de Deus ligado à entrega do Filho.',
-      'O amor divino une graça, verdade, perdão, santidade e aliança.',
+      'O amor divino une graça, verdade, perdão, santidade, justiça e aliança.',
       'Quem recebe o amor de Deus é chamado a amar o próximo com atitudes concretas.',
     ],
     links: [
@@ -1378,8 +1378,8 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       'Esperança cristã é a confiança nas promessas de Deus, mesmo em tempos difíceis. Ela se apoia na ressurreição de Jesus, na presença de Deus hoje e na certeza da vida eterna.',
     bullets: [
       'A esperança bíblica não é otimismo vazio, mas fé no caráter fiel de Deus.',
-      'A ressurreição de Cristo garante que sofrimento e morte não têm a palavra final.',
-      'Esperança cristã fortalece perseverança, consolo e fidelidade nas lutas.',
+      'A ressurreição de Cristo garante que sofrimento, pecado e morte não têm a palavra final.',
+      'A esperança cristã fortalece perseverança, consolo e fidelidade nas lutas.',
     ],
     links: [
       { href: '/devocional-fe-em-meio-as-lutas/', label: 'Fé em meio às lutas' },
@@ -1390,11 +1390,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'salvacao-significado': {
     question: 'Qual é o significado da salvação no cristianismo?',
     answer:
-      'No cristianismo, salvação significa ser resgatado do pecado e reconciliado com Deus pela graça, mediante a fé em Jesus Cristo. Ela inclui perdão, nova vida, adoção espiritual e esperança eterna.',
+      'No cristianismo, salvação significa ser resgatado do pecado e reconciliado com Deus pela graça, mediante a fé em Jesus Cristo. Ela inclui perdão, nova vida, adoção espiritual, transformação e esperança eterna.',
     bullets: [
       'A salvação nasce da graça de Deus, não do mérito humano.',
       'Jesus Cristo é o centro da salvação por sua morte e ressurreição.',
-      'Quem é salvo é chamado a viver em arrependimento, fé e transformação.',
+      'Quem é salvo é chamado a viver em arrependimento, fé, obediência e transformação.',
     ],
     links: [
       { href: '/estudo-biblico-sobre-salvacao/', label: 'Estudo sobre salvação' },
@@ -1405,11 +1405,11 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'vida-de-oracao': {
     question: 'O que é uma vida de oração?',
     answer:
-      'Uma vida de oração é uma rotina de comunhão sincera com Deus, marcada por dependência, adoração, confissão, gratidão e intercessão. Ela transforma a oração em relacionamento contínuo, não apenas em pedidos urgentes.',
+      'Uma vida de oração é uma rotina de comunhão sincera com Deus, marcada por dependência, adoração, confissão, gratidão e intercessão. Ela transforma a oração em relacionamento contínuo, não apenas em pedidos feitos nos momentos de urgência.',
     bullets: [
       'Oração amadurece quando é constante, honesta e guiada pela Palavra.',
       'Jesus é o maior exemplo de intimidade com o Pai em meio à missão.',
-      'Uma vida de oração fortalece discernimento, paz, arrependimento e perseverança.',
+      'Uma vida de oração fortalece discernimento, paz, arrependimento, perseverança e obediência.',
     ],
     links: [
       { href: '/estudo-biblico-sobre-oracao/', label: 'Estudo sobre oração' },
@@ -1420,10 +1420,10 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
   'o-poder-da-oracao': {
     question: 'Qual é o poder da oração?',
     answer:
-      'O poder da oração está em Deus, não na força das palavras humanas nem em fórmulas religiosas. Orar é buscar o Pai com fé, alinhar o coração à sua vontade e depender da sua graça, mesmo quando a resposta não vem como esperamos.',
+      'O poder da oração está em Deus, não na força das palavras humanas nem em fórmulas religiosas. Orar é buscar o Pai com fé, alinhar o coração à sua vontade e depender da sua graça, mesmo quando a resposta não vem do jeito esperado.',
     bullets: [
       'A oração bíblica envolve confiança, submissão, perseverança e arrependimento.',
-      'Nem toda oração sem resposta visível está “bloqueada”; Deus responde com sabedoria e tempo perfeito.',
+      'Nem toda oração sem resposta visível está bloqueada; Deus responde com sabedoria e no tempo certo.',
       'Orar transforma quem ora, fortalece a fé e conduz a uma vida mais obediente.',
     ],
     links: [
@@ -1438,7 +1438,7 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       'A Bíblia não determina um tempo obrigatório de oração para todos. Mais importante do que contar minutos é cultivar constância, sinceridade, reverência e comunhão real com Deus.',
     bullets: [
       'Jesus ensinou a evitar repetições vazias e buscar o Pai com sinceridade.',
-      'Há momentos de oração breve e momentos de oração prolongada na vida cristã.',
+      'Há momentos de oração breve e momentos de oração prolongada na caminhada cristã.',
       'O alvo é crescer em relacionamento com Deus, não cumprir uma métrica religiosa.',
     ],
     links: [
