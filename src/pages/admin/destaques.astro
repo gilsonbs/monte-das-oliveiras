@@ -8,8 +8,13 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       <h1>Destaques da homepage</h1>
       <p class="subtitle">Defina qual post ocupa cada posição. As mudanças entram no ar no próximo deploy.</p>
     </div>
+    <div class="topbar-actions">
+      <a class="btn" href="/" target="_blank">Ver homepage</a>
+      <button type="button" class="btn" id="btn-refresh">Atualizar</button>
+    </div>
   </div>
 
+  <div class="featured-summary" id="featured-summary">Carregando posições...</div>
   <div id="slots-wrap">
     <div class="loading-msg">Carregando...</div>
   </div>
@@ -44,6 +49,15 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
   let currentSlotPos = 0;
 
+  function escapeHtml(value: string) {
+    return value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   async function loadSlots() {
     const { data, error } = await supabase
       .from('posts')
@@ -65,6 +79,11 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
   function renderSlots(slots: Record<number, SlotPost | null>) {
     const wrap = document.getElementById('slots-wrap')!;
+    const filledCount = Object.values(slots).filter(Boolean).length;
+    document.getElementById('featured-summary')!.innerHTML = `
+      <strong>${filledCount}/6 posições preenchidas</strong>
+      <span>${filledCount === 6 ? 'A vitrine da homepage está completa.' : 'Complete as posições vazias para controlar melhor a abertura da home.'}</span>
+    `;
     wrap.innerHTML = `
       <div class="slots-layout">
         ${renderSlot(1, slots[1], 'hero-slot')}
@@ -83,6 +102,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
         if (action === 'assign') openModal(pos);
         if (action === 'remove') removeFromSlot(pos);
+        if (action === 'up') moveSlot(pos, pos - 1);
+        if (action === 'down') moveSlot(pos, pos + 1);
       });
     });
   }
@@ -99,9 +120,12 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         <div class="slot-desc">${desc}</div>
         ${filled
           ? `<div class="slot-post">
-               <div class="slot-post-title">${post!.title}</div>
-               <div class="slot-post-slug">/${post!.slug}</div>
+               <div class="slot-post-title">${escapeHtml(post!.title)}</div>
+               <div class="slot-post-slug">/${escapeHtml(post!.slug)}/</div>
                <div class="slot-actions">
+                 <a class="btn-slot btn-view" href="/${escapeHtml(post!.slug)}/" target="_blank">Ver</a>
+                 <button class="btn-slot btn-change" data-action="up" ${pos === 1 ? 'disabled' : ''}>Subir</button>
+                 <button class="btn-slot btn-change" data-action="down" ${pos === 6 ? 'disabled' : ''}>Descer</button>
                  <button class="btn-slot btn-change" data-action="assign">Trocar</button>
                  <button class="btn-slot btn-remove" data-action="remove">Remover</button>
                </div>
@@ -123,6 +147,24 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     loadSlots();
   }
 
+  async function moveSlot(from: number, to: number) {
+    if (to < 1 || to > 6 || from === to) return;
+    const { data } = await supabase
+      .from('posts')
+      .select('id, featured_order')
+      .in('featured_order', [from, to]);
+
+    const fromPost = data?.find((post: any) => post.featured_order === from);
+    const toPost = data?.find((post: any) => post.featured_order === to);
+    if (!fromPost) return;
+
+    await supabase.from('posts').update({ featured_order: null }).in('id', [fromPost.id, toPost?.id].filter(Boolean));
+    if (toPost) await supabase.from('posts').update({ featured_order: from, is_featured: true }).eq('id', toPost.id);
+    const { error } = await supabase.from('posts').update({ featured_order: to, is_featured: true }).eq('id', fromPost.id);
+    if (error) { alert(`Erro: ${error.message}`); return; }
+    loadSlots();
+  }
+
   // modal de busca
   function openModal(pos: number) {
     currentSlotPos = pos;
@@ -131,9 +173,10 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       `Posição ${pos} — ${SLOT_LABELS[pos].name}`;
     const input = document.getElementById('modal-search') as HTMLInputElement;
     input.value = '';
-    document.getElementById('modal-results')!.innerHTML = '';
+    document.getElementById('modal-results')!.innerHTML = '<div class="no-results">Digite para buscar ou veja os posts recentes abaixo.</div>';
     modal.hidden = false;
     input.focus();
+    searchPosts('');
   }
 
   document.getElementById('modal-close')!.addEventListener('click', () => {
@@ -150,17 +193,19 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   document.getElementById('modal-search')!.addEventListener('input', (e) => {
     clearTimeout(searchTimer);
     const q = (e.target as HTMLInputElement).value.trim();
-    if (q.length < 2) { document.getElementById('modal-results')!.innerHTML = ''; return; }
+    if (q.length === 1) { document.getElementById('modal-results')!.innerHTML = '<div class="no-results">Digite pelo menos 2 letras.</div>'; return; }
     searchTimer = setTimeout(() => searchPosts(q), 300);
   });
 
   async function searchPosts(q: string) {
-    const { data } = await supabase
+    let query = supabase
       .from('posts')
-      .select('id, title, slug, status, categories(name)')
+      .select('id, title, slug, status, published_at, is_featured, featured_order, categories(name)')
       .eq('status', 'published')
-      .ilike('title', `%${q}%`)
+      .order('published_at', { ascending: false })
       .limit(10);
+    if (q.trim().length >= 2) query = query.or(`title.ilike.%${q}%,slug.ilike.%${q}%`);
+    const { data } = await query;
 
     const resultsEl = document.getElementById('modal-results')!;
     if (!data || data.length === 0) {
@@ -169,9 +214,9 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     }
     resultsEl.innerHTML = data
       .map((p: any) => `
-        <div class="result-item" data-id="${p.id}" data-title="${p.title.replace(/"/g, '&quot;')}">
-          <div class="result-title">${p.title}</div>
-          <div class="result-cat">${p.categories?.name ?? ''} · /${p.slug}</div>
+        <div class="result-item" data-id="${p.id}">
+          <div class="result-title">${escapeHtml(p.title)} ${p.featured_order ? `<span>posição ${p.featured_order}</span>` : ''}</div>
+          <div class="result-cat">${escapeHtml(p.categories?.name ?? '')} · /${escapeHtml(p.slug)}/</div>
         </div>
       `)
       .join('');
@@ -209,13 +254,21 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     loadSlots();
   }
 
+  document.getElementById('btn-refresh')?.addEventListener('click', loadSlots);
   loadSlots();
 </script>
 
 <style>
-  .topbar { margin-bottom: 28px; }
+  .topbar { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; margin-bottom: 18px; }
   .topbar h1 { font-family: var(--font-display); font-size: 22px; font-weight: 600; margin: 0 0 4px; }
   .subtitle { font-size: 13px; color: #8A8367; margin: 0; }
+  .topbar-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { font-family: var(--font-ui); font-size: 13px; font-weight: 500; padding: 9px 14px; border-radius: 6px; border: 1px solid #E4E0D3; background: #fff; cursor: pointer; text-decoration: none; color: var(--ink); }
+  .featured-summary {
+    max-width: 900px; border: 1px solid #E4E0D3; border-radius: 8px; background: #FAF8F1; padding: 12px 14px;
+    display: flex; gap: 10px; align-items: center; margin-bottom: 16px; color: #5F5E5A; font-size: 13px;
+  }
+  .featured-summary strong { color: var(--olive-deep); }
 
   /* layout dos slots */
   .slots-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; max-width: 900px; }
@@ -242,13 +295,15 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
   .slot-empty-msg { font-size: 12.5px; color: #B0AB96; font-style: italic; }
 
-  .slot-actions { display: flex; gap: 8px; }
+  .slot-actions { display: flex; gap: 8px; flex-wrap: wrap; }
   .btn-slot {
     font-family: var(--font-ui); font-size: 12px; font-weight: 500; padding: 6px 14px;
-    border-radius: 6px; cursor: pointer; border: 1px solid #E4E0D3; background: #fff;
+    border-radius: 6px; cursor: pointer; border: 1px solid #E4E0D3; background: #fff; text-decoration: none; color: #4F4A3E;
   }
+  .btn-slot:disabled { opacity: .45; cursor: not-allowed; }
   .btn-assign { background: var(--olive, #59613A); color: #fff; border-color: var(--olive, #59613A); align-self: flex-start; }
   .btn-change { color: var(--olive-deep, #414A29); }
+  .btn-view { color: #5B4A1C; background: #FAF8F1; }
   .btn-remove { color: #A6462A; }
 
   /* modal */
@@ -273,10 +328,14 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   .result-item { padding: 10px 12px; border-radius: 6px; cursor: pointer; }
   .result-item:hover { background: var(--olive-bg, #EEF1E4); }
   .result-title { font-size: 13.5px; font-weight: 500; margin-bottom: 2px; }
+  .result-title span { margin-left: 6px; font-size: 10px; color: var(--olive-deep); background: #EEF1E4; border-radius: 999px; padding: 2px 7px; }
   .result-cat { font-size: 11px; color: #8A8367; }
   .no-results { font-size: 13px; color: #8A8367; padding: 12px; text-align: center; }
 
   @media (max-width: 700px) {
+    .topbar { display: block; }
+    .topbar-actions { margin-top: 14px; }
+    .featured-summary { display: block; }
     .slots-layout { grid-template-columns: 1fr; }
   }
 </style>
