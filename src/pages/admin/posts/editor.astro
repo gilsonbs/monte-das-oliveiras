@@ -26,6 +26,30 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
           <input type="hidden" id="slug" />
         </div>
 
+        <div class="panel starter-panel" id="starter-panel">
+          <div class="starter-head">
+            <div>
+              <label>Começar artigo novo</label>
+              <div class="hint">Monte uma estrutura inicial editável a partir do título.</div>
+            </div>
+            <button type="button" class="mini-btn" id="btn-build-starter">Criar estrutura</button>
+          </div>
+          <div class="starter-grid">
+            <label class="starter-option">
+              <input type="radio" name="starter_type" value="estudo" checked />
+              <span>Estudo bíblico</span>
+            </label>
+            <label class="starter-option">
+              <input type="radio" name="starter_type" value="pergunta" />
+              <span>Pergunta e resposta</span>
+            </label>
+            <label class="starter-option">
+              <input type="radio" name="starter_type" value="noticia" />
+              <span>Notícia comentada</span>
+            </label>
+          </div>
+        </div>
+
         <div class="panel">
           <label>Conteúdo</label>
           <div class="toolbar" id="toolbar">
@@ -515,6 +539,72 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     return limitText(`Imagem ilustrativa do artigo sobre ${title.toLowerCase()}`, 120);
   }
 
+  function getStarterType() {
+    return (document.querySelector('input[name="starter_type"]:checked') as HTMLInputElement | null)?.value || 'estudo';
+  }
+
+  function buildStarterContent() {
+    const title = titleInput.value.trim() || 'este tema';
+    const lowerTitle = title.toLowerCase();
+    const type = getStarterType();
+    const intro = `Este artigo apresenta uma explicação bíblica sobre ${lowerTitle}, com uma resposta direta, contexto e aplicações práticas para a vida cristã.`;
+
+    if (type === 'pergunta') {
+      return `
+        <p><strong>Resposta rápida:</strong> ${title} deve ser entendido à luz da Bíblia, considerando o contexto, os princípios cristãos e a direção espiritual para cada situação.</p>
+        <p>${intro}</p>
+        <h2>O que a Bíblia ensina sobre ${lowerTitle}?</h2>
+        <p>Desenvolva aqui a resposta principal, citando textos bíblicos importantes e explicando o sentido com clareza.</p>
+        <h2>Como aplicar esse ensino hoje?</h2>
+        <p>Mostre como esse tema conversa com decisões, dúvidas e desafios reais da vida cristã.</p>
+        <h2>Cuidados importantes ao interpretar esse assunto</h2>
+        <p>Explique limites, erros comuns e pontos que precisam de equilíbrio pastoral.</p>
+        <h2>Conclusão</h2>
+        <p>Feche retomando a resposta central e orientando o leitor para uma atitude prática de fé.</p>
+      `;
+    }
+
+    if (type === 'noticia') {
+      return `
+        <p><strong>Resposta rápida:</strong> ${title} merece atenção cristã, mas precisa ser avaliado com prudência, contexto bíblico e discernimento espiritual.</p>
+        <p>${intro}</p>
+        <h2>O que aconteceu?</h2>
+        <p>Resuma os fatos principais de forma objetiva, separando informação confirmada de interpretação.</p>
+        <h2>Por que isso importa para os cristãos?</h2>
+        <p>Explique a relevância espiritual, social ou profética do tema sem exageros.</p>
+        <h2>Como olhar para esse assunto biblicamente?</h2>
+        <p>Conecte o tema a princípios bíblicos, textos relevantes e discernimento cristão.</p>
+        <h2>Como devemos responder?</h2>
+        <p>Oriente o leitor com passos práticos: oração, prudência, serviço, esperança e fidelidade.</p>
+      `;
+    }
+
+    return `
+      <p><strong>Resposta rápida:</strong> ${title} é um tema importante para compreender melhor a fé cristã, a mensagem bíblica e sua aplicação prática hoje.</p>
+      <p>${intro}</p>
+      <h2>O significado bíblico de ${lowerTitle}</h2>
+      <p>Explique o conceito principal, trazendo o contexto bíblico e o sentido do tema.</p>
+      <h2>Principais textos bíblicos sobre o tema</h2>
+      <p>Liste e explique as passagens mais importantes, mostrando como elas se conectam.</p>
+      <h2>Lições espirituais para a vida cristã</h2>
+      <p>Mostre como o ensino se aplica à fé, à oração, à obediência e ao relacionamento com Deus.</p>
+      <h2>Conclusão</h2>
+      <p>Reforce a ideia central e convide o leitor a viver esse princípio de forma prática.</p>
+    `;
+  }
+
+  function applyStarterContent() {
+    const currentText = editor.getText().trim();
+    if (currentText.length > 20 && !confirm('O conteúdo atual será substituído pela estrutura inicial. Deseja continuar?')) return;
+
+    const starterContent = buildStarterContent();
+    editor.commands.setContent(starterContent);
+    contentHidden.value = editor.getHTML();
+    applySeoSuggestion('all');
+    if (!coverAltInput.value.trim()) coverAltInput.value = buildCoverAltSuggestion();
+    updateSeoChecklist();
+  }
+
   function applySeoSuggestion(target: 'excerpt' | 'seoTitle' | 'meta' | 'all') {
     if (target === 'excerpt' || target === 'all') excerptInput.value = buildExcerptSuggestion();
     if (target === 'seoTitle' || target === 'all') seoTitleInput.value = buildSeoTitleSuggestion();
@@ -526,6 +616,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
   document.getElementById('btn-suggest-seo-title')?.addEventListener('click', () => applySeoSuggestion('seoTitle'));
   document.getElementById('btn-suggest-meta')?.addEventListener('click', () => applySeoSuggestion('meta'));
   document.getElementById('btn-fill-all-seo')?.addEventListener('click', () => applySeoSuggestion('all'));
+  document.getElementById('btn-build-starter')?.addEventListener('click', applyStarterContent);
   document.getElementById('btn-suggest-cover-alt')?.addEventListener('click', () => {
     coverAltInput.value = buildCoverAltSuggestion();
     updateSeoChecklist();
@@ -860,6 +951,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       document.getElementById('page-title')!.textContent = 'Editar post';
       document.getElementById('btn-delete')!.hidden = false;
       document.getElementById('btn-preview')!.hidden = false;
+      document.getElementById('starter-panel')!.hidden = true;
       titleInput.value = post.title;
       slugInput.value = post.slug;
       slugPreview.textContent = post.slug;
@@ -883,6 +975,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       (document.getElementById('tags') as HTMLInputElement).value = tagNames;
     } else {
       document.getElementById('page-title')!.textContent = 'Novo post';
+      document.getElementById('starter-panel')!.hidden = false;
     }
     updateSeoChecklist();
   }
@@ -921,6 +1014,16 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
   .slug { font-size: 12px; color: #8A8367; margin-top: 6px; }
   .slug b { color: var(--olive-deep); font-weight: 500; }
   .hint { font-size: 11px; color: #8A8367; margin: 8px 0 0; }
+  .starter-panel[hidden] { display: none; }
+  .starter-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
+  .starter-head label { display: block; font-size: 12px; font-weight: 600; color: var(--olive-deep); margin-bottom: 3px; }
+  .starter-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .starter-option {
+    border: 1px solid #E4E0D3; border-radius: 7px; background: #FDFCF8; padding: 10px 11px;
+    display: flex; gap: 8px; align-items: center; color: #4F4A3E; font-size: 12px; cursor: pointer;
+  }
+  .starter-option:has(input:checked) { border-color: #C9B98F; background: #FAF6E9; color: var(--olive-deep); }
+  .starter-option input { accent-color: var(--olive); }
 
   .toolbar { display: flex; gap: 8px; padding-bottom: 12px; margin-bottom: 8px; border-bottom: 1px solid #E4E0D3; flex-wrap: wrap; }
   .toolbar-group { display: inline-flex; gap: 3px; padding: 3px; border: 1px solid #EEE9DA; border-radius: 7px; background: #FAF8F1; }
@@ -1022,5 +1125,6 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     .topbar { display: block; }
     .topbar-actions { margin-top: 16px; flex-wrap: wrap; }
     .editor-layout { grid-template-columns: 1fr; }
+    .starter-grid { grid-template-columns: 1fr; }
   }
 </style>
