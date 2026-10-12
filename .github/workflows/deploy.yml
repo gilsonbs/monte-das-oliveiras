@@ -7,6 +7,10 @@ on:
   repository_dispatch:
     types: [content-updated]
 
+concurrency:
+  group: content-deploy
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
@@ -37,6 +41,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main
 
           date -u +"%Y-%m-%dT%H:%M:%SZ" > .content-build-trigger
           git add .content-build-trigger
@@ -46,6 +51,6 @@ jobs:
             exit 0
           fi
 
-          git commit -m "chore: trigger content deploy [skip actions]"
+          git commit -m "chore: trigger content deploy"
           git push origin HEAD:main
           echo "✓ Commit enviado para main. A Vercel deve iniciar o deploy pelo Git."
