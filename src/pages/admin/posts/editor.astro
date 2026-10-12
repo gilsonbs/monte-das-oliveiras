@@ -873,6 +873,9 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       await upsertTagsAndLink(savedId!, tagsText);
 
       saveStatus.textContent = 'Salvo!';
+      (window as any).markAdminChangesPending?.(status === 'published'
+        ? 'Post publicado no admin. Clique em "Publicar mudanças" para atualizar o site.'
+        : 'Rascunho salvo. Publique o site quando quiser colocar mudanças no ar.');
       currentPostId = savedId!;
       const previewBtn = document.getElementById('btn-preview') as HTMLButtonElement;
       previewBtn.hidden = false;
@@ -883,7 +886,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         if (hookUrl) {
           saveStatus.textContent = 'Publicando...';
           await fetch(hookUrl, { method: 'POST' }).catch(() => {});
-          saveStatus.textContent = 'Publicado! O site será atualizado em ~1 min.';
+          saveStatus.textContent = 'Deploy iniciado. A Vercel costuma levar de 3 a 5 min.';
         }
       }
 
