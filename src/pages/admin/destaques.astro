@@ -144,6 +144,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       .update({ featured_order: null, is_featured: false })
       .eq('featured_order', pos);
     if (error) { alert(`Erro: ${error.message}`); return; }
+    (window as any).markAdminChangesPending?.('Destaque removido. Publique as mudanças para atualizar a homepage.');
     loadSlots();
   }
 
@@ -162,6 +163,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     if (toPost) await supabase.from('posts').update({ featured_order: from, is_featured: true }).eq('id', toPost.id);
     const { error } = await supabase.from('posts').update({ featured_order: to, is_featured: true }).eq('id', fromPost.id);
     if (error) { alert(`Erro: ${error.message}`); return; }
+    (window as any).markAdminChangesPending?.('Ordem dos destaques salva. Publique as mudanças para atualizar a homepage.');
     loadSlots();
   }
 
@@ -251,6 +253,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     document.getElementById('search-modal')!.hidden = true;
 
     if (error) { alert(`Erro: ${error.message}`); return; }
+    (window as any).markAdminChangesPending?.('Destaque salvo. Publique as mudanças para atualizar a homepage.');
     loadSlots();
   }
 

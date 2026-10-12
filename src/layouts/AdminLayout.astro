@@ -35,6 +35,7 @@ function isActive(prefix: string) {
       </nav>
       <div class="sidebar-section">Publicação</div>
       <div class="deploy-box">
+        <div id="deploy-notice" class="deploy-notice clean">Site em dia</div>
         <button id="btn-deploy" class="btn-deploy">Publicar site</button>
         <div id="deploy-status" class="deploy-status"></div>
       </div>
@@ -76,11 +77,60 @@ function isActive(prefix: string) {
     // botão publicar
     const btnDeploy = document.getElementById('btn-deploy') as HTMLButtonElement;
     const deployStatus = document.getElementById('deploy-status') as HTMLElement;
+    const deployNotice = document.getElementById('deploy-notice') as HTMLElement;
+    const pendingDeployKey = 'mdo-admin-pending-deploy';
+    const deployStartedKey = 'mdo-admin-deploy-started-at';
+
+    function formatDeployTime(value: string | null) {
+      if (!value) return '';
+      const startedAt = Number(value);
+      if (!Number.isFinite(startedAt)) return '';
+      const minutes = Math.max(0, Math.round((Date.now() - startedAt) / 60000));
+      if (minutes <= 0) return 'agora';
+      if (minutes === 1) return 'há 1 min';
+      return `há ${minutes} min`;
+    }
+
+    function updateDeployNotice() {
+      const hasPendingChanges = localStorage.getItem(pendingDeployKey) === '1';
+      const deployStartedAt = localStorage.getItem(deployStartedKey);
+
+      if (deployStartedAt) {
+        deployNotice.textContent = `Deploy iniciado ${formatDeployTime(deployStartedAt)}. Aguarde a Vercel finalizar.`;
+        deployNotice.className = 'deploy-notice running';
+        btnDeploy.textContent = 'Publicar novamente';
+        return;
+      }
+
+      if (hasPendingChanges) {
+        deployNotice.textContent = 'Mudanças salvas aguardando publicação.';
+        deployNotice.className = 'deploy-notice pending';
+        btnDeploy.textContent = 'Publicar mudanças';
+        return;
+      }
+
+      deployNotice.textContent = 'Site em dia';
+      deployNotice.className = 'deploy-notice clean';
+      btnDeploy.textContent = 'Publicar site';
+    }
+
+    (window as any).markAdminChangesPending = (message?: string) => {
+      localStorage.setItem(pendingDeployKey, '1');
+      localStorage.removeItem(deployStartedKey);
+      updateDeployNotice();
+      if (message) {
+        deployStatus.textContent = message;
+        deployStatus.className = 'deploy-status ok';
+      }
+    };
+
+    updateDeployNotice();
+    setInterval(updateDeployNotice, 60000);
 
     btnDeploy?.addEventListener('click', async () => {
       btnDeploy.disabled = true;
       btnDeploy.textContent = 'Publicando…';
-      deployStatus.textContent = '';
+      deployStatus.textContent = 'Enviando pedido de deploy...';
       deployStatus.className = 'deploy-status';
 
       try {
@@ -108,16 +158,17 @@ function isActive(prefix: string) {
 
         if (!res.ok) throw new Error(`GitHub retornou ${res.status}`);
 
-        deployStatus.textContent = 'Deploy iniciado — leva ~4 min';
+        localStorage.removeItem(pendingDeployKey);
+        localStorage.setItem(deployStartedKey, String(Date.now()));
+        deployStatus.textContent = 'Deploy iniciado. Normalmente leva de 3 a 5 min para aparecer no site.';
         deployStatus.className = 'deploy-status ok';
-        btnDeploy.textContent = 'Publicar site';
-        setTimeout(() => { deployStatus.textContent = ''; }, 10000);
+        updateDeployNotice();
       } catch (err: any) {
         deployStatus.textContent = `Erro: ${err.message}`;
         deployStatus.className = 'deploy-status err';
-        btnDeploy.textContent = 'Publicar site';
       }
       btnDeploy.disabled = false;
+      updateDeployNotice();
     });
   </script>
 
@@ -134,6 +185,13 @@ function isActive(prefix: string) {
     .sidebar nav a:hover { color: #F3EEDD; }
     .sidebar-section { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #71715F; margin: 24px 0 10px; padding: 0 6px; }
     .deploy-box { padding: 0 6px; margin-bottom: 8px; }
+    .deploy-notice {
+      border: 1px solid rgba(207,201,174,.22); border-radius: 6px; padding: 8px 9px; margin-bottom: 8px;
+      font-size: 11px; line-height: 1.35; color: #CFC9AE; background: rgba(255,255,255,.04);
+    }
+    .deploy-notice.clean { color: #93B586; border-color: rgba(147,181,134,.3); }
+    .deploy-notice.pending { color: #F3D18A; border-color: rgba(243,209,138,.38); background: rgba(176,122,41,.11); }
+    .deploy-notice.running { color: #9BB9EC; border-color: rgba(155,185,236,.35); background: rgba(71,106,167,.13); }
     .btn-deploy {
       width: 100%; padding: 9px 12px; border-radius: 6px; border: none; cursor: pointer;
       background: var(--ember, #B07A29); color: #fff;
