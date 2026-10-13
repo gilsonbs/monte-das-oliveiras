@@ -35,6 +35,29 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     <p class="muted">Carregando...</p>
   </div>
 
+  <div class="panel affiliate-panel">
+    <div class="panel-heading">
+      <div>
+        <h2>CTAs de afiliados</h2>
+        <p>Configure recomendações por página, categoria ou padrão geral. Elas só aparecem quando houver link cadastrado.</p>
+      </div>
+      <button id="save-affiliate-ctas">Salvar CTAs</button>
+    </div>
+    <textarea id="affiliate-ctas" spellcheck="false" placeholder='[
+  {
+    "slug": "livros-impactantes-da-biblia",
+    "title": "Materiais para aprofundar seu estudo bíblico",
+    "description": "Veja Bíblias de estudo, comentários e livros cristãos recomendados.",
+    "buttonLabel": "Ver recomendações",
+    "url": "https://..."
+  }
+]'></textarea>
+    <div class="affiliate-help">
+      Use <strong>slug</strong> para uma página específica, <strong>category</strong> para uma categoria ou <strong>"default": true</strong> para um bloco geral.
+    </div>
+    <div class="affiliate-status" id="affiliate-status"></div>
+  </div>
+
   <div class="plan-grid">
     <div class="plan-card">
       <div class="plan-step">Fase 1</div>
@@ -97,6 +120,24 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     if (!slot.active) return { className: 'off', label: 'Inativo' };
     if (isValidClient(slot.ad_client || '') && isValidSlotId(slot.ad_slot_id || '')) return { className: 'ready', label: 'Pronto' };
     return { className: 'warn', label: 'Incompleto' };
+  }
+
+  function validateAffiliateCtas(value: string) {
+    if (!value.trim()) return { ok: true, parsed: [] };
+
+    try {
+      const parsed = JSON.parse(value);
+      const items = Array.isArray(parsed) ? parsed : [parsed];
+      const invalidIndex = items.findIndex((item: any) => !item?.title || !item?.buttonLabel || !item?.url);
+
+      if (invalidIndex >= 0) {
+        return { ok: false, message: `O item ${invalidIndex + 1} precisa de title, buttonLabel e url.` };
+      }
+
+      return { ok: true, parsed: items };
+    } catch {
+      return { ok: false, message: 'O JSON está inválido. Confira vírgulas, aspas e colchetes.' };
+    }
   }
 
   async function load() {
@@ -178,9 +219,53 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         }
       });
     });
+
+    const { data: affiliateSetting } = await supabase
+      .from('site_settings')
+      .select('value')
+      .eq('key', 'affiliate_ctas')
+      .maybeSingle();
+
+    const affiliateTextarea = document.getElementById('affiliate-ctas') as HTMLTextAreaElement;
+    affiliateTextarea.value = affiliateSetting?.value || '';
   }
 
   load();
+
+  document.getElementById('save-affiliate-ctas')?.addEventListener('click', async (e) => {
+    const button = e.target as HTMLButtonElement;
+    const textarea = document.getElementById('affiliate-ctas') as HTMLTextAreaElement;
+    const status = document.getElementById('affiliate-status') as HTMLElement;
+    const rawValue = textarea.value.trim();
+    const validation = validateAffiliateCtas(rawValue);
+
+    if (!validation.ok) {
+      status.textContent = validation.message || 'Revise os CTAs antes de salvar.';
+      status.className = 'affiliate-status error';
+      return;
+    }
+
+    button.disabled = true;
+    button.textContent = 'Salvando...';
+
+    const { error } = await supabase
+      .from('site_settings')
+      .upsert({ key: 'affiliate_ctas', value: rawValue }, { onConflict: 'key' });
+
+    if (error) {
+      status.textContent = `Erro: ${error.message}`;
+      status.className = 'affiliate-status error';
+      button.disabled = false;
+      button.textContent = 'Salvar CTAs';
+      return;
+    }
+
+    status.textContent = 'CTAs salvos. Publique as mudanças para atualizar o site.';
+    status.className = 'affiliate-status ok';
+    (window as any).markAdminChangesPending?.('CTAs de afiliados salvos. Publique as mudanças para atualizar o site.');
+    button.disabled = false;
+    button.textContent = 'Salvar CTAs';
+  });
 </script>
 
 <style>
@@ -211,6 +296,17 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   .panel :global(.slot-help) { grid-column: 2 / 4; color: #8A8367; font-size: 11.5px; margin-top: -8px; min-height: 16px; }
   .panel :global(.slot-help.ok) { color: var(--olive-deep); }
   .panel :global(.slot-help.error) { color: #A6462A; }
+  .affiliate-panel { margin-top: 18px; padding: 18px 22px; }
+  .panel-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+  .panel-heading h2 { margin: 0 0 4px; font-family: var(--font-display); color: var(--olive-deep); font-size: 19px; font-weight: 600; }
+  .panel-heading p { margin: 0; color: #8A8367; font-size: 12.5px; line-height: 1.45; }
+  .panel-heading button { font-family: var(--font-ui); font-size: 12px; font-weight: 700; padding: 8px 13px; border-radius: 6px; border: 1px solid var(--olive-deep); color: #fff; background: var(--olive-deep); cursor: pointer; white-space: nowrap; }
+  .panel-heading button:disabled { opacity: .7; cursor: wait; }
+  #affiliate-ctas { width: 100%; min-height: 220px; resize: vertical; padding: 12px; border: 1px solid #E4E0D3; border-radius: 8px; color: var(--ink); background: #fff; font-family: Consolas, Monaco, monospace; font-size: 12px; line-height: 1.55; box-sizing: border-box; }
+  .affiliate-help { margin-top: 9px; color: #8A8367; font-size: 12px; line-height: 1.5; }
+  .affiliate-status { min-height: 18px; margin-top: 8px; font-size: 12px; }
+  .affiliate-status.ok { color: var(--olive-deep); }
+  .affiliate-status.error { color: #A6462A; }
 
   .plan-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; max-width: 920px; margin-top: 18px; }
   .plan-card { background: #FAF8F1; border: 1px solid #E4E0D3; border-radius: 8px; padding: 16px; }
@@ -231,5 +327,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     .panel :global(.slot-fields) { grid-template-columns: 1fr; }
     .panel :global(.slot-actions) { justify-content: flex-start; }
     .panel :global(.slot-help) { grid-column: auto; margin-top: 0; }
+    .panel-heading { display: block; }
+    .panel-heading button { margin-top: 12px; width: 100%; }
   }
 </style>
