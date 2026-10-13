@@ -1,0 +1,134 @@
+---
+import { supabase } from '../lib/supabase';
+
+type AffiliateCta = {
+  slug?: string;
+  category?: string;
+  default?: boolean;
+  title?: string;
+  description?: string;
+  buttonLabel?: string;
+  url?: string;
+};
+
+const { slug, categorySlug } = Astro.props as { slug: string; categorySlug?: string };
+
+let cta: AffiliateCta | null = null;
+
+try {
+  const { data, error } = await supabase
+    .from('site_settings')
+    .select('value')
+    .eq('key', 'affiliate_ctas')
+    .maybeSingle();
+
+  if (!error && data?.value) {
+    const parsed = JSON.parse(data.value);
+    const items = Array.isArray(parsed) ? parsed : [parsed];
+    const validItems = items.filter((item): item is AffiliateCta => Boolean(item?.title && item?.url && item?.buttonLabel));
+
+    cta =
+      validItems.find((item) => item.slug === slug) ||
+      validItems.find((item) => item.category && item.category === categorySlug) ||
+      validItems.find((item) => item.default === true) ||
+      null;
+  }
+} catch {
+  cta = null;
+}
+---
+
+{cta && (
+  <aside class="affiliate-cta" aria-label="Recomendacao de material complementar">
+    <div>
+      <span>Material complementar</span>
+      <h2>{cta.title}</h2>
+      {cta.description && <p>{cta.description}</p>}
+      <small>Recomendação editorial. Alguns links podem gerar comissão sem custo extra para você.</small>
+    </div>
+    <a href={cta.url} target="_blank" rel="nofollow sponsored noopener noreferrer">{cta.buttonLabel}</a>
+  </aside>
+)}
+
+<style>
+  .affiliate-cta {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 18px;
+    align-items: center;
+    margin: 34px 0;
+    padding: 18px 20px;
+    border: 1px solid #E4E0D3;
+    border-left: 4px solid var(--olive);
+    border-radius: 8px;
+    background: #FAF8F1;
+  }
+
+  .affiliate-cta span {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--ember);
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  .affiliate-cta h2 {
+    margin: 0 0 6px;
+    color: var(--olive-deep);
+    font-family: var(--font-display);
+    font-size: 21px;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .affiliate-cta p {
+    margin: 0 0 8px;
+    color: #4A4842;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .affiliate-cta small {
+    display: block;
+    color: #8A8367;
+    font-family: var(--font-ui);
+    font-size: 11.5px;
+    line-height: 1.45;
+  }
+
+  .affiliate-cta a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0 16px;
+    border-radius: 7px;
+    background: var(--olive-deep);
+    color: #fff;
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .affiliate-cta a:hover {
+    background: var(--olive);
+  }
+
+  @media (max-width: 680px) {
+    .affiliate-cta {
+      grid-template-columns: 1fr;
+      padding: 16px;
+    }
+
+    .affiliate-cta a {
+      width: 100%;
+      white-space: normal;
+      text-align: center;
+    }
+  }
+</style>
