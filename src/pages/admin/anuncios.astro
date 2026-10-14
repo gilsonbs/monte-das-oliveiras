@@ -39,21 +39,17 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     <div class="panel-heading">
       <div>
         <h2>CTAs de afiliados</h2>
-        <p>Configure recomendações por página, categoria ou padrão geral. Elas só aparecem quando houver link cadastrado.</p>
+        <p>Cadastre recomendações por página, categoria ou padrão geral. Elas só aparecem quando houver link válido.</p>
       </div>
-      <button id="save-affiliate-ctas">Salvar CTAs</button>
+      <div class="affiliate-actions">
+        <button type="button" class="btn-secondary" id="add-affiliate-cta">Adicionar CTA</button>
+        <button type="button" id="save-affiliate-ctas">Salvar CTAs</button>
+      </div>
     </div>
-    <textarea id="affiliate-ctas" spellcheck="false" placeholder='[
-  {
-    "slug": "livros-impactantes-da-biblia",
-    "title": "Materiais para aprofundar seu estudo bíblico",
-    "description": "Veja Bíblias de estudo, comentários e livros cristãos recomendados.",
-    "buttonLabel": "Ver recomendações",
-    "url": "https://..."
-  }
-]'></textarea>
+    <div id="affiliate-list" class="affiliate-list"></div>
+    <textarea id="affiliate-ctas" hidden></textarea>
     <div class="affiliate-help">
-      Use <strong>slug</strong> para uma página específica, <strong>category</strong> para uma categoria ou <strong>"default": true</strong> para um bloco geral.
+      Página específica tem prioridade sobre categoria. O padrão geral aparece só quando não houver CTA mais específico.
     </div>
     <div class="affiliate-status" id="affiliate-status"></div>
   </div>
@@ -122,16 +118,155 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     return { className: 'warn', label: 'Incompleto' };
   }
 
+  function getEmptyAffiliateCta() {
+    return {
+      type: 'slug',
+      target: '',
+      title: '',
+      description: '',
+      buttonLabel: 'Ver recomendação',
+      url: '',
+    };
+  }
+
+  function normalizeAffiliateCtas(value: string) {
+    if (!value.trim()) return [];
+
+    try {
+      const parsed = JSON.parse(value);
+      const items = Array.isArray(parsed) ? parsed : [parsed];
+
+      return items.map((item: any) => {
+        const type = item.default ? 'default' : item.category ? 'category' : 'slug';
+        return {
+          type,
+          target: type === 'category' ? item.category || '' : type === 'slug' ? item.slug || '' : '',
+          title: item.title || '',
+          description: item.description || '',
+          buttonLabel: item.buttonLabel || 'Ver recomendação',
+          url: item.url || '',
+        };
+      });
+    } catch {
+      return [];
+    }
+  }
+
+  function serializeAffiliateCtas() {
+    return Array.from(document.querySelectorAll('.affiliate-card')).map((card) => {
+      const type = (card.querySelector('.affiliate-type') as HTMLSelectElement).value;
+      const target = (card.querySelector('.affiliate-target') as HTMLInputElement).value.trim();
+      const title = (card.querySelector('.affiliate-title') as HTMLInputElement).value.trim();
+      const description = (card.querySelector('.affiliate-description') as HTMLTextAreaElement).value.trim();
+      const buttonLabel = (card.querySelector('.affiliate-button-label') as HTMLInputElement).value.trim();
+      const url = (card.querySelector('.affiliate-url') as HTMLInputElement).value.trim();
+      const item: any = { title, description, buttonLabel, url };
+
+      if (type === 'default') item.default = true;
+      if (type === 'category') item.category = target;
+      if (type === 'slug') item.slug = target;
+
+      return item;
+    });
+  }
+
+  function syncAffiliateTextarea() {
+    const textarea = document.getElementById('affiliate-ctas') as HTMLTextAreaElement;
+    textarea.value = JSON.stringify(serializeAffiliateCtas(), null, 2);
+  }
+
+  function getTargetPlaceholder(type: string) {
+    if (type === 'category') return 'estudos-biblicos';
+    if (type === 'slug') return 'livros-impactantes-da-biblia';
+    return 'Usado como padrão geral';
+  }
+
+  function renderAffiliateEditor(items: any[]) {
+    const list = document.getElementById('affiliate-list')!;
+    const normalized = items.length ? items : [getEmptyAffiliateCta()];
+
+    list.innerHTML = normalized
+      .map((item, index) => {
+        const type = item.type || 'slug';
+        const targetDisabled = type === 'default' ? 'disabled' : '';
+        return `
+          <div class="affiliate-card">
+            <div class="affiliate-card-head">
+              <strong>CTA ${index + 1}</strong>
+              <button type="button" class="remove-affiliate-cta" ${normalized.length === 1 ? 'disabled' : ''}>Remover</button>
+            </div>
+            <div class="affiliate-grid">
+              <label>
+                Tipo
+                <select class="affiliate-type">
+                  <option value="slug" ${type === 'slug' ? 'selected' : ''}>Página específica</option>
+                  <option value="category" ${type === 'category' ? 'selected' : ''}>Categoria</option>
+                  <option value="default" ${type === 'default' ? 'selected' : ''}>Padrão geral</option>
+                </select>
+              </label>
+              <label>
+                Slug ou categoria
+                <input class="affiliate-target" type="text" value="${escapeHtml(item.target || '')}" placeholder="${getTargetPlaceholder(type)}" ${targetDisabled} />
+              </label>
+              <label>
+                Título
+                <input class="affiliate-title" type="text" value="${escapeHtml(item.title || '')}" placeholder="Materiais para aprofundar seu estudo bíblico" />
+              </label>
+              <label>
+                Texto do botão
+                <input class="affiliate-button-label" type="text" value="${escapeHtml(item.buttonLabel || 'Ver recomendação')}" placeholder="Ver recomendação" />
+              </label>
+              <label class="full">
+                Link de afiliado
+                <input class="affiliate-url" type="url" value="${escapeHtml(item.url || '')}" placeholder="https://..." />
+              </label>
+              <label class="full">
+                Descrição
+                <textarea class="affiliate-description" rows="2" placeholder="Explique por que esse material combina com o artigo.">${escapeHtml(item.description || '')}</textarea>
+              </label>
+            </div>
+          </div>
+        `;
+      })
+      .join('');
+
+    list.querySelectorAll('input, textarea, select').forEach((field) => {
+      field.addEventListener('input', syncAffiliateTextarea);
+      field.addEventListener('change', () => {
+        const card = (field as HTMLElement).closest('.affiliate-card')!;
+        const type = (card.querySelector('.affiliate-type') as HTMLSelectElement).value;
+        const target = card.querySelector('.affiliate-target') as HTMLInputElement;
+        target.disabled = type === 'default';
+        target.placeholder = getTargetPlaceholder(type);
+        if (type === 'default') target.value = '';
+        syncAffiliateTextarea();
+      });
+    });
+
+    list.querySelectorAll('.remove-affiliate-cta').forEach((button) => {
+      button.addEventListener('click', () => {
+        (button as HTMLElement).closest('.affiliate-card')?.remove();
+        if (!list.querySelector('.affiliate-card')) renderAffiliateEditor([getEmptyAffiliateCta()]);
+        syncAffiliateTextarea();
+      });
+    });
+
+    syncAffiliateTextarea();
+  }
+
   function validateAffiliateCtas(value: string) {
     if (!value.trim()) return { ok: true, parsed: [] };
 
     try {
       const parsed = JSON.parse(value);
       const items = Array.isArray(parsed) ? parsed : [parsed];
-      const invalidIndex = items.findIndex((item: any) => !item?.title || !item?.buttonLabel || !item?.url);
+      const invalidIndex = items.findIndex((item: any) => {
+        const hasTarget = item.default === true || Boolean(item.slug || item.category);
+        return !item?.title || !item?.buttonLabel || !item?.url || !hasTarget;
+      });
 
       if (invalidIndex >= 0) {
-        return { ok: false, message: `O item ${invalidIndex + 1} precisa de title, buttonLabel e url.` };
+        return { ok: false, message: `O CTA ${invalidIndex + 1} precisa de destino, título, texto do botão e link.` };
       }
 
       return { ok: true, parsed: items };
@@ -228,9 +363,22 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
     const affiliateTextarea = document.getElementById('affiliate-ctas') as HTMLTextAreaElement;
     affiliateTextarea.value = affiliateSetting?.value || '';
+    renderAffiliateEditor(normalizeAffiliateCtas(affiliateTextarea.value));
   }
 
   load();
+
+  document.getElementById('add-affiliate-cta')?.addEventListener('click', () => {
+    const current = serializeAffiliateCtas().map((item: any) => ({
+      type: item.default ? 'default' : item.category ? 'category' : 'slug',
+      target: item.category || item.slug || '',
+      title: item.title || '',
+      description: item.description || '',
+      buttonLabel: item.buttonLabel || 'Ver recomendação',
+      url: item.url || '',
+    }));
+    renderAffiliateEditor([...current, getEmptyAffiliateCta()]);
+  });
 
   document.getElementById('save-affiliate-ctas')?.addEventListener('click', async (e) => {
     const button = e.target as HTMLButtonElement;
@@ -300,9 +448,25 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   .panel-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
   .panel-heading h2 { margin: 0 0 4px; font-family: var(--font-display); color: var(--olive-deep); font-size: 19px; font-weight: 600; }
   .panel-heading p { margin: 0; color: #8A8367; font-size: 12.5px; line-height: 1.45; }
-  .panel-heading button { font-family: var(--font-ui); font-size: 12px; font-weight: 700; padding: 8px 13px; border-radius: 6px; border: 1px solid var(--olive-deep); color: #fff; background: var(--olive-deep); cursor: pointer; white-space: nowrap; }
+  .affiliate-actions { display: flex; gap: 8px; }
+  .affiliate-actions button { font-family: var(--font-ui); font-size: 12px; font-weight: 700; padding: 8px 13px; border-radius: 6px; border: 1px solid var(--olive-deep); color: #fff; background: var(--olive-deep); cursor: pointer; white-space: nowrap; }
+  .affiliate-actions .btn-secondary { background: #fff; color: var(--olive-deep); }
   .panel-heading button:disabled { opacity: .7; cursor: wait; }
-  #affiliate-ctas { width: 100%; min-height: 220px; resize: vertical; padding: 12px; border: 1px solid #E4E0D3; border-radius: 8px; color: var(--ink); background: #fff; font-family: Consolas, Monaco, monospace; font-size: 12px; line-height: 1.55; box-sizing: border-box; }
+  .affiliate-list { display: grid; gap: 12px; }
+  .affiliate-list:empty::before { content: "Nenhum CTA cadastrado."; display: block; color: #8A8367; font-size: 13px; padding: 12px 0; }
+  .affiliate-list :global(.affiliate-card) { border: 1px solid #F1EFE8; border-radius: 8px; padding: 14px; background: #FAF8F1; }
+  .affiliate-list :global(.affiliate-card-head) { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .affiliate-list :global(.affiliate-card-head strong) { font-size: 13px; color: var(--olive-deep); }
+  .affiliate-list :global(.remove-affiliate-cta) { border: 0; background: transparent; color: #A6462A; cursor: pointer; font-family: var(--font-ui); font-size: 12px; font-weight: 700; }
+  .affiliate-list :global(.remove-affiliate-cta:disabled) { color: #BDB6A2; cursor: not-allowed; }
+  .affiliate-list :global(.affiliate-grid) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .affiliate-list :global(label) { display: grid; gap: 5px; color: #5F5E5A; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+  .affiliate-list :global(label.full) { grid-column: 1 / -1; }
+  .affiliate-list :global(input),
+  .affiliate-list :global(select),
+  .affiliate-list :global(textarea) { width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #E4E0D3; border-radius: 6px; background: #fff; color: var(--ink); font-family: var(--font-ui); font-size: 13px; text-transform: none; letter-spacing: 0; }
+  .affiliate-list :global(textarea) { resize: vertical; line-height: 1.45; }
+  .affiliate-list :global(input:disabled) { background: #F1EFE8; color: #8A8367; }
   .affiliate-help { margin-top: 9px; color: #8A8367; font-size: 12px; line-height: 1.5; }
   .affiliate-status { min-height: 18px; margin-top: 8px; font-size: 12px; }
   .affiliate-status.ok { color: var(--olive-deep); }
@@ -328,6 +492,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     .panel :global(.slot-actions) { justify-content: flex-start; }
     .panel :global(.slot-help) { grid-column: auto; margin-top: 0; }
     .panel-heading { display: block; }
-    .panel-heading button { margin-top: 12px; width: 100%; }
+    .affiliate-actions { display: grid; margin-top: 12px; }
+    .affiliate-actions button { width: 100%; }
+    .affiliate-list :global(.affiliate-grid) { grid-template-columns: 1fr; }
   }
 </style>
