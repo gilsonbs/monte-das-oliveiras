@@ -72,21 +72,20 @@ try {
       button.textContent = 'Enviando...';
       feedback.hidden = true;
 
-      const { error } = await supabase.from('newsletter_subscribers').insert({
-        name: name || null,
-        email,
-        source: form.dataset.source || 'article_lead_magnet',
-        post_slug: form.dataset.postSlug || null,
-        offer_title: form.dataset.offerTitle || null,
-        consent: true,
+      const { data, error } = await supabase.functions.invoke('subscribe-lead', {
+        body: {
+          name,
+          email,
+          source: form.dataset.source || 'article_lead_magnet',
+          postSlug: form.dataset.postSlug || null,
+          offerTitle: form.dataset.offerTitle || null,
+          consent: true,
+        },
       });
 
       if (error) {
-        const duplicate = error.code === '23505';
-        feedback.textContent = duplicate
-          ? 'Esse e-mail já está cadastrado. Obrigado por acompanhar o Monte das Oliveiras.'
-          : 'Ainda precisamos concluir a configuração da lista de e-mails. Tente novamente mais tarde.';
-        feedback.className = duplicate ? 'lead-feedback ok' : 'lead-feedback error';
+        feedback.textContent = 'Ainda estamos concluindo a configuração da lista de e-mails. Tente novamente mais tarde.';
+        feedback.className = 'lead-feedback error';
         feedback.hidden = false;
         button.disabled = false;
         button.textContent = originalButtonLabel;
@@ -95,7 +94,9 @@ try {
 
       form.reset();
       fields.hidden = true;
-      feedback.textContent = 'Cadastro recebido. Obrigado por se inscrever! Por enquanto, seu e-mail ficou salvo na lista do Monte das Oliveiras. A confirmação por e-mail será ativada na próxima etapa, quando conectarmos um serviço de envio.';
+      feedback.textContent = data?.emailSent
+        ? 'Cadastro confirmado! Enviamos uma mensagem de confirmação para o seu e-mail.'
+        : 'Cadastro recebido! A confirmação por e-mail será enviada assim que o remetente estiver verificado.';
       feedback.className = 'lead-feedback ok';
       feedback.hidden = false;
       button.textContent = 'Cadastrado';
