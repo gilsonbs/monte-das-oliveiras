@@ -17,7 +17,7 @@ let cta: AffiliateCta | null = null;
 
 try {
   const { data, error } = await supabase
-    .from('site_settings')
+    .from('public_site_settings')
     .select('value')
     .eq('key', 'affiliate_ctas')
     .maybeSingle();
