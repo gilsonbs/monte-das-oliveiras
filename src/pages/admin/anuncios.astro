@@ -27,7 +27,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     </div>
     <div class="summary-card">
       <span>Próxima frente</span>
-      <strong>Afiliados</strong>
+      <strong>Leads</strong>
     </div>
   </div>
 
@@ -54,6 +54,42 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     <div class="affiliate-status" id="affiliate-status"></div>
   </div>
 
+  <div class="panel lead-panel">
+    <div class="panel-heading">
+      <div>
+        <h2>Captura de leads</h2>
+        <p>Configure uma oferta gratuita para capturar e-mails nos artigos.</p>
+      </div>
+      <button type="button" id="save-lead-magnet">Salvar oferta</button>
+    </div>
+    <div class="lead-grid">
+      <label class="switch-line">
+        <input type="checkbox" id="lead-active" />
+        <span>Ativar bloco nos artigos</span>
+      </label>
+      <label>
+        Título da oferta
+        <input type="text" id="lead-title" placeholder="Plano de leitura bíblica de 30 dias" />
+      </label>
+      <label>
+        Texto do botão
+        <input type="text" id="lead-button" placeholder="Receber material gratuito" />
+      </label>
+      <label class="full">
+        Descrição
+        <textarea id="lead-description" rows="3" placeholder="Receba um roteiro simples para criar constância na leitura bíblica e fortalecer sua vida devocional."></textarea>
+      </label>
+      <label class="full">
+        Nota de privacidade
+        <input type="text" id="lead-privacy" placeholder="Você receberá conteúdos do Monte das Oliveiras. Pode sair da lista quando quiser." />
+      </label>
+    </div>
+    <div class="affiliate-help">
+      Depois de salvar e publicar, o bloco aparece nos artigos. Os inscritos serão salvos na tabela <strong>newsletter_subscribers</strong>.
+    </div>
+    <div class="affiliate-status" id="lead-status"></div>
+  </div>
+
   <div class="plan-grid">
     <div class="plan-card">
       <div class="plan-step">Fase 1</div>
@@ -67,8 +103,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     </div>
     <div class="plan-card">
       <div class="plan-step">Fase 3</div>
-      <h2>Produtos próprios</h2>
-      <p>Criar PDFs, planos de leitura, devocionais e estudos bíblicos para captura e venda.</p>
+      <h2>Lista e produtos</h2>
+      <p>Capturar leads com materiais gratuitos antes de criar PDFs, devocionais e produtos pagos.</p>
     </div>
   </div>
 </AdminLayout>
@@ -275,6 +311,14 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     }
   }
 
+  function parseLeadConfig(value: string) {
+    try {
+      return value ? JSON.parse(value) : {};
+    } catch {
+      return {};
+    }
+  }
+
   async function load() {
     const { data: existing } = await supabase.from('ad_slots').select('*');
     const existingByKey = new Map((existing ?? []).map((s: any) => [s.key, s]));
@@ -364,6 +408,19 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     const affiliateTextarea = document.getElementById('affiliate-ctas') as HTMLTextAreaElement;
     affiliateTextarea.value = affiliateSetting?.value || '';
     renderAffiliateEditor(normalizeAffiliateCtas(affiliateTextarea.value));
+
+    const { data: leadSetting } = await supabase
+      .from('site_settings')
+      .select('value')
+      .eq('key', 'lead_magnet_config')
+      .maybeSingle();
+
+    const leadConfig = parseLeadConfig(leadSetting?.value || '');
+    (document.getElementById('lead-active') as HTMLInputElement).checked = Boolean(leadConfig.active);
+    (document.getElementById('lead-title') as HTMLInputElement).value = leadConfig.title || '';
+    (document.getElementById('lead-button') as HTMLInputElement).value = leadConfig.buttonLabel || '';
+    (document.getElementById('lead-description') as HTMLTextAreaElement).value = leadConfig.description || '';
+    (document.getElementById('lead-privacy') as HTMLInputElement).value = leadConfig.privacyNote || '';
   }
 
   load();
@@ -413,6 +470,52 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     (window as any).markAdminChangesPending?.('CTAs de afiliados salvos. Publique as mudanças para atualizar o site.');
     button.disabled = false;
     button.textContent = 'Salvar CTAs';
+  });
+
+  document.getElementById('save-lead-magnet')?.addEventListener('click', async (e) => {
+    const button = e.target as HTMLButtonElement;
+    const status = document.getElementById('lead-status') as HTMLElement;
+    const active = (document.getElementById('lead-active') as HTMLInputElement).checked;
+    const title = (document.getElementById('lead-title') as HTMLInputElement).value.trim();
+    const buttonLabel = (document.getElementById('lead-button') as HTMLInputElement).value.trim();
+    const description = (document.getElementById('lead-description') as HTMLTextAreaElement).value.trim();
+    const privacyNote = (document.getElementById('lead-privacy') as HTMLInputElement).value.trim();
+
+    if (active && (!title || !buttonLabel)) {
+      status.textContent = 'Para ativar, preencha pelo menos o título e o texto do botão.';
+      status.className = 'affiliate-status error';
+      return;
+    }
+
+    button.disabled = true;
+    button.textContent = 'Salvando...';
+
+    const value = JSON.stringify({
+      active,
+      title,
+      description,
+      buttonLabel,
+      privacyNote,
+      source: 'article_lead_magnet',
+    });
+
+    const { error } = await supabase
+      .from('site_settings')
+      .upsert({ key: 'lead_magnet_config', value }, { onConflict: 'key' });
+
+    if (error) {
+      status.textContent = `Erro: ${error.message}`;
+      status.className = 'affiliate-status error';
+      button.disabled = false;
+      button.textContent = 'Salvar oferta';
+      return;
+    }
+
+    status.textContent = 'Oferta salva. Publique as mudanças para atualizar o site.';
+    status.className = 'affiliate-status ok';
+    (window as any).markAdminChangesPending?.('Oferta de captura salva. Publique as mudanças para atualizar o site.');
+    button.disabled = false;
+    button.textContent = 'Salvar oferta';
   });
 </script>
 
@@ -471,6 +574,16 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   .affiliate-status { min-height: 18px; margin-top: 8px; font-size: 12px; }
   .affiliate-status.ok { color: var(--olive-deep); }
   .affiliate-status.error { color: #A6462A; }
+  .lead-panel { margin-top: 18px; padding: 18px 22px; }
+  .lead-panel .panel-heading button { font-family: var(--font-ui); font-size: 12px; font-weight: 700; padding: 8px 13px; border-radius: 6px; border: 1px solid var(--olive-deep); color: #fff; background: var(--olive-deep); cursor: pointer; white-space: nowrap; }
+  .lead-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .lead-grid label { display: grid; gap: 5px; color: #5F5E5A; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+  .lead-grid label.full { grid-column: 1 / -1; }
+  .lead-grid input[type=text],
+  .lead-grid textarea { width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #E4E0D3; border-radius: 6px; background: #fff; color: var(--ink); font-family: var(--font-ui); font-size: 13px; text-transform: none; letter-spacing: 0; }
+  .lead-grid textarea { resize: vertical; line-height: 1.45; }
+  .lead-grid .switch-line { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid #F1EFE8; border-radius: 8px; background: #FAF8F1; text-transform: none; letter-spacing: 0; font-size: 13px; }
+  .lead-grid .switch-line input { width: 16px; height: 16px; }
 
   .plan-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; max-width: 920px; margin-top: 18px; }
   .plan-card { background: #FAF8F1; border: 1px solid #E4E0D3; border-radius: 8px; padding: 16px; }
@@ -495,5 +608,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     .affiliate-actions { display: grid; margin-top: 12px; }
     .affiliate-actions button { width: 100%; }
     .affiliate-list :global(.affiliate-grid) { grid-template-columns: 1fr; }
+    .lead-panel .panel-heading button { width: 100%; margin-top: 12px; }
+    .lead-grid { grid-template-columns: 1fr; }
   }
 </style>
