@@ -400,7 +400,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     });
 
     const { data: affiliateSetting } = await supabase
-      .from('site_settings')
+      .from('public_site_settings')
       .select('value')
       .eq('key', 'affiliate_ctas')
       .maybeSingle();
@@ -410,7 +410,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     renderAffiliateEditor(normalizeAffiliateCtas(affiliateTextarea.value));
 
     const { data: leadSetting } = await supabase
-      .from('site_settings')
+      .from('public_site_settings')
       .select('value')
       .eq('key', 'lead_magnet_config')
       .maybeSingle();
@@ -454,7 +454,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     button.textContent = 'Salvando...';
 
     const { error } = await supabase
-      .from('site_settings')
+      .from('public_site_settings')
       .upsert({ key: 'affiliate_ctas', value: rawValue }, { onConflict: 'key' });
 
     if (error) {
@@ -500,7 +500,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     });
 
     const { error } = await supabase
-      .from('site_settings')
+      .from('public_site_settings')
       .upsert({ key: 'lead_magnet_config', value }, { onConflict: 'key' });
 
     if (error) {
