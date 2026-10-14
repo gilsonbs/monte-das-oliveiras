@@ -579,9 +579,9 @@ const jsonLd = [
         <ArticleAnswerBox slug={post.slug} />
         <Fragment set:html={before} />
         <AdSlot slotKey="in_article" />
+        <LeadMagnet postSlug={post.slug} />
         <Fragment set:html={after} />
         <TopicClusterLinks currentSlug={post.slug} />
-        <LeadMagnet postSlug={post.slug} />
         <AffiliateCTA slug={post.slug} categorySlug={post.category_slug || undefined} />
 
         <div class="share-block">
