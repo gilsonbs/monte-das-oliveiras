@@ -56,8 +56,27 @@ try {
   import { createSupabaseBrowserClient } from '../lib/supabase-browser';
 
   const supabase = createSupabaseBrowserClient();
+  const trackLeadEvent = (eventName: string, params: Record<string, string>) => {
+    const gtag = (window as any).gtag;
+    if (typeof gtag === 'function') gtag('event', eventName, params);
+  };
 
   document.querySelectorAll<HTMLFormElement>('.lead-form').forEach((form) => {
+    const eventParams = {
+      post_slug: form.dataset.postSlug || '',
+      offer_title: form.dataset.offerTitle || '',
+    };
+    let started = false;
+    trackLeadEvent('lead_magnet_view', eventParams);
+
+    form.querySelectorAll('input').forEach((input) => {
+      input.addEventListener('focus', () => {
+        if (started) return;
+        started = true;
+        trackLeadEvent('lead_form_start', eventParams);
+      }, { once: true });
+    });
+
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
 
@@ -67,6 +86,7 @@ try {
       const formData = new FormData(form);
       const name = String(formData.get('name') || '').trim();
       const email = String(formData.get('email') || '').trim();
+      trackLeadEvent('lead_form_submit', eventParams);
 
       button.disabled = true;
       button.textContent = 'Enviando...';
@@ -92,8 +112,10 @@ try {
         return;
       }
 
+      trackLeadEvent('lead_capture_success', eventParams);
       const downloadUrl = form.dataset.downloadUrl;
       if (downloadUrl) {
+        trackLeadEvent('lead_download_click', { ...eventParams, download_url: downloadUrl });
         window.location.assign(downloadUrl);
         return;
       }
