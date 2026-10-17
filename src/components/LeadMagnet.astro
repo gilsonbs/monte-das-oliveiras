@@ -112,6 +112,7 @@ try {
         return;
       }
 
+      trackLeadEvent('lead_capture_success', eventParams);
       const downloadUrl = form.dataset.downloadUrl;
       if (downloadUrl) {
         trackLeadEvent('lead_download_click', { ...eventParams, download_url: downloadUrl });
@@ -119,7 +120,6 @@ try {
         return;
       }
 
-      trackLeadEvent('lead_capture_success', eventParams);
       feedback.textContent = 'Cadastro recebido! O material será liberado assim que o link de download for configurado.';
       feedback.className = 'lead-feedback ok';
       feedback.hidden = false;
