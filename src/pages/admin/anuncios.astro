@@ -80,6 +80,10 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         <textarea id="lead-description" rows="3" placeholder="Receba um roteiro simples para criar constância na leitura bíblica e fortalecer sua vida devocional."></textarea>
       </label>
       <label class="full">
+        Link da página ou arquivo para download
+        <input type="url" id="lead-download-url" placeholder="https://... ou /materiais/guia.pdf" />
+      </label>
+      <label class="full">
         Nota de privacidade
         <input type="text" id="lead-privacy" placeholder="Você receberá conteúdos do Monte das Oliveiras. Pode sair da lista quando quiser." />
       </label>
@@ -420,6 +424,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     (document.getElementById('lead-title') as HTMLInputElement).value = leadConfig.title || '';
     (document.getElementById('lead-button') as HTMLInputElement).value = leadConfig.buttonLabel || '';
     (document.getElementById('lead-description') as HTMLTextAreaElement).value = leadConfig.description || '';
+    (document.getElementById('lead-download-url') as HTMLInputElement).value = leadConfig.downloadUrl || '';
     (document.getElementById('lead-privacy') as HTMLInputElement).value = leadConfig.privacyNote || '';
   }
 
@@ -479,10 +484,11 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     const title = (document.getElementById('lead-title') as HTMLInputElement).value.trim();
     const buttonLabel = (document.getElementById('lead-button') as HTMLInputElement).value.trim();
     const description = (document.getElementById('lead-description') as HTMLTextAreaElement).value.trim();
+    const downloadUrl = (document.getElementById('lead-download-url') as HTMLInputElement).value.trim();
     const privacyNote = (document.getElementById('lead-privacy') as HTMLInputElement).value.trim();
 
-    if (active && (!title || !buttonLabel)) {
-      status.textContent = 'Para ativar, preencha pelo menos o título e o texto do botão.';
+    if (active && (!title || !buttonLabel || !downloadUrl)) {
+      status.textContent = 'Para ativar, preencha o título, o texto do botão e o link de download.';
       status.className = 'affiliate-status error';
       return;
     }
@@ -495,6 +501,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       title,
       description,
       buttonLabel,
+      downloadUrl,
       privacyNote,
       source: 'article_lead_magnet',
     });

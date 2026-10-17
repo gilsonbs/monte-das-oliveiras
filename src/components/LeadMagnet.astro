@@ -8,6 +8,7 @@ type LeadMagnetConfig = {
   buttonLabel?: string;
   privacyNote?: string;
   source?: string;
+  downloadUrl?: string;
 };
 
 const { postSlug } = Astro.props as { postSlug: string };
@@ -39,7 +40,7 @@ try {
       <h2>{config.title}</h2>
       {config.description && <p>{config.description}</p>}
     </div>
-    <form class="lead-form" data-post-slug={postSlug} data-offer-title={config.title} data-source={config.source || 'article_lead_magnet'}>
+    <form class="lead-form" data-post-slug={postSlug} data-offer-title={config.title} data-source={config.source || 'article_lead_magnet'} data-download-url={config.downloadUrl || ''}>
       <div class="lead-fields">
         <input type="text" name="name" placeholder="Seu nome" autocomplete="name" />
         <input type="email" name="email" placeholder="Seu e-mail" autocomplete="email" required />
@@ -62,7 +63,6 @@ try {
 
       const button = form.querySelector('button') as HTMLButtonElement;
       const feedback = form.querySelector('.lead-feedback') as HTMLParagraphElement;
-      const fields = form.querySelector('.lead-fields') as HTMLElement;
       const originalButtonLabel = button.textContent || 'Receber material';
       const formData = new FormData(form);
       const name = String(formData.get('name') || '').trim();
@@ -72,7 +72,7 @@ try {
       button.textContent = 'Enviando...';
       feedback.hidden = true;
 
-      const { data, error } = await supabase.functions.invoke('subscribe-lead', {
+      const { error } = await supabase.functions.invoke('subscribe-lead', {
         body: {
           name,
           email,
@@ -92,14 +92,17 @@ try {
         return;
       }
 
-      form.reset();
-      fields.hidden = true;
-      feedback.textContent = data?.emailSent
-        ? 'Cadastro confirmado! Enviamos uma mensagem de confirmação para o seu e-mail.'
-        : 'Cadastro recebido! A confirmação por e-mail será enviada assim que o remetente estiver verificado.';
+      const downloadUrl = form.dataset.downloadUrl;
+      if (downloadUrl) {
+        window.location.assign(downloadUrl);
+        return;
+      }
+
+      feedback.textContent = 'Cadastro recebido! O material será liberado assim que o link de download for configurado.';
       feedback.className = 'lead-feedback ok';
       feedback.hidden = false;
-      button.textContent = 'Cadastrado';
+      button.disabled = false;
+      button.textContent = originalButtonLabel;
     });
   });
 </script>

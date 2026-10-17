@@ -2,8 +2,6 @@ const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 const BREVO_API_KEY = Deno.env.get('BREVO_API_KEY') ?? '';
 const BREVO_LIST_ID = Number(Deno.env.get('BREVO_LIST_ID') || '3');
-const BREVO_SENDER_EMAIL = Deno.env.get('BREVO_SENDER_EMAIL') ?? '';
-const BREVO_SENDER_NAME = Deno.env.get('BREVO_SENDER_NAME') || 'Monte das Oliveiras';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -84,26 +82,7 @@ Deno.serve(async (req) => {
       return json({ error: 'Could not add subscriber to email list' }, 502);
     }
 
-    let emailSent = false;
-    if (BREVO_SENDER_EMAIL) {
-      const confirmationResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
-        method: 'POST',
-        headers: brevoHeaders,
-        body: JSON.stringify({
-          sender: { email: BREVO_SENDER_EMAIL, name: BREVO_SENDER_NAME },
-          to: [{ email, ...(name ? { name } : {}) }],
-          subject: 'Cadastro recebido | Monte das Oliveiras',
-          htmlContent: `<html><body><p>Olá${name ? `, ${name}` : ''}!</p><p>Seu cadastro no Monte das Oliveiras foi recebido com sucesso.</p><p>Em breve enviaremos conteúdos e materiais relacionados à Bíblia e às profecias bíblicas.</p><p>Obrigado por acompanhar nosso trabalho.</p></body></html>`,
-          textContent: `Olá${name ? `, ${name}` : ''}! Seu cadastro no Monte das Oliveiras foi recebido com sucesso. Em breve enviaremos conteúdos e materiais relacionados à Bíblia e às profecias bíblicas.`,
-        }),
-      });
-      emailSent = confirmationResponse.ok;
-      if (!confirmationResponse.ok) {
-        console.error('Brevo confirmation error', confirmationResponse.status, await confirmationResponse.text());
-      }
-    }
-
-    return json({ ok: true, emailSent });
+    return json({ ok: true });
   } catch (error) {
     console.error('Lead subscription error', error);
     return json({ error: 'Could not process subscription' }, 500);
