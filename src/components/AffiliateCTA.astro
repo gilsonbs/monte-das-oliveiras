@@ -48,9 +48,23 @@ try {
       {cta.description && <p>{cta.description}</p>}
       <small>Recomendação editorial. Alguns links podem gerar comissão sem custo extra para você.</small>
     </div>
-    <a href={cta.url} target="_blank" rel="nofollow sponsored noopener noreferrer">{cta.buttonLabel}</a>
+    <a class="affiliate-cta-link" href={cta.url} target="_blank" rel="nofollow sponsored noopener noreferrer" data-product-title={cta.title || ''} data-article-slug={slug}>{cta.buttonLabel}</a>
   </aside>
 )}
+
+<script>
+  document.querySelectorAll<HTMLAnchorElement>('.affiliate-cta-link').forEach((link) => {
+    link.addEventListener('click', () => {
+      const gtag = (window as any).gtag;
+      if (typeof gtag === 'function') {
+        gtag('event', 'affiliate_click', {
+          product_title: link.dataset.productTitle || '',
+          article_slug: link.dataset.articleSlug || '',
+        });
+      }
+    });
+  });
+</script>
 
 <style>
   .affiliate-cta {
