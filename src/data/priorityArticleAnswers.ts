@@ -291,6 +291,22 @@ export const priorityArticleAnswers: Record<string, PriorityArticleAnswer> = {
       { href: '/pos-e-pre-tribulacionismo/', label: 'Tribulação e arrebatamento' },
     ],
   },
+  'terceiro-templo-sinal-da-grande-tribulacao': {
+    question: 'O Terceiro Templo é um sinal da Grande Tribulação?',
+    answer:
+      'Na interpretação escatológica futurista, uma eventual reconstrução do templo em Jerusalém é relacionada a textos como Daniel 9:27, Mateus 24:15 e 2 Tessalonicenses 2:3-4. Porém, a Bíblia não autoriza marcar datas nem afirmar que qualquer preparação atual seja o cumprimento final. O ponto central é estudar os textos em contexto, permanecer vigilante e manter a esperança em Cristo.',
+    bullets: [
+      'Mateus 24:15 relaciona o “abominável da desolação” ao lugar santo, em diálogo com as profecias de Daniel.',
+      'Há diferentes interpretações cristãs sobre o templo, a septuagésima semana de Daniel e a Grande Tribulação.',
+      'Preparativos, conflitos ou notícias em Jerusalém não provam, por si só, que a profecia final começou.',
+      'A resposta bíblica é vigilância, fidelidade e esperança, não especulação nem marcação de datas.',
+    ],
+    links: [
+      { href: '/terceiro-templo-anticristo-neste-ano/', label: 'Terceiro templo e anticristo' },
+      { href: '/a-grande-tribulacao/', label: 'A grande tribulação' },
+      { href: '/pos-e-pre-tribulacionismo/', label: 'Pré e pós-tribulacionismo' },
+    ],
+  },
   'o-fechamento-da-porta-da-graca-e-o-tempo-de': {
     question: 'O que significa o fechamento da porta da graça?',
     answer:
