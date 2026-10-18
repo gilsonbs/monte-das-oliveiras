@@ -9,6 +9,7 @@ type AffiliateCta = {
   description?: string;
   buttonLabel?: string;
   url?: string;
+  imageUrl?: string;
 };
 
 const { slug, categorySlug } = Astro.props as { slug: string; categorySlug?: string };
@@ -39,7 +40,8 @@ try {
 ---
 
 {cta && (
-  <aside class="affiliate-cta" aria-label="Recomendacao de material complementar">
+  <aside class:list={["affiliate-cta", { "has-image": Boolean(cta.imageUrl) }]} aria-label="Recomendacao de material complementar">
+    {cta.imageUrl && <img class="affiliate-cta-image" src={cta.imageUrl} alt={cta.title || 'Material recomendado'} loading="lazy" />}
     <div>
       <span>Material complementar</span>
       <h2>{cta.title}</h2>
@@ -62,6 +64,19 @@ try {
     border-left: 4px solid var(--olive);
     border-radius: 8px;
     background: #FAF8F1;
+  }
+
+  .affiliate-cta.has-image {
+    grid-template-columns: 96px 1fr auto;
+  }
+
+  .affiliate-cta-image {
+    width: 96px;
+    height: 128px;
+    object-fit: cover;
+    border: 1px solid #E4E0D3;
+    border-radius: 6px;
+    background: #fff;
   }
 
   .affiliate-cta span {
@@ -120,9 +135,15 @@ try {
   }
 
   @media (max-width: 680px) {
-    .affiliate-cta {
+    .affiliate-cta,
+    .affiliate-cta.has-image {
       grid-template-columns: 1fr;
       padding: 16px;
+    }
+
+    .affiliate-cta-image {
+      width: 76px;
+      height: 104px;
     }
 
     .affiliate-cta a {

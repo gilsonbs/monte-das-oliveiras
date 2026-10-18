@@ -185,6 +185,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           description: item.description || '',
           buttonLabel: item.buttonLabel || 'Ver recomendação',
           url: item.url || '',
+          imageUrl: item.imageUrl || '',
         };
       });
     } catch {
@@ -200,7 +201,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       const description = (card.querySelector('.affiliate-description') as HTMLTextAreaElement).value.trim();
       const buttonLabel = (card.querySelector('.affiliate-button-label') as HTMLInputElement).value.trim();
       const url = (card.querySelector('.affiliate-url') as HTMLInputElement).value.trim();
-      const item: any = { title, description, buttonLabel, url };
+      const imageUrl = (card.querySelector('.affiliate-image-url') as HTMLInputElement).value.trim();
+      const item: any = { title, description, buttonLabel, url, imageUrl };
 
       if (type === 'default') item.default = true;
       if (type === 'category') item.category = target;
@@ -259,6 +261,10 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
               <label class="full">
                 Link de afiliado
                 <input class="affiliate-url" type="url" value="${escapeHtml(item.url || '')}" placeholder="https://..." />
+              </label>
+              <label class="full">
+                URL da imagem do produto
+                <input class="affiliate-image-url" type="url" value="${escapeHtml(item.imageUrl || '')}" placeholder="https://..." />
               </label>
               <label class="full">
                 Descrição
