@@ -21,10 +21,15 @@
 @media(min-width:701px) and (max-width:1000px){.bookstage{min-height:440px}.book{width:260px}.page-behind{width:200px;right:0}}
 @media(max-width:700px){.bookstage{min-height:405px}.book{width:245px}.page-behind{width:190px;right:6%;top:9%}}
 
-/* A superfície clara separa a capa azul do fundo da seção. */
-.bookstage{background:var(--sage);margin:0;padding:40px 24px 60px;min-height:590px}
-.bookstage figcaption{color:var(--ink);left:20px;right:20px;bottom:18px;text-align:center}
-.page-behind{top:14%;right:5%}
+/* Volume do livro sobre a mesma superfície azul do hero. */
+.bookstage{background:transparent;margin:0;padding:40px 24px 60px;min-height:590px;perspective:1200px}
+.bookstage figcaption{color:var(--paper);left:20px;right:20px;bottom:18px;text-align:center}
+.book{transform:rotate(-5deg) rotateY(-12deg);transform-style:preserve-3d;isolation:isolate}
+.book img{position:relative;z-index:2;border:1px solid #b79d6c;border-radius:2px 0 0 2px;box-shadow:18px 28px 38px #071921a6}
+.book::before{content:'';position:absolute;left:-11px;top:0;bottom:0;width:12px;background:#8f754d;transform:skewY(18deg);transform-origin:right;box-shadow:inset 4px 0 5px #302e2b55;z-index:1}
+.book::after{content:'';position:absolute;right:-10px;top:5px;bottom:-2px;width:11px;background:repeating-linear-gradient(90deg,#d5d0c4 0px,#f5f1e7 1px,#e1dbce 2px);transform:skewY(-17deg);transform-origin:left;z-index:1}
+.book:hover{transform:rotate(-3deg) rotateY(-8deg) translateY(-5px)}
+.page-behind{top:14%;right:5%;box-shadow:10px 16px 28px #07192166}
 @media(min-width:701px) and (max-width:1000px){.bookstage{min-height:490px;padding:35px 18px 55px}.page-behind{right:3%}}
 @media(max-width:700px){.bookstage{min-height:455px;padding:35px 20px 55px}.page-behind{right:6%;top:14%}}
 </style></head>
