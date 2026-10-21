@@ -1,0 +1,124 @@
+---
+const { slug } = Astro.props as { slug: string };
+
+const productSlugs = new Set([
+  'a-grande-tribulacao',
+  'terceiro-templo-sinal-da-grande-tribulacao',
+  'terceiro-templo-anticristo-neste-ano',
+  'anticristo-quem-e-e-como-identifica-lo-um-guia-completo-para-entender-esta-figura-apocaliptica',
+  'sinais-do-fim',
+  'profecias-biblicas',
+]);
+
+const checkoutUrl = 'https://pay.kiwify.com.br/57MDDc6';
+const shouldRender = productSlugs.has(slug);
+---
+
+{shouldRender && (
+  <aside class="product-cta" aria-label="Conheça o Guia de Estudo das Profecias Bíblicas">
+    <div>
+      <span>Estudo recomendado</span>
+      <h2>Quer aprofundar este tema?</h2>
+      <p>
+        O Guia de Estudo das Profecias Bíblicas organiza tribulação, Anticristo, terceiro templo e a volta de Cristo
+        com referências, contexto e diferentes interpretações cristãs.
+      </p>
+      <small>Material digital em PDF · pagamento único · sem marcar datas</small>
+    </div>
+    <a class="product-cta-link" href={checkoutUrl} target="_blank" rel="nofollow noopener" data-article-slug={slug}>
+      Conhecer o guia
+    </a>
+  </aside>
+)}
+
+<script>
+  document.querySelectorAll<HTMLAnchorElement>('.product-cta-link').forEach((link) => {
+    link.addEventListener('click', () => {
+      const gtag = (window as any).gtag;
+      if (typeof gtag === 'function') {
+        gtag('event', 'product_cta_click', {
+          product_name: 'guia_profecias_biblicas',
+          article_slug: link.dataset.articleSlug || '',
+        });
+      }
+    });
+  });
+</script>
+
+<style>
+  .product-cta {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 22px;
+    align-items: center;
+    margin: 38px 0;
+    padding: 24px 26px;
+    border: 1px solid #d9c18a;
+    border-left: 5px solid #b47b2b;
+    background: #fffaf0;
+  }
+
+  .product-cta span {
+    display: block;
+    margin-bottom: 7px;
+    color: #99651d;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  .product-cta h2 {
+    margin: 0 0 7px;
+    color: var(--olive-deep);
+    font-family: var(--font-display);
+    font-size: 23px;
+    line-height: 1.25;
+  }
+
+  .product-cta p {
+    max-width: 65ch;
+    margin: 0 0 9px;
+    color: #4a4842;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .product-cta small {
+    color: #8a8367;
+    font-family: var(--font-ui);
+    font-size: 11.5px;
+  }
+
+  .product-cta-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 18px;
+    border-radius: 7px;
+    background: var(--olive-deep);
+    color: #fff;
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .product-cta-link:hover { background: var(--olive); }
+
+  @media (max-width: 680px) {
+    .product-cta {
+      grid-template-columns: 1fr;
+      padding: 20px;
+    }
+
+    .product-cta-link {
+      width: 100%;
+      white-space: normal;
+      text-align: center;
+    }
+  }
+</style>

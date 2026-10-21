@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import AdSlot from '../components/AdSlot.astro';
 import AffiliateCTA from '../components/AffiliateCTA.astro';
 import ArticleAnswerBox from '../components/ArticleAnswerBox.astro';
+import ProductCTA from '../components/ProductCTA.astro';
 import LeadMagnet from '../components/LeadMagnet.astro';
 import PriorityStudies from '../components/PriorityStudies.astro';
 import TopicClusterLinks from '../components/TopicClusterLinks.astro';
@@ -582,6 +583,7 @@ const jsonLd = [
         <LeadMagnet postSlug={post.slug} />
         <Fragment set:html={after} />
         <TopicClusterLinks currentSlug={post.slug} />
+        <ProductCTA slug={post.slug} />
         <AffiliateCTA slug={post.slug} categorySlug={post.category_slug || undefined} />
 
         <div class="share-block">
