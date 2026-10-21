@@ -1,0 +1,159 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Distribuição">
+  <div class="topbar">
+    <div>
+      <p class="eyebrow">Fluxo social</p>
+      <h1>Distribuição</h1>
+      <p class="intro">Transforme um artigo publicado em um pacote de rascunhos para as redes sociais.</p>
+    </div>
+  </div>
+
+  <section class="panel generator-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Gerar pacote</h2>
+        <p>Escolha um artigo publicado. O sistema cria textos-base e links com UTM para revisão.</p>
+      </div>
+      <span class="status-pill">Rascunho por padrão</span>
+    </div>
+    <div class="generator-row">
+      <label for="post-select">Artigo publicado</label>
+      <select id="post-select"><option value="">Carregando artigos...</option></select>
+      <button id="generate-package" class="btn-primary" type="button">Gerar pacote</button>
+    </div>
+    <div id="generation-status" class="status" aria-live="polite"></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Pacotes recentes</h2>
+        <p>Revise os textos antes de publicar ou agendar em qualquer rede.</p>
+      </div>
+    </div>
+    <div id="packages" class="packages"><p class="muted">Carregando...</p></div>
+  </section>
+</AdminLayout>
+
+<script>
+  import { createSupabaseBrowserClient } from '../../lib/supabase-browser';
+
+  const supabase = createSupabaseBrowserClient();
+  const siteUrl = 'https://montedasoliveiras.com';
+  const sourceOptions = ['instagram', 'facebook', 'youtube', 'tiktok', 'pinterest'];
+  const postSelect = document.getElementById('post-select') as HTMLSelectElement;
+  const generateButton = document.getElementById('generate-package') as HTMLButtonElement;
+  const statusEl = document.getElementById('generation-status') as HTMLElement;
+  const packagesEl = document.getElementById('packages') as HTMLElement;
+
+  function setStatus(message: string, type = '') {
+    statusEl.textContent = message;
+    statusEl.className = `status ${type}`;
+  }
+
+  function escapeHtml(value: string) {
+    return value.replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char] || char));
+  }
+
+  function buildUtm(slug: string, source: string) {
+    const params = new URLSearchParams({
+      utm_source: source,
+      utm_medium: 'organic',
+      utm_campaign: 'distribuicao_artigos',
+      utm_content: slug,
+    });
+    return `${siteUrl}/${slug}/?${params.toString()}`;
+  }
+
+  function createPackage(post: any) {
+    const title = post.title || 'Novo estudo bíblico';
+    const excerpt = post.excerpt || `Leia o estudo completo sobre ${title}.`;
+    const links = Object.fromEntries(sourceOptions.map((source) => [source, buildUtm(post.slug, source)]));
+    return {
+      article: { title, slug: post.slug, excerpt, url: `${siteUrl}/${post.slug}/` },
+      video: {
+        hook: `${title}: o que a Bíblia realmente ensina?`,
+        script: `Você já se perguntou: ${title}? Neste estudo, analisamos o contexto bíblico, as principais interpretações e o que podemos afirmar com segurança. Leia o artigo completo no Monte das Oliveiras.`,
+        cta: 'Leia o estudo completo no site.',
+      },
+      instagram: { caption: `${title}\n\n${excerpt}\n\nLeia o estudo completo no link do perfil.`, url: links.instagram },
+      facebook: { text: `${title}\n\n${excerpt}\n\nLeia o estudo completo: ${links.facebook}`, url: links.facebook },
+      youtube: { title: title.slice(0, 90), description: `${excerpt}\n\nLeia o estudo completo: ${links.youtube}`, url: links.youtube },
+      tiktok: { caption: `${title} | Estudo bíblico com contexto e esperança.`, url: links.tiktok },
+      pinterest: { title: title.slice(0, 100), description: `${excerpt} Leia o estudo bíblico completo.`, url: links.pinterest },
+      review: { status: 'draft', notes: 'Revisar referências, tom, imagem e CTA antes de publicar.' },
+    };
+  }
+
+  function renderPackages(rows: any[]) {
+    if (!rows.length) {
+      packagesEl.innerHTML = '<p class="muted">Nenhum pacote criado ainda.</p>';
+      return;
+    }
+    packagesEl.innerHTML = rows.map((row) => {
+      const article = row.package?.article || {};
+      return `<article class="package-card">
+        <div><span class="package-status">${escapeHtml(row.status)}</span><h3>${escapeHtml(article.title || 'Artigo')}</h3>
+        <p>${escapeHtml(article.excerpt || '')}</p></div>
+        <div class="package-meta"><span>${new Date(row.updated_at).toLocaleDateString('pt-BR')}</span><a href="/admin/posts/editor?id=${row.post_id}">Editar artigo</a></div>
+      </article>`;
+    }).join('');
+  }
+
+  async function loadPosts() {
+    const { data, error } = await supabase.from('posts').select('id, title, slug, excerpt').eq('status', 'published').order('published_at', { ascending: false }).limit(100);
+    if (error) { postSelect.innerHTML = '<option value="">Não foi possível carregar os artigos</option>'; return; }
+    postSelect.innerHTML = '<option value="">Selecione um artigo</option>' + (data || []).map((post) => `<option value="${post.id}">${escapeHtml(post.title)}</option>`).join('');
+    (window as any).__posts = data || [];
+  }
+
+  async function loadPackages() {
+    const { data, error } = await supabase.from('content_distribution_packages').select('id, post_id, status, package, updated_at').order('updated_at', { ascending: false }).limit(20);
+    if (error) { packagesEl.innerHTML = '<p class="muted">Aplique o schema-content-distribution.sql no Supabase para ativar este fluxo.</p>'; return; }
+    renderPackages(data || []);
+  }
+
+  generateButton.addEventListener('click', async () => {
+    const post = ((window as any).__posts || []).find((item: any) => item.id === postSelect.value);
+    if (!post) { setStatus('Selecione um artigo publicado.', 'error'); return; }
+    generateButton.disabled = true;
+    setStatus('Gerando pacote...');
+    const payload = { post_id: post.id, status: 'draft', package: createPackage(post), updated_at: new Date().toISOString() };
+    const { error } = await supabase.from('content_distribution_packages').upsert(payload, { onConflict: 'post_id' });
+    generateButton.disabled = false;
+    if (error) { setStatus(`Erro: ${error.message}`, 'error'); return; }
+    setStatus('Pacote criado como rascunho. A próxima etapa é revisar o conteúdo.', 'ok');
+    await loadPackages();
+  });
+
+  await Promise.all([loadPosts(), loadPackages()]);
+</script>
+
+<style>
+  .topbar { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 26px; }
+  h1 { margin: 0 0 8px; font-family: var(--font-display); color: var(--olive-deep); font-size: 32px; }
+  h2 { margin: 0 0 6px; color: var(--olive-deep); font-size: 18px; }
+  h3 { margin: 8px 0 5px; color: var(--olive-deep); font-size: 15px; }
+  .eyebrow { margin: 0 0 5px; color: var(--ember); font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+  .intro, .panel-head p { margin: 0; color: #77705F; font-size: 13px; }
+  .panel { margin-bottom: 18px; padding: 20px 22px; border: 1px solid #E9E4D7; border-radius: 8px; background: #fff; }
+  .panel-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 18px; }
+  .status-pill, .package-status { display: inline-flex; padding: 5px 9px; border-radius: 999px; background: #F2EEE3; color: #756A4D; font-size: 11px; font-weight: 700; }
+  .generator-row { display: grid; grid-template-columns: 145px 1fr auto; align-items: center; gap: 10px; }
+  label { color: #5F5E5A; font-size: 12px; font-weight: 700; }
+  select { min-height: 40px; border: 1px solid #DCD6C8; border-radius: 6px; padding: 0 10px; background: #fff; color: var(--ink); font: inherit; }
+  .btn-primary { min-height: 40px; border: 0; border-radius: 6px; padding: 0 15px; background: var(--olive-deep); color: #fff; font: 600 13px var(--font-ui); cursor: pointer; }
+  .btn-primary:disabled { opacity: .55; cursor: wait; }
+  .status { min-height: 18px; margin-top: 10px; color: #77705F; font-size: 12px; }
+  .status.ok { color: #3B7441; } .status.error { color: #A6462A; }
+  .packages { display: grid; gap: 10px; }
+  .package-card { display: flex; justify-content: space-between; gap: 20px; padding: 15px; border: 1px solid #EEEAE0; border-radius: 7px; background: #FAF8F1; }
+  .package-card p { margin: 0; color: #77705F; font-size: 12px; line-height: 1.5; }
+  .package-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; color: #8A8367; font-size: 11px; white-space: nowrap; }
+  .package-meta a { color: var(--olive-deep); font-weight: 700; text-decoration: none; }
+  .muted { color: #8A8367; font-size: 13px; }
+  @media (max-width: 700px) { .generator-row { grid-template-columns: 1fr; } .package-card { display: grid; } .package-meta { align-items: flex-start; } }
+</style>
