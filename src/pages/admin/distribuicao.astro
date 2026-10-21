@@ -48,6 +48,9 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   const generateButton = document.getElementById('generate-package') as HTMLButtonElement;
   const statusEl = document.getElementById('generation-status') as HTMLElement;
   const packagesEl = document.getElementById('packages') as HTMLElement;
+  const packageRows = new Map<string, any>();
+  const packageDialog = document.getElementById('package-dialog') as HTMLDialogElement;
+  document.getElementById('close-package-dialog')?.addEventListener('click', () => packageDialog.close());
 
   function setStatus(message: string, type = '') {
     statusEl.textContent = message;
@@ -93,14 +96,44 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       packagesEl.innerHTML = '<p class="muted">Nenhum pacote criado ainda.</p>';
       return;
     }
+    rows.forEach((row) => packageRows.set(row.id, row));
     packagesEl.innerHTML = rows.map((row) => {
       const article = row.package?.article || {};
       return `<article class="package-card">
         <div><span class="package-status">${escapeHtml(row.status)}</span><h3>${escapeHtml(article.title || 'Artigo')}</h3>
         <p>${escapeHtml(article.excerpt || '')}</p></div>
-        <div class="package-meta"><span>${new Date(row.updated_at).toLocaleDateString('pt-BR')}</span><a href="/admin/posts/editor?id=${row.post_id}">Editar artigo</a></div>
+        <div class="package-meta"><span>${new Date(row.updated_at).toLocaleDateString('pt-BR')}</span><button class="open-package" type="button" data-package-id="${row.id}">Abrir pacote</button><a href="/admin/posts/editor?id=${row.post_id}">Editar artigo</a></div>
       </article>`;
     }).join('');
+    packagesEl.querySelectorAll<HTMLButtonElement>('.open-package').forEach((button) => {
+      button.addEventListener('click', () => openPackage(button.dataset.packageId || ''));
+    });
+  }
+
+  function openPackage(id: string) {
+    const row = packageRows.get(id);
+    if (!row) return;
+    const pack = row.package || {};
+    const blocks = [
+      ['Vídeo', `${pack.video?.hook || ''}\n\n${pack.video?.script || ''}\n\nCTA: ${pack.video?.cta || ''}`],
+      ['Instagram', `${pack.instagram?.caption || ''}\n\n${pack.instagram?.url || ''}`],
+      ['Facebook', `${pack.facebook?.text || ''}`],
+      ['YouTube', `${pack.youtube?.title || ''}\n\n${pack.youtube?.description || ''}`],
+      ['TikTok', `${pack.tiktok?.caption || ''}\n\n${pack.tiktok?.url || ''}`],
+      ['Pinterest', `${pack.pinterest?.title || ''}\n\n${pack.pinterest?.description || ''}\n\n${pack.pinterest?.url || ''}`],
+    ];
+    const content = blocks.map(([label, text]) => `<section class="content-block"><div class="content-block-head"><h3>${label}</h3><button type="button" class="copy-content" data-copy="${encodeURIComponent(text)}">Copiar</button></div><pre>${escapeHtml(text)}</pre></section>`).join('');
+    const dialog = packageDialog;
+    dialog.querySelector('.dialog-title')!.textContent = pack.article?.title || 'Pacote de distribuição';
+    dialog.querySelector('.dialog-content')!.innerHTML = content;
+    dialog.showModal();
+    dialog.querySelectorAll<HTMLButtonElement>('.copy-content').forEach((button) => {
+      button.addEventListener('click', async () => {
+        await navigator.clipboard.writeText(decodeURIComponent(button.dataset.copy || ''));
+        button.textContent = 'Copiado';
+        setTimeout(() => { button.textContent = 'Copiar'; }, 1200);
+      });
+    });
   }
 
   async function loadPosts() {
@@ -132,6 +165,11 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   await Promise.all([loadPosts(), loadPackages()]);
 </script>
 
+<dialog id="package-dialog" class="package-dialog">
+  <div class="dialog-head"><h2 class="dialog-title">Pacote de distribuição</h2><button id="close-package-dialog" type="button" class="close-dialog">Fechar</button></div>
+  <div class="dialog-content"></div>
+</dialog>
+
 <style>
   .topbar { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 26px; }
   h1 { margin: 0 0 8px; font-family: var(--font-display); color: var(--olive-deep); font-size: 32px; }
@@ -154,6 +192,17 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   .package-card p { margin: 0; color: #77705F; font-size: 12px; line-height: 1.5; }
   .package-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; color: #8A8367; font-size: 11px; white-space: nowrap; }
   .package-meta a { color: var(--olive-deep); font-weight: 700; text-decoration: none; }
+  .package-meta button, .copy-content, .close-dialog { border: 0; border-radius: 5px; padding: 7px 10px; background: var(--olive-deep); color: #fff; font: 600 11px var(--font-ui); cursor: pointer; }
+  .package-meta button { background: #EEE8D7; color: var(--olive-deep); }
+  .package-dialog { width: min(760px, calc(100vw - 32px)); max-height: 88vh; padding: 0; border: 1px solid #DCD6C8; border-radius: 8px; color: var(--ink); }
+  .package-dialog::backdrop { background: rgba(21, 46, 58, .48); }
+  .dialog-head { position: sticky; top: 0; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 20px; background: #fff; border-bottom: 1px solid #EEEAE0; }
+  .dialog-head h2 { margin: 0; font-size: 18px; }
+  .dialog-content { display: grid; gap: 14px; padding: 18px 20px 24px; }
+  .content-block { border: 1px solid #E9E4D7; border-radius: 6px; background: #FAF8F1; }
+  .content-block-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 12px; border-bottom: 1px solid #E9E4D7; }
+  .content-block-head h3 { margin: 0; font-size: 14px; }
+  .content-block pre { overflow-x: auto; margin: 0; padding: 12px; white-space: pre-wrap; font: 12px/1.55 var(--font-ui); }
   .muted { color: #8A8367; font-size: 13px; }
   @media (max-width: 700px) { .generator-row { grid-template-columns: 1fr; } .package-card { display: grid; } .package-meta { align-items: flex-start; } }
 </style>
