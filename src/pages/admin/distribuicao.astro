@@ -50,6 +50,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   const packagesEl = document.getElementById('packages') as HTMLElement;
   const packageRows = new Map<string, any>();
   const packageDialog = document.getElementById('package-dialog') as HTMLDialogElement;
+  let activePackageId = '';
   document.getElementById('close-package-dialog')?.addEventListener('click', () => packageDialog.close());
 
   function setStatus(message: string, type = '') {
@@ -113,28 +114,52 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   function openPackage(id: string) {
     const row = packageRows.get(id);
     if (!row) return;
+    activePackageId = id;
     const pack = row.package || {};
     const blocks = [
-      ['Vídeo', `${pack.video?.hook || ''}\n\n${pack.video?.script || ''}\n\nCTA: ${pack.video?.cta || ''}`],
-      ['Instagram', `${pack.instagram?.caption || ''}\n\n${pack.instagram?.url || ''}`],
-      ['Facebook', `${pack.facebook?.text || ''}`],
-      ['YouTube', `${pack.youtube?.title || ''}\n\n${pack.youtube?.description || ''}`],
-      ['TikTok', `${pack.tiktok?.caption || ''}\n\n${pack.tiktok?.url || ''}`],
-      ['Pinterest', `${pack.pinterest?.title || ''}\n\n${pack.pinterest?.description || ''}\n\n${pack.pinterest?.url || ''}`],
+      ['Vídeo', 'video.script', pack.video?.script || ''],
+      ['Instagram', 'instagram.caption', pack.instagram?.caption || ''],
+      ['Facebook', 'facebook.text', pack.facebook?.text || ''],
+      ['YouTube', 'youtube.description', pack.youtube?.description || ''],
+      ['TikTok', 'tiktok.caption', pack.tiktok?.caption || ''],
+      ['Pinterest', 'pinterest.description', pack.pinterest?.description || ''],
     ];
-    const content = blocks.map(([label, text]) => `<section class="content-block"><div class="content-block-head"><h3>${label}</h3><button type="button" class="copy-content" data-copy="${encodeURIComponent(text)}">Copiar</button></div><pre>${escapeHtml(text)}</pre></section>`).join('');
+    const content = blocks.map(([label, field, text]) => `<section class="content-block"><div class="content-block-head"><h3>${label}</h3><button type="button" class="copy-content" data-copy-field="${field}">Copiar</button></div><textarea class="package-field" data-package-field="${field}" rows="6">${escapeHtml(text)}</textarea></section>`).join('');
     const dialog = packageDialog;
     dialog.querySelector('.dialog-title')!.textContent = pack.article?.title || 'Pacote de distribuição';
     dialog.querySelector('.dialog-content')!.innerHTML = content;
     dialog.showModal();
     dialog.querySelectorAll<HTMLButtonElement>('.copy-content').forEach((button) => {
       button.addEventListener('click', async () => {
-        await navigator.clipboard.writeText(decodeURIComponent(button.dataset.copy || ''));
+        const field = dialog.querySelector<HTMLTextAreaElement>(`[data-package-field="${button.dataset.copyField}"]`);
+        await navigator.clipboard.writeText(field?.value || '');
         button.textContent = 'Copiado';
         setTimeout(() => { button.textContent = 'Copiar'; }, 1200);
       });
     });
   }
+
+  async function savePackage(status?: string) {
+    const row = packageRows.get(activePackageId);
+    if (!row) return;
+    const nextPackage = structuredClone(row.package || {});
+    packageDialog.querySelectorAll<HTMLTextAreaElement>('[data-package-field]').forEach((field) => {
+      const [group, key] = (field.dataset.packageField || '').split('.');
+      if (group && key) nextPackage[group] = { ...(nextPackage[group] || {}), [key]: field.value };
+    });
+    const update: any = { package: nextPackage, updated_at: new Date().toISOString() };
+    if (status) update.status = status;
+    const { error } = await supabase.from('content_distribution_packages').update(update).eq('id', activePackageId);
+    if (error) { setStatus(`Erro ao salvar: ${error.message}`, 'error'); return; }
+    row.package = nextPackage;
+    if (status) row.status = status;
+    setStatus(status === 'approved' ? 'Pacote aprovado e salvo.' : 'Alterações salvas.', 'ok');
+    packageDialog.close();
+    await loadPackages();
+  }
+
+  document.getElementById('save-package')?.addEventListener('click', () => savePackage());
+  document.getElementById('approve-package')?.addEventListener('click', () => savePackage('approved'));
 
   async function loadPosts() {
     const { data, error } = await supabase.from('posts').select('id, title, slug, excerpt').eq('status', 'published').order('published_at', { ascending: false }).limit(100);
@@ -168,6 +193,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 <dialog id="package-dialog" class="package-dialog">
   <div class="dialog-head"><h2 class="dialog-title">Pacote de distribuição</h2><button id="close-package-dialog" type="button" class="close-dialog">Fechar</button></div>
   <div class="dialog-content"></div>
+  <div class="dialog-actions"><button id="save-package" type="button" class="btn-secondary">Salvar alterações</button><button id="approve-package" type="button" class="btn-primary">Aprovar pacote</button></div>
 </dialog>
 
 <style>
@@ -202,7 +228,9 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   .content-block { border: 1px solid #E9E4D7; border-radius: 6px; background: #FAF8F1; }
   .content-block-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 12px; border-bottom: 1px solid #E9E4D7; }
   .content-block-head h3 { margin: 0; font-size: 14px; }
-  .content-block pre { overflow-x: auto; margin: 0; padding: 12px; white-space: pre-wrap; font: 12px/1.55 var(--font-ui); }
+  .package-field { display: block; width: calc(100% - 24px); margin: 12px; box-sizing: border-box; min-height: 92px; resize: vertical; border: 1px solid #DCD6C8; border-radius: 5px; padding: 9px; color: var(--ink); background: #fff; font: 12px/1.55 var(--font-ui); }
+  .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #EEEAE0; background: #fff; }
+  .btn-secondary { min-height: 40px; border: 1px solid #DCD6C8; border-radius: 6px; padding: 0 13px; background: #fff; color: var(--olive-deep); font: 600 12px var(--font-ui); cursor: pointer; }
   .muted { color: #8A8367; font-size: 13px; }
   @media (max-width: 700px) { .generator-row { grid-template-columns: 1fr; } .package-card { display: grid; } .package-meta { align-items: flex-start; } }
 </style>
