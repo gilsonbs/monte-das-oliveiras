@@ -10,7 +10,8 @@ const productSlugs = new Set([
   'profecias-biblicas',
 ]);
 
-const checkoutUrl = 'https://pay.kiwify.com.br/57MDDc6';
+const salesPageUrl = 'https://www.montedasoliveiras.com/guia-profecias/';
+const salesPageHref = `${salesPageUrl}?utm_source=artigo&utm_medium=conteudo&utm_campaign=guia_profecias&utm_content=${encodeURIComponent(slug)}`;
 const shouldRender = productSlugs.has(slug);
 ---
 
@@ -25,7 +26,7 @@ const shouldRender = productSlugs.has(slug);
       </p>
       <small>Material digital em PDF · pagamento único · sem marcar datas</small>
     </div>
-    <a class="product-cta-link" href={checkoutUrl} target="_blank" rel="nofollow noopener" data-article-slug={slug}>
+    <a class="product-cta-link" href={salesPageHref} data-article-slug={slug}>
       Conhecer o guia
     </a>
   </aside>
@@ -36,7 +37,7 @@ const shouldRender = productSlugs.has(slug);
     link.addEventListener('click', () => {
       const gtag = (window as any).gtag;
       if (typeof gtag === 'function') {
-        gtag('event', 'product_cta_click', {
+        gtag('event', 'product_sales_page_click', {
           product_name: 'guia_profecias_biblicas',
           article_slug: link.dataset.articleSlug || '',
         });
