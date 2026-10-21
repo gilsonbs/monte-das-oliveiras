@@ -43,7 +43,6 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
   const supabase = createSupabaseBrowserClient();
   const siteUrl = 'https://montedasoliveiras.com';
-  const sourceOptions = ['instagram', 'facebook', 'youtube', 'tiktok', 'pinterest'];
   const postSelect = document.getElementById('post-select') as HTMLSelectElement;
   const generateButton = document.getElementById('generate-package') as HTMLButtonElement;
   const statusEl = document.getElementById('generation-status') as HTMLElement;
@@ -61,34 +60,13 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     return value.replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char] || char));
   }
 
-  function buildUtm(slug: string, source: string) {
-    const params = new URLSearchParams({
-      utm_source: source,
-      utm_medium: 'organic',
-      utm_campaign: 'distribuicao_artigos',
-      utm_content: slug,
+  async function generatePackage(post: any) {
+    const articleUrl = `${siteUrl}/${post.slug}/`;
+    const { data, error } = await supabase.functions.invoke('generate-social-package', {
+      body: { title: post.title, excerpt: post.excerpt, slug: post.slug, articleUrl },
     });
-    return `${siteUrl}/${slug}/?${params.toString()}`;
-  }
-
-  function createPackage(post: any) {
-    const title = post.title || 'Novo estudo bíblico';
-    const excerpt = post.excerpt || `Leia o estudo completo sobre ${title}.`;
-    const links = Object.fromEntries(sourceOptions.map((source) => [source, buildUtm(post.slug, source)]));
-    return {
-      article: { title, slug: post.slug, excerpt, url: `${siteUrl}/${post.slug}/` },
-      video: {
-        hook: `${title}: o que a Bíblia realmente ensina?`,
-        script: `Você já se perguntou: ${title}? Neste estudo, analisamos o contexto bíblico, as principais interpretações e o que podemos afirmar com segurança. Leia o artigo completo no Monte das Oliveiras.`,
-        cta: 'Leia o estudo completo no site.',
-      },
-      instagram: { caption: `${title}\n\n${excerpt}\n\nLeia o estudo completo no link do perfil.`, url: links.instagram },
-      facebook: { text: `${title}\n\n${excerpt}\n\nLeia o estudo completo: ${links.facebook}`, url: links.facebook },
-      youtube: { title: title.slice(0, 90), description: `${excerpt}\n\nLeia o estudo completo: ${links.youtube}`, url: links.youtube },
-      tiktok: { caption: `${title} | Estudo bíblico com contexto e esperança.`, url: links.tiktok },
-      pinterest: { title: title.slice(0, 100), description: `${excerpt} Leia o estudo bíblico completo.`, url: links.pinterest },
-      review: { status: 'draft', notes: 'Revisar referências, tom, imagem e CTA antes de publicar.' },
-    };
+    if (error) throw error;
+    return data.package;
   }
 
   function renderPackages(rows: any[]) {
@@ -153,8 +131,16 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     const post = ((window as any).__posts || []).find((item: any) => item.id === postSelect.value);
     if (!post) { setStatus('Selecione um artigo publicado.', 'error'); return; }
     generateButton.disabled = true;
-    setStatus('Gerando pacote...');
-    const payload = { post_id: post.id, status: 'draft', package: createPackage(post), updated_at: new Date().toISOString() };
+    setStatus('Gerando pacote com Gemini...');
+    let generatedPackage;
+    try {
+      generatedPackage = await generatePackage(post);
+    } catch (error: any) {
+      generateButton.disabled = false;
+      setStatus(`Erro ao gerar com Gemini: ${error.message || 'verifique a chave e o deploy da função.'}`, 'error');
+      return;
+    }
+    const payload = { post_id: post.id, status: 'draft', package: generatedPackage, updated_at: new Date().toISOString() };
     const { error } = await supabase.from('content_distribution_packages').upsert(payload, { onConflict: 'post_id' });
     generateButton.disabled = false;
     if (error) { setStatus(`Erro: ${error.message}`, 'error'); return; }
