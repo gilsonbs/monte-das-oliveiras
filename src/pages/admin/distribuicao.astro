@@ -36,6 +36,18 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     </div>
     <div id="packages" class="packages"><p class="muted">Carregando...</p></div>
   </section>
+
+  <section class="panel">
+    <div class="panel-head"><div><h2>Fila de publicação</h2><p>Agende os pacotes revisados para cada rede.</p></div><span class="status-pill">Publicação assistida</span></div>
+    <div class="queue-form">
+      <select id="queue-package"><option value="">Pacote</option></select>
+      <select id="queue-platform"><option value="instagram">Instagram</option><option value="facebook">Facebook</option><option value="youtube">YouTube</option><option value="tiktok">TikTok</option><option value="pinterest">Pinterest</option></select>
+      <input id="queue-date" type="datetime-local" aria-label="Data e hora da publicação" />
+      <button id="schedule-package" class="btn-primary" type="button">Agendar</button>
+    </div>
+    <div id="queue-status" class="status" aria-live="polite"></div>
+    <div id="queue-list" class="queue-list"><p class="muted">Carregando fila...</p></div>
+  </section>
 </AdminLayout>
 
 <script>
@@ -49,6 +61,12 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   const statusEl = document.getElementById('generation-status') as HTMLElement;
   const packagesEl = document.getElementById('packages') as HTMLElement;
   const packageRows = new Map<string, any>();
+  const queuePackage = document.getElementById('queue-package') as HTMLSelectElement;
+  const queuePlatform = document.getElementById('queue-platform') as HTMLSelectElement;
+  const queueDate = document.getElementById('queue-date') as HTMLInputElement;
+  const scheduleButton = document.getElementById('schedule-package') as HTMLButtonElement;
+  const queueStatus = document.getElementById('queue-status') as HTMLElement;
+  const queueList = document.getElementById('queue-list') as HTMLElement;
   const packageDialog = document.getElementById('package-dialog') as HTMLDialogElement;
   let activePackageId = '';
   document.getElementById('close-package-dialog')?.addEventListener('click', () => packageDialog.close());
@@ -56,6 +74,11 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   function setStatus(message: string, type = '') {
     statusEl.textContent = message;
     statusEl.className = `status ${type}`;
+  }
+
+  function setQueueStatus(message: string, type = '') {
+    queueStatus.textContent = message;
+    queueStatus.className = `status ${type}`;
   }
 
   function escapeHtml(value: string) {
@@ -98,6 +121,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       return;
     }
     rows.forEach((row) => packageRows.set(row.id, row));
+    queuePackage.innerHTML = '<option value="">Pacote</option>' + rows.map((row) => `<option value="${row.id}">${escapeHtml(row.package?.article?.title || 'Artigo')}</option>`).join('');
     packagesEl.innerHTML = rows.map((row) => {
       const article = row.package?.article || {};
       return `<article class="package-card">
@@ -174,6 +198,27 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     renderPackages(data || []);
   }
 
+  async function loadQueue() {
+    const { data, error } = await supabase.from('content_publication_queue').select('id, package_id, platform, scheduled_for, status').order('scheduled_for', { ascending: true }).limit(50);
+    if (error) { queueList.innerHTML = '<p class="muted">Aplique o schema-content-publication-queue.sql para ativar a fila.</p>'; return; }
+    if (!data?.length) { queueList.innerHTML = '<p class="muted">Nenhuma publicação agendada.</p>'; return; }
+    queueList.innerHTML = data.map((item) => `<div class="queue-item"><strong>${escapeHtml(item.platform)}</strong><span>${new Date(item.scheduled_for).toLocaleString('pt-BR')}</span><span class="package-status">${escapeHtml(item.status)}</span></div>`).join('');
+  }
+
+  scheduleButton.addEventListener('click', async () => {
+    const packageId = queuePackage.value;
+    if (!packageId || !queueDate.value) { setQueueStatus('Escolha um pacote e uma data.', 'error'); return; }
+    const row = packageRows.get(packageId);
+    if (!row || row.status !== 'approved') { setQueueStatus('Aprove o pacote antes de agendá-lo.', 'error'); return; }
+    scheduleButton.disabled = true;
+    const { error } = await supabase.from('content_publication_queue').insert({ package_id: packageId, platform: queuePlatform.value, scheduled_for: new Date(queueDate.value).toISOString() });
+    scheduleButton.disabled = false;
+    if (error) { setQueueStatus(`Erro ao agendar: ${error.message}`, 'error'); return; }
+    setQueueStatus('Publicação adicionada à fila.', 'ok');
+    queueDate.value = '';
+    await loadQueue();
+  });
+
   generateButton.addEventListener('click', async () => {
     const post = ((window as any).__posts || []).find((item: any) => item.id === postSelect.value);
     if (!post) { setStatus('Selecione um artigo publicado.', 'error'); return; }
@@ -187,7 +232,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     await loadPackages();
   });
 
-  await Promise.all([loadPosts(), loadPackages()]);
+  await Promise.all([loadPosts(), loadPackages(), loadQueue()]);
 </script>
 
 <dialog id="package-dialog" class="package-dialog">
@@ -232,5 +277,10 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #EEEAE0; background: #fff; }
   .btn-secondary { min-height: 40px; border: 1px solid #DCD6C8; border-radius: 6px; padding: 0 13px; background: #fff; color: var(--olive-deep); font: 600 12px var(--font-ui); cursor: pointer; }
   .muted { color: #8A8367; font-size: 13px; }
-  @media (max-width: 700px) { .generator-row { grid-template-columns: 1fr; } .package-card { display: grid; } .package-meta { align-items: flex-start; } }
+  .queue-form { display: grid; grid-template-columns: 1.5fr .8fr 1fr auto; gap: 10px; }
+  .queue-form input { min-height: 40px; border: 1px solid #DCD6C8; border-radius: 6px; padding: 0 10px; color: var(--ink); font: inherit; }
+  .queue-list { display: grid; gap: 8px; margin-top: 14px; }
+  .queue-item { display: grid; grid-template-columns: 1fr 1.3fr auto; gap: 12px; align-items: center; padding: 11px 12px; border: 1px solid #EEEAE0; border-radius: 6px; background: #FAF8F1; color: #77705F; font-size: 12px; }
+  .queue-item strong { color: var(--olive-deep); text-transform: capitalize; }
+  @media (max-width: 700px) { .generator-row, .queue-form { grid-template-columns: 1fr; } .package-card { display: grid; } .package-meta { align-items: flex-start; } .queue-item { grid-template-columns: 1fr; gap: 5px; } }
 </style>
