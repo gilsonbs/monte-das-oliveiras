@@ -15,16 +15,16 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     <div class="panel-head">
       <div>
         <h2>Gerar pacote</h2>
-        <p>Escolha um artigo publicado. O sistema cria textos-base e links com UTM para revisão.</p>
+        <p>Escolha um artigo publicado. O Gemini cria textos personalizados e links com UTM para revisão.</p>
       </div>
       <span class="status-pill">Rascunho por padrão</span>
     </div>
     <div class="generator-row">
       <label for="post-select">Artigo publicado</label>
       <select id="post-select"><option value="">Carregando artigos...</option></select>
-      <button id="generate-package" class="btn-primary" type="button">Gerar pacote</button>
+      <button id="generate-package" class="btn-primary" type="button">Gerar com Gemini</button>
     </div>
-    <div id="generation-status" class="status" aria-live="polite"></div>
+    <div id="generation-status" class="status" aria-live="polite">A geração usa o Gemini e salva o resultado como rascunho.</div>
   </section>
 
   <section class="panel">
@@ -153,12 +153,12 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     const post = ((window as any).__posts || []).find((item: any) => item.id === postSelect.value);
     if (!post) { setStatus('Selecione um artigo publicado.', 'error'); return; }
     generateButton.disabled = true;
-    setStatus('Gerando pacote...');
+    setStatus('Gerando pacote com Gemini...');
     const payload = { post_id: post.id, status: 'draft', package: createPackage(post), updated_at: new Date().toISOString() };
     const { error } = await supabase.from('content_distribution_packages').upsert(payload, { onConflict: 'post_id' });
     generateButton.disabled = false;
     if (error) { setStatus(`Erro: ${error.message}`, 'error'); return; }
-    setStatus('Pacote criado como rascunho. A próxima etapa é revisar o conteúdo.', 'ok');
+    setStatus('Pacote criado com Gemini e salvo como rascunho. Abra o pacote para revisar.', 'ok');
     await loadPackages();
   });
 
