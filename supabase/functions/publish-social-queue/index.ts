@@ -34,7 +34,7 @@ async function publishInstagram(item: any) {
   const caption = pack.instagram?.caption;
   if (!slug || !caption) throw new Error('Pacote sem slug ou legenda do Instagram');
 
-  const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/social-cards/${encodeURIComponent(slug)}.jpg`;
+  const imageUrl = pack.article?.image_url || `${SUPABASE_URL}/storage/v1/object/public/social-cards/${encodeURIComponent(slug)}.jpg`;
   const container = await instagramRequest(`/${INSTAGRAM_USER_ID}/media`, new URLSearchParams({
     image_url: imageUrl,
     caption,

@@ -96,17 +96,18 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   }
 
   function createPackage(post: any) {
-    const title = post.title || 'Novo estudo bíblico';
-    const excerpt = post.excerpt || `Leia o estudo completo sobre ${title}.`;
+    const title = post.title || 'Estudo bíblico';
+    const excerpt = post.excerpt || `Entenda o contexto bíblico de ${title}.`;
+    const imageUrl = post.cover_url || `${import.meta.env.PUBLIC_SUPABASE_URL}/storage/v1/object/public/social-cards/${encodeURIComponent(post.slug)}.jpg`;
     const links = Object.fromEntries(sourceOptions.map((source) => [source, buildUtm(post.slug, source)]));
     return {
-      article: { title, slug: post.slug, excerpt, url: `${siteUrl}/${post.slug}/` },
+      article: { title, slug: post.slug, excerpt, url: `${siteUrl}/${post.slug}/`, image_url: imageUrl },
       video: {
-        hook: `${title}: o que a Bíblia realmente ensina?`,
-        script: `Você já se perguntou: ${title}? Neste estudo, analisamos o contexto bíblico, as principais interpretações e o que podemos afirmar com segurança. Leia o artigo completo no Monte das Oliveiras.`,
+        hook: `O que a Bíblia revela sobre ${title}?`,
+        script: `${title}. Neste estudo, analisamos o contexto bíblico, as principais interpretações e o que podemos afirmar com segurança. Leia o artigo completo no Monte das Oliveiras.`,
         cta: 'Leia o estudo completo no site.',
       },
-      instagram: { caption: `${title}\n\n${excerpt}\n\nLeia o estudo completo no link do perfil.`, url: links.instagram },
+      instagram: { caption: `${title}\n\n${excerpt}\n\nO que esse tema revela para quem deseja compreender a Bíblia com mais contexto?\n\nLeia o estudo completo no link do perfil.`, url: links.instagram, image_url: imageUrl },
       facebook: { text: `${title}\n\n${excerpt}\n\nLeia o estudo completo: ${links.facebook}`, url: links.facebook },
       youtube: { title: title.slice(0, 90), description: `${excerpt}\n\nLeia o estudo completo: ${links.youtube}`, url: links.youtube },
       tiktok: { caption: `${title} | Estudo bíblico com contexto e esperança.`, url: links.tiktok },
@@ -186,7 +187,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   document.getElementById('approve-package')?.addEventListener('click', () => savePackage('approved'));
 
   async function loadPosts() {
-    const { data, error } = await supabase.from('posts').select('id, title, slug, excerpt').eq('status', 'published').order('published_at', { ascending: false }).limit(100);
+    const { data, error } = await supabase.from('posts').select('id, title, slug, excerpt, cover_url').eq('status', 'published').order('published_at', { ascending: false }).limit(100);
     if (error) { postSelect.innerHTML = '<option value="">Não foi possível carregar os artigos</option>'; return; }
     postSelect.innerHTML = '<option value="">Selecione um artigo</option>' + (data || []).map((post) => `<option value="${post.id}">${escapeHtml(post.title)}</option>`).join('');
     (window as any).__posts = data || [];
