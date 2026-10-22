@@ -45,7 +45,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     6: { name: 'Lado 5', desc: 'Sidebar direito — posição 5' },
   };
 
-  type SlotPost = { id: string; title: string; slug: string; featured_order: number | null };
+  type SlotPost = { id: string; title: string; slug: string; cover_url?: string | null; featured_order: number | null };
 
   let currentSlotPos = 0;
 
@@ -61,7 +61,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   async function loadSlots() {
     const { data, error } = await supabase
       .from('posts')
-      .select('id, title, slug, featured_order')
+      .select('id, title, slug, cover_url, featured_order')
       .eq('is_featured', true)
       .not('featured_order', 'is', null)
       .order('featured_order', { ascending: true });
@@ -120,6 +120,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         <div class="slot-desc">${desc}</div>
         ${filled
           ? `<div class="slot-post">
+               ${post!.cover_url ? `<img class="slot-cover" src="${escapeHtml(post!.cover_url)}" alt="" loading="lazy" />` : '<div class="slot-cover slot-cover-empty" aria-hidden="true"></div>'}
+               <div class="slot-post-copy">
                <div class="slot-post-title">${escapeHtml(post!.title)}</div>
                <div class="slot-post-slug">/${escapeHtml(post!.slug)}/</div>
                <div class="slot-actions">
@@ -129,8 +131,9 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                  <button class="btn-slot btn-change" data-action="assign">Trocar</button>
                  <button class="btn-slot btn-remove" data-action="remove">Remover</button>
                </div>
+               </div>
              </div>`
-          : `<div class="slot-empty-msg">Nenhum post atribuído</div>
+          : `<div class="empty-state"><span class="empty-icon">+</span><div><strong>Nenhuma história escolhida</strong><span class="slot-empty-msg">Escolha um post publicado para preencher esta posição.</span></div></div>
              <button class="btn-slot btn-assign" data-action="assign">Escolher post</button>`
         }
       </div>
@@ -268,22 +271,23 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   .topbar-actions { display: flex; gap: 10px; flex-wrap: wrap; }
   .btn { font-family: var(--font-ui); font-size: 13px; font-weight: 500; padding: 9px 14px; border-radius: 6px; border: 1px solid #E4E0D3; background: #fff; cursor: pointer; text-decoration: none; color: var(--ink); }
   .featured-summary {
-    max-width: 900px; border: 1px solid #E4E0D3; border-radius: 8px; background: #FAF8F1; padding: 12px 14px;
-    display: flex; gap: 10px; align-items: center; margin-bottom: 16px; color: #5F5E5A; font-size: 13px;
+    max-width: 900px; border: 1px solid #E4E0D3; border-radius: 8px; background: linear-gradient(135deg, #FAF8F1, #F4F1E7); padding: 14px 16px;
+    display: flex; gap: 12px; align-items: center; margin-bottom: 18px; color: #5F5E5A; font-size: 13px;
   }
   .featured-summary strong { color: var(--olive-deep); }
 
   /* layout dos slots */
-  .slots-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; max-width: 900px; }
+  .slots-layout { display: grid; grid-template-columns: 1.45fr 1fr; gap: 18px; max-width: 980px; }
   .side-slots { display: flex; flex-direction: column; gap: 12px; }
   .loading-msg { color: #8A8367; font-size: 13px; }
 
   /* slot base */
   .slot {
-    background: #fff; border: 2px solid #E4E0D3; border-radius: 8px; padding: 18px 20px;
+    background: #fff; border: 1px solid #E4E0D3; border-radius: 10px; padding: 18px 20px;
     display: flex; flex-direction: column; gap: 8px;
+    box-shadow: 0 3px 12px rgba(63, 56, 38, .04);
   }
-  .slot.filled { border-color: var(--olive, #59613A); }
+  .slot.filled { border-color: #AEB98B; }
   .slot.empty  { border-style: dashed; }
 
   .slot-header { display: flex; align-items: baseline; gap: 10px; }
@@ -293,19 +297,26 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
   .hero-slot .slot-name { font-size: 18px; }
 
-  .slot-post-title { font-size: 13.5px; font-weight: 500; line-height: 1.4; margin-bottom: 3px; }
+  .slot-post { display: grid; grid-template-columns: 76px 1fr; gap: 12px; align-items: start; margin-top: 4px; }
+  .slot-cover { width: 76px; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 7px; background: #E9E5D8; }
+  .slot-cover-empty { background: linear-gradient(145deg, #D9DEC5, #7A8455); }
+  .slot-post-copy { min-width: 0; }
+  .slot-post-title { font-size: 13.5px; font-weight: 600; line-height: 1.4; margin-bottom: 3px; color: #30352A; }
   .slot-post-slug  { font-size: 11px; color: #8A8367; font-family: var(--font-ui); margin-bottom: 10px; }
 
-  .slot-empty-msg { font-size: 12.5px; color: #B0AB96; font-style: italic; }
+  .slot-empty-msg { display: block; font-size: 12px; color: #8A8367; line-height: 1.4; margin-top: 3px; }
+  .empty-state { display: flex; gap: 10px; align-items: center; padding: 7px 0 4px; }
+  .empty-state strong { display: block; color: #5F5E5A; font-size: 13px; }
+  .empty-icon { display: grid; place-items: center; width: 28px; height: 28px; border: 1px dashed #B9B39E; border-radius: 50%; color: #8A8367; font-size: 18px; }
 
   .slot-actions { display: flex; gap: 8px; flex-wrap: wrap; }
   .btn-slot {
-    font-family: var(--font-ui); font-size: 12px; font-weight: 500; padding: 6px 14px;
+    font-family: var(--font-ui); font-size: 12px; font-weight: 600; padding: 6px 11px;
     border-radius: 6px; cursor: pointer; border: 1px solid #E4E0D3; background: #fff; text-decoration: none; color: #4F4A3E;
   }
   .btn-slot:disabled { opacity: .45; cursor: not-allowed; }
   .btn-assign { background: var(--olive, #59613A); color: #fff; border-color: var(--olive, #59613A); align-self: flex-start; }
-  .btn-change { color: var(--olive-deep, #414A29); }
+  .btn-change { color: var(--olive-deep, #414A29); background: #FBFAF6; }
   .btn-view { color: #5B4A1C; background: #FAF8F1; }
   .btn-remove { color: #A6462A; }
 
@@ -340,5 +351,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     .topbar-actions { margin-top: 14px; }
     .featured-summary { display: block; }
     .slots-layout { grid-template-columns: 1fr; }
+    .slot-post { grid-template-columns: 64px 1fr; }
+    .slot-cover { width: 64px; }
   }
 </style>
