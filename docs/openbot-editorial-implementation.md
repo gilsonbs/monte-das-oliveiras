@@ -47,7 +47,9 @@ Uma declaração do modelo não prova, sozinha, que o texto bíblico está corre
 
 O OpenBot Desktop escuta somente em `127.0.0.1` e sua API exige autenticação local. Uma Edge Function não consegue chamar esse endereço. Por isso, quando `OPENBOT_EDITORIAL_WEBHOOK_URL` não estiver configurada, `openbot-editorial` cria o trabalho com estado `queued` e retorna HTTP 202.
 
-O leitor local está em `scripts/openbot-editorial-worker.mjs`. Ele chama a função
+O configurador e o leitor local estão em `scripts/configure-openbot-supabase.ps1`
+e `scripts/openbot-editorial-worker.ps1`. A sessão é protegida com DPAPI para o
+usuário atual do Windows e fica fora do repositório. O leitor chama a função
 `claim_next_editorial_job`, que reserva atomicamente uma única pauta do usuário
 autenticado. Pautas urgentes vêm antes das altas e normais. Dois executores não
 conseguem reservar o mesmo trabalho.
@@ -69,6 +71,9 @@ Comandos disponíveis:
 npm run openbot:check
 npm run openbot:next
 ```
+
+Use `npm run openbot:configure` para criar ou renovar a configuração local.
+`openbot:check` apenas valida a sessão; ele não reserva nenhuma pauta.
 
 O conector local precisa:
 
