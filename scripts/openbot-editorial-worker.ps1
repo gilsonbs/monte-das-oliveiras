@@ -1,4 +1,7 @@
-param([switch]$Check)
+param(
+  [switch]$Check,
+  [ValidateSet('production', 'test')][string]$Profile = 'production'
+)
 
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Security
@@ -23,7 +26,8 @@ function Protect-LocalData([string]$Value) {
   [Convert]::ToBase64String($protected)
 }
 
-$configPath = Join-Path $env:LOCALAPPDATA 'MonteDasOliveiras\openbot-supabase.session'
+$sessionFile = if ($Profile -eq 'test') { 'openbot-supabase.test.session' } else { 'openbot-supabase.session' }
+$configPath = Join-Path $env:LOCALAPPDATA "MonteDasOliveiras\$sessionFile"
 if (-not (Test-Path -LiteralPath $configPath)) {
   throw 'Sessão local ausente. Execute npm run openbot:configure.'
 }
