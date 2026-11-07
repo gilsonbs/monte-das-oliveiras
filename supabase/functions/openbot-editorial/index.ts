@@ -38,21 +38,52 @@ Deno.serve(async (req) => {
     ? { type: 'topic', topic: parsed.value.topic }
     : { type: 'youtube', url: parsed.value.youtubeUrl };
 
+  const activeStatuses = ['incomplete', 'pending', 'reserved', 'researching', 'writing_article', 'awaiting_review', 'article_approved', 'preparing_carousel', 'awaiting_social_approval', 'ready_to_publish', 'paused', 'error'];
+  const { data: duplicate } = await admin.from('editorial_topics')
+    .select('id, status')
+    .eq('requested_by', user.id)
+    .eq('source_fingerprint', parsed.value.sourceFingerprint)
+    .in('status', activeStatuses)
+    .maybeSingle();
+  if (duplicate) return json(req, { error: 'Esta pauta já está ativa.', topic_id: duplicate.id, status: duplicate.status }, 409);
+
+  const { data: editorialTopic, error: topicError } = await admin.from('editorial_topics').insert({
+    input_type: parsed.value.sourceType,
+    topic: parsed.value.topic || null,
+    youtube_url: parsed.value.youtubeUrl || null,
+    seo_keyword: parsed.value.seoKeyword,
+    category_slug: parsed.value.categorySlug || null,
+    priority: parsed.value.priority,
+    requested_execution: parsed.value.executionMode,
+    scheduled_for: parsed.value.scheduledFor || null,
+    status: 'pending',
+    current_agent: 'orchestrator',
+    source_fingerprint: parsed.value.sourceFingerprint,
+    requested_by: user.id,
+  }).select('id').single();
+  if (topicError) return json(req, { error: topicError.message }, 500);
+
   const { data: job, error: jobError } = await admin.from('editorial_automation_jobs').insert({
+    topic_id: editorialTopic.id,
     source_type: parsed.value.sourceType,
     topic: parsed.value.topic || null,
     youtube_url: parsed.value.youtubeUrl || null,
     seo_keyword: parsed.value.seoKeyword,
     status: OPENBOT_URL && OPENBOT_TOKEN ? 'processing' : 'queued',
-    assigned_agent: 'editorial',
+    assigned_agent: 'orchestrator',
+    priority: parsed.value.priority,
+    requested_execution: parsed.value.executionMode,
     requested_by: user.id,
   }).select('id').single();
-  if (jobError) return json(req, { error: jobError.message }, 500);
+  if (jobError) {
+    await admin.from('editorial_topics').delete().eq('id', editorialTopic.id);
+    return json(req, { error: jobError.message }, 500);
+  }
 
   // O OpenBot Desktop só escuta em localhost. Sem um endpoint remoto explícito,
   // a função mantém o trabalho na fila para um conector local autenticado.
   if (!OPENBOT_URL || !OPENBOT_TOKEN) {
-    return json(req, { ok: true, job_id: job.id, status: 'queued' }, 202);
+    return json(req, { ok: true, topic_id: editorialTopic.id, job_id: job.id, status: 'queued' }, 202);
   }
 
   try {
@@ -105,13 +136,19 @@ Deno.serve(async (req) => {
       validation_report: { ...validation, verified_references: result.article.verified_references },
       updated_at: new Date().toISOString(),
     }).eq('id', job.id);
+    await admin.from('editorial_topics').update({
+      status: 'awaiting_review', current_agent: 'editorial', updated_at: new Date().toISOString(),
+    }).eq('id', editorialTopic.id);
 
-    return json(req, { ok: true, job_id: job.id, post_id: post.id, status: 'review_required' }, 201);
+    return json(req, { ok: true, topic_id: editorialTopic.id, job_id: job.id, post_id: post.id, status: 'review_required' }, 201);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     await admin.from('editorial_automation_jobs').update({
       status: 'failed', error_message: message, updated_at: new Date().toISOString(),
     }).eq('id', job.id);
+    await admin.from('editorial_topics').update({
+      status: 'error', error_message: message, updated_at: new Date().toISOString(),
+    }).eq('id', editorialTopic.id);
     return json(req, { error: message, job_id: job.id }, 502);
   }
 });

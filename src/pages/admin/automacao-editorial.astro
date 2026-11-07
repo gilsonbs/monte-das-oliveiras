@@ -28,13 +28,31 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       <label>Palavra-chave SEO
         <input id="seo_keyword" type="text" minlength="3" maxlength="120" required placeholder="Ex.: profecias do Monte das Oliveiras" />
       </label>
-      <button class="btn btn-primary" type="submit" id="submit-button">Gerar rascunho</button>
+      <label>Categoria ou slug <span class="optional">opcional</span>
+        <input id="category_slug" type="text" maxlength="120" placeholder="Ex.: estudos-biblicos" />
+      </label>
+      <div class="form-row">
+        <label>Prioridade da rotina
+          <select id="priority">
+            <option value="normal">Normal</option>
+            <option value="high">Alta</option>
+          </select>
+        </label>
+        <label>Executar a partir de <span class="optional">opcional</span>
+          <input id="scheduled_for" type="datetime-local" />
+        </label>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit" id="submit-button" value="routine">Adicionar à rotina</button>
+        <button class="btn btn-urgent" type="submit" id="urgent-button" value="now">Executar agora</button>
+      </div>
+      <p class="muted help">Executar agora coloca a pauta no início da fila, mas não aprova publicação, redes sociais ou deploy.</p>
       <p id="form-status" class="status" aria-live="polite"></p>
     </form>
   </section>
 
   <section class="panel">
-    <div class="section-title"><h2>Execuções recentes</h2><button class="btn" id="refresh-button">Atualizar</button></div>
+    <div class="section-title"><h2>Lista de pautas</h2><button class="btn" id="refresh-button">Atualizar</button></div>
     <div id="jobs"><p class="muted">Carregando...</p></div>
   </section>
 </AdminLayout>
@@ -49,6 +67,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   const youtubeInput = document.getElementById('youtube_url') as HTMLInputElement;
   const status = document.getElementById('form-status') as HTMLElement;
   const submit = document.getElementById('submit-button') as HTMLButtonElement;
+  const urgent = document.getElementById('urgent-button') as HTMLButtonElement;
 
   function escapeHtml(value: unknown) {
     return String(value ?? '').replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]!));
@@ -69,27 +88,34 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
   async function loadJobs() {
     const jobs = document.getElementById('jobs')!;
-    const { data, error } = await supabase.from('editorial_automation_jobs')
-      .select('id, source_type, topic, youtube_url, seo_keyword, status, post_id, error_message, created_at')
-      .order('created_at', { ascending: false }).limit(20);
+    const [{ data, error }, { data: jobData }] = await Promise.all([
+      supabase.from('editorial_topics')
+        .select('id, input_type, topic, youtube_url, seo_keyword, category_slug, priority, requested_execution, status, current_agent, error_message, created_at')
+        .order('created_at', { ascending: false }).limit(30),
+      supabase.from('editorial_automation_jobs').select('topic_id, post_id').not('post_id', 'is', null),
+    ]);
     if (error) {
       jobs.innerHTML = `<p class="error">${escapeHtml(error.message)}</p>`;
       return;
     }
     if (!data?.length) {
-      jobs.innerHTML = '<p class="muted">Nenhuma execução registrada.</p>';
+      jobs.innerHTML = '<p class="muted">Nenhuma pauta registrada.</p>';
       return;
     }
+    const postByTopic = new Map((jobData ?? []).map((job) => [job.topic_id, job.post_id]));
     jobs.innerHTML = `<div class="job-list">${data.map((job) => {
-      const source = job.source_type === 'topic' ? job.topic : job.youtube_url;
-      const action = job.post_id ? `<a class="btn" href="/admin/preview/?id=${job.post_id}">Revisar rascunho</a>` : '';
-      return `<article class="job"><div><span class="chip chip-${escapeHtml(job.status)}">${escapeHtml(job.status)}</span><h3>${escapeHtml(source)}</h3><p>SEO: ${escapeHtml(job.seo_keyword)}</p><small>${new Date(job.created_at).toLocaleString('pt-BR')}</small>${job.error_message ? `<p class="error">${escapeHtml(job.error_message)}</p>` : ''}</div>${action}</article>`;
+      const source = job.input_type === 'topic' ? job.topic : job.youtube_url;
+      const postId = postByTopic.get(job.id);
+      const action = postId ? `<a class="btn" href="/admin/preview/?id=${encodeURIComponent(postId)}">Revisar rascunho</a>` : '';
+      return `<article class="job"><div><div class="chips"><span class="chip chip-${escapeHtml(job.status)}">${escapeHtml(job.status)}</span><span class="chip chip-${escapeHtml(job.priority)}">${escapeHtml(job.priority)}</span>${job.requested_execution === 'now' ? '<span class="chip chip-now">agora</span>' : ''}</div><h3>${escapeHtml(source)}</h3><p>SEO: ${escapeHtml(job.seo_keyword)}</p><p>Agente: ${escapeHtml(job.current_agent || 'aguardando')}</p><small>${new Date(job.created_at).toLocaleString('pt-BR')}</small>${job.error_message ? `<p class="error">${escapeHtml(job.error_message)}</p>` : ''}</div>${action}</article>`;
     }).join('')}</div>`;
   }
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
+    const executionMode = ((event as SubmitEvent).submitter as HTMLButtonElement | null)?.value === 'now' ? 'now' : 'routine';
     submit.disabled = true;
+    urgent.disabled = true;
     status.className = 'status';
     status.textContent = 'Enviando para o OpenBot...';
     const sourceType = (new FormData(form).get('source_type') || 'topic').toString();
@@ -98,6 +124,12 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       topic: sourceType === 'topic' ? topicInput.value.trim() : undefined,
       youtube_url: sourceType === 'youtube' ? youtubeInput.value.trim() : undefined,
       seo_keyword: (document.getElementById('seo_keyword') as HTMLInputElement).value.trim(),
+      category_slug: (document.getElementById('category_slug') as HTMLInputElement).value.trim() || undefined,
+      priority: executionMode === 'now' ? 'urgent' : (document.getElementById('priority') as HTMLSelectElement).value,
+      execution_mode: executionMode,
+      scheduled_for: executionMode === 'routine' && (document.getElementById('scheduled_for') as HTMLInputElement).value
+        ? new Date((document.getElementById('scheduled_for') as HTMLInputElement).value).toISOString()
+        : undefined,
     };
     const { data, error } = await supabase.functions.invoke('openbot-editorial', { body: payload });
     if (error) {
@@ -112,6 +144,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       setSource('topic');
     }
     submit.disabled = false;
+    urgent.disabled = false;
     await loadJobs();
   });
 
@@ -131,9 +164,14 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   legend { font-weight: 600; margin-bottom: 8px; }
   label { display: grid; gap: 7px; font-weight: 600; }
   label.radio { display: flex; align-items: center; font-weight: 400; }
-  input[type='text'], input[type='url'] { width: 100%; padding: 11px 12px; border: 1px solid #cfc9ba; border-radius: 6px; font: inherit; }
+  input[type='text'], input[type='url'], input[type='datetime-local'], select { width: 100%; padding: 11px 12px; border: 1px solid #cfc9ba; border-radius: 6px; font: inherit; background: #fff; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .optional { color: #777; font-size: 12px; font-weight: 400; }
+  .help { margin: -6px 0 0; font-size: 13px; }
   .btn { display: inline-flex; width: fit-content; padding: 9px 13px; border: 1px solid #cfc9ba; border-radius: 6px; background: #fff; color: inherit; text-decoration: none; cursor: pointer; }
   .btn-primary { background: var(--ember); border-color: var(--ember); color: #fff; font-weight: 600; }
+  .btn-urgent { background: #7c2d12; border-color: #7c2d12; color: #fff; font-weight: 600; }
   .btn:disabled { opacity: .55; cursor: wait; }
   .status { min-height: 20px; margin: 0; }
   .success { color: #39713a; } .error { color: #a43838; }
@@ -144,7 +182,11 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   .job p { margin: 4px 0; }
   .job small { color: #777; }
   .chip { display: inline-block; font-size: 11px; padding: 3px 7px; border-radius: 999px; background: #eee; }
+  .chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .chip-urgent, .chip-now { background: #fee2e2; color: #991b1b; }
+  .chip-high { background: #ffedd5; color: #9a3412; }
   .chip-review_required { background: #fff1c9; color: #6e5412; }
   .chip-failed { background: #f9d9d9; color: #8b2525; }
+  @media (max-width: 640px) { .form-row { grid-template-columns: 1fr; } }
 </style>
 

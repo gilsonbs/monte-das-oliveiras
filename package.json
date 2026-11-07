@@ -6,6 +6,8 @@
     "node": ">=22.12.0"
   },
   "scripts": {
+    "openbot:check": "node scripts/openbot-editorial-worker.mjs --check",
+    "openbot:next": "node scripts/openbot-editorial-worker.mjs",
     "dev": "astro dev",
     "build": "astro build",
     "test": "node --test tests/*.test.js",

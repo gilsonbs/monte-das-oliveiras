@@ -47,7 +47,30 @@ Uma declaração do modelo não prova, sozinha, que o texto bíblico está corre
 
 O OpenBot Desktop escuta somente em `127.0.0.1` e sua API exige autenticação local. Uma Edge Function não consegue chamar esse endereço. Por isso, quando `OPENBOT_EDITORIAL_WEBHOOK_URL` não estiver configurada, `openbot-editorial` cria o trabalho com estado `queued` e retorna HTTP 202.
 
-Um conector local ainda precisa ser instalado para:
+O leitor local está em `scripts/openbot-editorial-worker.mjs`. Ele chama a função
+`claim_next_editorial_job`, que reserva atomicamente uma única pauta do usuário
+autenticado. Pautas urgentes vêm antes das altas e normais. Dois executores não
+conseguem reservar o mesmo trabalho.
+
+Variáveis somente do computador local:
+
+```text
+OPENBOT_SUPABASE_URL
+OPENBOT_SUPABASE_ANON_KEY
+OPENBOT_SUPABASE_ACCESS_TOKEN
+```
+
+O token é uma sessão autenticada com RLS, não uma `service_role`. Ele deve ficar
+fora do repositório e nunca ser colocado no navegador ou no `AGENTS.md`.
+
+Comandos disponíveis:
+
+```text
+npm run openbot:check
+npm run openbot:next
+```
+
+O conector local precisa:
 
 1. buscar trabalhos `queued` no Supabase de desenvolvimento;
 2. encaminhar o conteúdo ao agente indicado por `assigned_agent`;
@@ -59,6 +82,8 @@ O conector deve guardar credenciais fora do repositório e nunca expô-las ao na
 ## Revisão inicial de RLS e segredos
 
 - `editorial_automation_jobs`: o navegador lê apenas as próprias execuções. Escrita fica restrita à Edge Function.
+- `editorial_topics`: o navegador lê apenas as próprias pautas. Criação fica restrita à Edge Function e a reserva ocorre por uma função autenticada que filtra `auth.uid()`.
+- `claim_next_editorial_job`: disponível somente para `authenticated`; usa bloqueio de linha e `skip locked` para impedir execução duplicada.
 - `content_distribution_packages` e `content_publication_queue`: qualquer usuário autenticado pode gerenciar tudo. Isso só é aceitável enquanto todo usuário autenticado for administrador. O próximo endurecimento deve usar uma tabela de perfis com função `admin`.
 - bucket `media`: leitura pública combina com imagens do portal. Inserção, alteração e exclusão estão abertas a qualquer autenticado; também devem migrar para uma regra de administrador.
 - `site_settings`: havia um token do GitHub sendo lido no navegador. O código deixou de fazer isso. Aplique `schema-security-hardening.sql`, revogue o token antigo e configure o substituto apenas como secret da Edge Function.
