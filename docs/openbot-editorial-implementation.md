@@ -43,6 +43,19 @@ Uma declaração do modelo não prova, sozinha, que o texto bíblico está corre
 4. Não configurar `GITHUB_DEPLOY_TOKEN` no ambiente de teste se o objetivo for impedir deploy por construção.
 5. Testar com um usuário autenticado de desenvolvimento e confirmar no banco que o post ficou como `draft` e `published_at` ficou nulo.
 
+## OpenBot Desktop e fila local
+
+O OpenBot Desktop escuta somente em `127.0.0.1` e sua API exige autenticação local. Uma Edge Function não consegue chamar esse endereço. Por isso, quando `OPENBOT_EDITORIAL_WEBHOOK_URL` não estiver configurada, `openbot-editorial` cria o trabalho com estado `queued` e retorna HTTP 202.
+
+Um conector local ainda precisa ser instalado para:
+
+1. buscar trabalhos `queued` no Supabase de desenvolvimento;
+2. encaminhar o conteúdo ao agente indicado por `assigned_agent`;
+3. devolver o resultado e o relatório de validação;
+4. marcar o trabalho como `review_required` ou `failed`.
+
+O conector deve guardar credenciais fora do repositório e nunca expô-las ao navegador. Não use o Supabase de produção para validar esse ciclo.
+
 ## Revisão inicial de RLS e segredos
 
 - `editorial_automation_jobs`: o navegador lê apenas as próprias execuções. Escrita fica restrita à Edge Function.

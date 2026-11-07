@@ -21,3 +21,8 @@ test('força rascunho no payload mesmo se a resposta pedir publicação', () => 
   assert.equal(payload.published_at, null);
 });
 
+test('mantém publicação e data bloqueadas no payload', () => {
+  const payload = buildPostPayload({ title: 'T', slug: 't', content: 'x', excerpt: 'x', seo_title: 'x', meta_description: 'x' }, 'cat');
+  assert.deepEqual({ status: payload.status, published_at: payload.published_at, is_featured: payload.is_featured }, { status: 'draft', published_at: null, is_featured: false });
+});
+

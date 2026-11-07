@@ -30,8 +30,6 @@ Deno.serve(async (req) => {
   const authClient = createClient(SUPABASE_URL, ANON_KEY, { global: { headers: { Authorization: authorization } } });
   const { data: { user } } = await authClient.auth.getUser();
   if (!user) return json(req, { error: 'Sessão inválida.' }, 401);
-  if (!OPENBOT_URL || !OPENBOT_TOKEN) return json(req, { error: 'Integração do OpenBot ainda não configurada no servidor.' }, 503);
-
   const parsed = validateRequest(await req.json().catch(() => ({})));
   if (!parsed.ok) return json(req, { error: parsed.errors.join(' ') }, 400);
 
@@ -45,10 +43,17 @@ Deno.serve(async (req) => {
     topic: parsed.value.topic || null,
     youtube_url: parsed.value.youtubeUrl || null,
     seo_keyword: parsed.value.seoKeyword,
-    status: 'processing',
+    status: OPENBOT_URL && OPENBOT_TOKEN ? 'processing' : 'queued',
+    assigned_agent: 'editorial',
     requested_by: user.id,
   }).select('id').single();
   if (jobError) return json(req, { error: jobError.message }, 500);
+
+  // O OpenBot Desktop só escuta em localhost. Sem um endpoint remoto explícito,
+  // a função mantém o trabalho na fila para um conector local autenticado.
+  if (!OPENBOT_URL || !OPENBOT_TOKEN) {
+    return json(req, { ok: true, job_id: job.id, status: 'queued' }, 202);
+  }
 
   try {
     const categories = await admin.from('categories').select('id, name, slug').order('name');

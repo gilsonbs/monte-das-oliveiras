@@ -105,7 +105,9 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       status.textContent = `Não foi possível gerar: ${error.message}`;
     } else {
       status.className = 'status success';
-      status.innerHTML = `Rascunho criado para revisão. <a href="/admin/preview/?id=${encodeURIComponent(data.post_id)}">Abrir pré-visualização</a>`;
+      status.innerHTML = data.status === 'queued'
+        ? 'Solicitação colocada na fila. O OpenBot local processará quando o conector estiver ativo.'
+        : `Rascunho criado para revisão. <a href="/admin/preview/?id=${encodeURIComponent(data.post_id)}">Abrir pré-visualização</a>`;
       form.reset();
       setSource('topic');
     }
