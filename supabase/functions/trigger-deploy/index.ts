@@ -7,7 +7,8 @@ const ALLOWED_ORIGIN      = Deno.env.get('ADMIN_ALLOWED_ORIGIN') ?? 'https://www
 
 const cors = (req: Request) => ({
   'Access-Control-Allow-Origin': req.headers.get('origin') === ALLOWED_ORIGIN ? ALLOWED_ORIGIN : 'null',
-  'Access-Control-Allow-Headers': 'authorization, content-type',
+  'Access-Control-Allow-Headers': 'authorization, apikey, content-type, x-client-info',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Vary': 'Origin',
 });
 
@@ -35,6 +36,12 @@ Deno.serve(async (req) => {
     }
   }
 
+  if (!GITHUB_TOKEN) {
+    return new Response(JSON.stringify({ error: 'Deploy token is not configured' }), {
+      status: 500, headers: { ...CORS, 'Content-Type': 'application/json' },
+    });
+  }
+
   const ghRes = await fetch(`https://api.github.com/repos/${REPO}/dispatches`, {
     method: 'POST',
     headers: {
@@ -45,6 +52,11 @@ Deno.serve(async (req) => {
     },
     body: JSON.stringify({ event_type: 'content-updated' }),
   });
+
+  if (!ghRes.ok) {
+    const details = await ghRes.text();
+    console.error('GitHub dispatch failed', ghRes.status, details);
+  }
 
   return new Response(JSON.stringify({ ok: ghRes.ok }), {
     status: ghRes.ok ? 200 : 502,
