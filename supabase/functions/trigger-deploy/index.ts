@@ -3,14 +3,20 @@ const SUPABASE_URL        = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_ANON_KEY   = Deno.env.get('SUPABASE_ANON_KEY')!;
 const SERVICE_ROLE_KEY    = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const REPO                = 'gilsonbs/monte-das-oliveiras';
+const ALLOWED_ORIGIN      = Deno.env.get('ADMIN_ALLOWED_ORIGIN') ?? 'https://www.montedasoliveiras.com';
 
-const CORS = {
-  'Access-Control-Allow-Origin': '*',
+const cors = (req: Request) => ({
+  'Access-Control-Allow-Origin': req.headers.get('origin') === ALLOWED_ORIGIN ? ALLOWED_ORIGIN : 'null',
   'Access-Control-Allow-Headers': 'authorization, content-type',
-};
+  'Vary': 'Origin',
+});
 
 Deno.serve(async (req) => {
+  const CORS = cors(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: CORS });
+  if (req.method !== 'POST') return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+    status: 405, headers: { ...CORS, 'Content-Type': 'application/json' },
+  });
 
   const auth = req.headers.get('Authorization') ?? '';
 

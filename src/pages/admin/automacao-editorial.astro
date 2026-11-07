@@ -1,0 +1,192 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Automação editorial">
+  <header class="page-header">
+    <div>
+      <h1>Automação editorial</h1>
+      <p>O OpenBot prepara conteúdo e salva somente como rascunho. Publicação e distribuição continuam dependendo de aprovação humana.</p>
+    </div>
+  </header>
+
+  <section class="panel">
+    <div class="guardrail"><strong>Modo seguro:</strong> esta tela não publica artigos, não agenda redes sociais e não dispara deploy.</div>
+    <form id="automation-form">
+      <fieldset>
+        <legend>Tipo de entrada</legend>
+        <label class="radio"><input type="radio" name="source_type" value="topic" checked /> Tema</label>
+        <label class="radio"><input type="radio" name="source_type" value="youtube" /> Vídeo do YouTube</label>
+      </fieldset>
+
+      <label id="topic-field">Tema
+        <input id="topic" type="text" minlength="5" maxlength="240" placeholder="Ex.: O contexto bíblico do Monte das Oliveiras" required />
+      </label>
+      <label id="youtube-field" hidden>Link do YouTube
+        <input id="youtube_url" type="url" placeholder="https://www.youtube.com/watch?v=..." />
+      </label>
+      <label>Palavra-chave SEO
+        <input id="seo_keyword" type="text" minlength="3" maxlength="120" required placeholder="Ex.: profecias do Monte das Oliveiras" />
+      </label>
+      <label>Categoria ou slug <span class="optional">opcional</span>
+        <input id="category_slug" type="text" maxlength="120" placeholder="Ex.: estudos-biblicos" />
+      </label>
+      <div class="form-row">
+        <label>Prioridade da rotina
+          <select id="priority">
+            <option value="normal">Normal</option>
+            <option value="high">Alta</option>
+          </select>
+        </label>
+        <label>Executar a partir de <span class="optional">opcional</span>
+          <input id="scheduled_for" type="datetime-local" />
+        </label>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit" id="submit-button" value="routine">Adicionar à rotina</button>
+        <button class="btn btn-urgent" type="submit" id="urgent-button" value="now">Executar agora</button>
+      </div>
+      <p class="muted help">Executar agora coloca a pauta no início da fila, mas não aprova publicação, redes sociais ou deploy.</p>
+      <p id="form-status" class="status" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <section class="panel">
+    <div class="section-title"><h2>Lista de pautas</h2><button class="btn" id="refresh-button">Atualizar</button></div>
+    <div id="jobs"><p class="muted">Carregando...</p></div>
+  </section>
+</AdminLayout>
+
+<script>
+  import { createSupabaseBrowserClient } from '../../lib/supabase-browser';
+  const supabase = createSupabaseBrowserClient();
+  const form = document.getElementById('automation-form') as HTMLFormElement;
+  const topicField = document.getElementById('topic-field') as HTMLElement;
+  const youtubeField = document.getElementById('youtube-field') as HTMLElement;
+  const topicInput = document.getElementById('topic') as HTMLInputElement;
+  const youtubeInput = document.getElementById('youtube_url') as HTMLInputElement;
+  const status = document.getElementById('form-status') as HTMLElement;
+  const submit = document.getElementById('submit-button') as HTMLButtonElement;
+  const urgent = document.getElementById('urgent-button') as HTMLButtonElement;
+
+  function escapeHtml(value: unknown) {
+    return String(value ?? '').replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]!));
+  }
+
+  function setSource(type: string) {
+    const isTopic = type === 'topic';
+    topicField.hidden = !isTopic;
+    youtubeField.hidden = isTopic;
+    topicInput.required = isTopic;
+    youtubeInput.required = !isTopic;
+    if (isTopic) youtubeInput.value = ''; else topicInput.value = '';
+  }
+
+  document.querySelectorAll<HTMLInputElement>('input[name="source_type"]').forEach((radio) => {
+    radio.addEventListener('change', () => setSource(radio.value));
+  });
+
+  async function loadJobs() {
+    const jobs = document.getElementById('jobs')!;
+    const [{ data, error }, { data: jobData }] = await Promise.all([
+      supabase.from('editorial_topics')
+        .select('id, input_type, topic, youtube_url, seo_keyword, category_slug, priority, requested_execution, status, current_agent, error_message, created_at')
+        .order('created_at', { ascending: false }).limit(30),
+      supabase.from('editorial_automation_jobs').select('topic_id, post_id').not('post_id', 'is', null),
+    ]);
+    if (error) {
+      jobs.innerHTML = `<p class="error">${escapeHtml(error.message)}</p>`;
+      return;
+    }
+    if (!data?.length) {
+      jobs.innerHTML = '<p class="muted">Nenhuma pauta registrada.</p>';
+      return;
+    }
+    const postByTopic = new Map((jobData ?? []).map((job) => [job.topic_id, job.post_id]));
+    jobs.innerHTML = `<div class="job-list">${data.map((job) => {
+      const source = job.input_type === 'topic' ? job.topic : job.youtube_url;
+      const postId = postByTopic.get(job.id);
+      const action = postId ? `<a class="btn" href="/admin/preview/?id=${encodeURIComponent(postId)}">Revisar rascunho</a>` : '';
+      return `<article class="job"><div><div class="chips"><span class="chip chip-${escapeHtml(job.status)}">${escapeHtml(job.status)}</span><span class="chip chip-${escapeHtml(job.priority)}">${escapeHtml(job.priority)}</span>${job.requested_execution === 'now' ? '<span class="chip chip-now">agora</span>' : ''}</div><h3>${escapeHtml(source)}</h3><p>SEO: ${escapeHtml(job.seo_keyword)}</p><p>Agente: ${escapeHtml(job.current_agent || 'aguardando')}</p><small>${new Date(job.created_at).toLocaleString('pt-BR')}</small>${job.error_message ? `<p class="error">${escapeHtml(job.error_message)}</p>` : ''}</div>${action}</article>`;
+    }).join('')}</div>`;
+  }
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const executionMode = ((event as SubmitEvent).submitter as HTMLButtonElement | null)?.value === 'now' ? 'now' : 'routine';
+    submit.disabled = true;
+    urgent.disabled = true;
+    status.className = 'status';
+    status.textContent = 'Enviando para o OpenBot...';
+    const sourceType = (new FormData(form).get('source_type') || 'topic').toString();
+    const payload = {
+      source_type: sourceType,
+      topic: sourceType === 'topic' ? topicInput.value.trim() : undefined,
+      youtube_url: sourceType === 'youtube' ? youtubeInput.value.trim() : undefined,
+      seo_keyword: (document.getElementById('seo_keyword') as HTMLInputElement).value.trim(),
+      category_slug: (document.getElementById('category_slug') as HTMLInputElement).value.trim() || undefined,
+      priority: executionMode === 'now' ? 'urgent' : (document.getElementById('priority') as HTMLSelectElement).value,
+      execution_mode: executionMode,
+      scheduled_for: executionMode === 'routine' && (document.getElementById('scheduled_for') as HTMLInputElement).value
+        ? new Date((document.getElementById('scheduled_for') as HTMLInputElement).value).toISOString()
+        : undefined,
+    };
+    const { data, error } = await supabase.functions.invoke('openbot-editorial', { body: payload });
+    if (error) {
+      status.className = 'status error';
+      status.textContent = `Não foi possível gerar: ${error.message}`;
+    } else {
+      status.className = 'status success';
+      status.innerHTML = data.status === 'queued'
+        ? 'Solicitação colocada na fila. O OpenBot local processará quando o conector estiver ativo.'
+        : `Rascunho criado para revisão. <a href="/admin/preview/?id=${encodeURIComponent(data.post_id)}">Abrir pré-visualização</a>`;
+      form.reset();
+      setSource('topic');
+    }
+    submit.disabled = false;
+    urgent.disabled = false;
+    await loadJobs();
+  });
+
+  document.getElementById('refresh-button')?.addEventListener('click', loadJobs);
+  loadJobs();
+</script>
+
+<style>
+  .page-header { margin-bottom: 22px; }
+  h1 { font-family: var(--font-display); font-size: 30px; margin: 0 0 8px; }
+  h2 { font-family: var(--font-display); margin: 0; }
+  .page-header p, .muted { color: #68675f; }
+  .panel { background: #fff; border: 1px solid #e4e0d5; border-radius: 10px; padding: 22px; margin-bottom: 20px; max-width: 920px; }
+  .guardrail { background: #f3f7ed; border: 1px solid #cdddbd; color: #3e5c36; padding: 11px 13px; border-radius: 7px; margin-bottom: 20px; }
+  form { display: grid; gap: 16px; max-width: 680px; }
+  fieldset { border: 0; padding: 0; margin: 0; display: flex; gap: 18px; }
+  legend { font-weight: 600; margin-bottom: 8px; }
+  label { display: grid; gap: 7px; font-weight: 600; }
+  label.radio { display: flex; align-items: center; font-weight: 400; }
+  input[type='text'], input[type='url'], input[type='datetime-local'], select { width: 100%; padding: 11px 12px; border: 1px solid #cfc9ba; border-radius: 6px; font: inherit; background: #fff; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .optional { color: #777; font-size: 12px; font-weight: 400; }
+  .help { margin: -6px 0 0; font-size: 13px; }
+  .btn { display: inline-flex; width: fit-content; padding: 9px 13px; border: 1px solid #cfc9ba; border-radius: 6px; background: #fff; color: inherit; text-decoration: none; cursor: pointer; }
+  .btn-primary { background: var(--ember); border-color: var(--ember); color: #fff; font-weight: 600; }
+  .btn-urgent { background: #7c2d12; border-color: #7c2d12; color: #fff; font-weight: 600; }
+  .btn:disabled { opacity: .55; cursor: wait; }
+  .status { min-height: 20px; margin: 0; }
+  .success { color: #39713a; } .error { color: #a43838; }
+  .section-title, .job { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .job-list { display: grid; gap: 10px; margin-top: 16px; }
+  .job { border-top: 1px solid #ece8df; padding-top: 14px; }
+  .job h3 { font-size: 15px; margin: 7px 0 4px; overflow-wrap: anywhere; }
+  .job p { margin: 4px 0; }
+  .job small { color: #777; }
+  .chip { display: inline-block; font-size: 11px; padding: 3px 7px; border-radius: 999px; background: #eee; }
+  .chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .chip-urgent, .chip-now { background: #fee2e2; color: #991b1b; }
+  .chip-high { background: #ffedd5; color: #9a3412; }
+  .chip-review_required { background: #fff1c9; color: #6e5412; }
+  .chip-failed { background: #f9d9d9; color: #8b2525; }
+  @media (max-width: 640px) { .form-row { grid-template-columns: 1fr; } }
+</style>
+

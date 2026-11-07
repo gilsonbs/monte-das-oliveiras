@@ -29,6 +29,7 @@ function isActive(prefix: string) {
       <nav>
         <a href="/admin" class={isActive('/admin') && !path.includes('/admin/categorias') && !path.includes('/admin/destaques') ? 'active' : ''}>Posts</a>
         <a href="/admin/distribuicao" class={isActive('/admin/distribuicao')}>Distribuição</a>
+        <a href="/admin/automacao-editorial" class={isActive('/admin/automacao-editorial')}>Automação editorial</a>
         <a href="/admin/destaques" class={isActive('/admin/destaques')}>Destaques</a>
         <a href="/admin/categorias" class={isActive('/admin/categorias')}>Categorias e tags</a>
         <a href="/admin/anuncios" class={isActive('/admin/anuncios')}>Anúncios</a>
@@ -135,29 +136,8 @@ function isActive(prefix: string) {
       deployStatus.className = 'deploy-status';
 
       try {
-        // busca o token do GitHub salvo na tabela site_settings
-        const { data: setting, error } = await supabase
-          .from('site_settings')
-          .select('value')
-          .eq('key', 'github_deploy_token')
-          .maybeSingle();
-
-        if (error || !setting?.value) {
-          throw new Error('Token do GitHub não configurado. Adicione a linha github_deploy_token na tabela site_settings.');
-        }
-
-        const res = await fetch('https://api.github.com/repos/gilsonbs/monte-das-oliveiras/dispatches', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${setting.value}`,
-            Accept: 'application/vnd.github+json',
-            'X-GitHub-Api-Version': '2022-11-28',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ event_type: 'content-updated' }),
-        });
-
-        if (!res.ok) throw new Error(`GitHub retornou ${res.status}`);
+        const { error } = await supabase.functions.invoke('trigger-deploy');
+        if (error) throw error;
 
         localStorage.removeItem(pendingDeployKey);
         localStorage.setItem(deployStartedKey, String(Date.now()));
