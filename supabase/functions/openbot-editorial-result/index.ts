@@ -21,7 +21,9 @@ Deno.serve(async (request) => {
   const jobId = String(body.job_id || '');
   const topicId = String(body.topic_id || '');
   const validation = validateOpenBotArticle(body.article);
-  if (!jobId || !topicId || !validation.ok) return respond({ error: validation.errors.join(' ') || 'Identificadores ausentes.' }, 400);
+  if (!jobId || !topicId || !validation.ok) {
+    return respond({ error: validation.errors.join(' ') || 'Identificadores ausentes.' }, 400);
+  }
 
   const admin = createClient(url, serviceKey, { auth: { persistSession: false } });
   const { data: job } = await admin.from('editorial_automation_jobs')

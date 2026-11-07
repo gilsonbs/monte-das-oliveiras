@@ -23,10 +23,17 @@ if (-not (Test-Path -LiteralPath $articlePath)) { throw 'README.md do pacote edi
 $parser = Join-Path $PSScriptRoot 'openbot-parse-result.mjs'
 $parsedJson = if (Test-Path -LiteralPath $carouselPath) { & node $parser $articlePath $carouselPath } else { & node $parser $articlePath }
 if ($LASTEXITCODE -ne 0) { throw 'O pacote editorial nao passou na validacao.' }
-$payload = $parsedJson | ConvertFrom-Json
-$payload | Add-Member -NotePropertyName job_id -NotePropertyValue $JobId
-$payload | Add-Member -NotePropertyName topic_id -NotePropertyValue $TopicId
-$payload | Add-Member -NotePropertyName category_slug -NotePropertyValue $CategorySlug
+$parsed = $parsedJson | ConvertFrom-Json
+if (-not $parsed.article -or -not $parsed.article.title) {
+  throw 'O parser nao devolveu um artigo valido.'
+}
+$payload = @{
+  job_id = $JobId
+  topic_id = $TopicId
+  category_slug = $CategorySlug
+  article = $parsed.article
+  social_package = $parsed.social_package
+}
 
 $sessionFile = if ($Profile -eq 'test') { 'openbot-supabase.test.session' } else { 'openbot-supabase.session' }
 $configPath = Join-Path $env:LOCALAPPDATA "MonteDasOliveiras\$sessionFile"
@@ -39,8 +46,11 @@ $config.refresh_token = $session.refresh_token
 $config.expires_at = $session.expires_at
 Set-Content -LiteralPath $configPath -Value (Protect-LocalData ($config | ConvertTo-Json -Compress)) -Encoding ascii
 
+$requestBody = $payload | ConvertTo-Json -Compress -Depth 12
+$requestCheck = $requestBody | ConvertFrom-Json
+if (-not $requestCheck.article.title) { throw 'Falha ao serializar o artigo para envio.' }
 $response = Invoke-RestMethod -Method Post -Uri "$($config.project_url)/functions/v1/openbot-editorial-result" -Headers @{
   apikey = $config.publishable_key
   Authorization = 'Bearer ' + $session.access_token
-} -ContentType 'application/json' -Body ($payload | ConvertTo-Json -Compress -Depth 12)
+} -ContentType 'application/json; charset=utf-8' -Body ([Text.Encoding]::UTF8.GetBytes($requestBody))
 $response | ConvertTo-Json -Compress

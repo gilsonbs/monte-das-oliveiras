@@ -100,3 +100,12 @@ Depois que os agentes criarem `README.md` e, opcionalmente, `CARROSSEL-DRAFT.md`
 
 O artigo sempre entra em `posts` como `draft`, com `published_at` nulo e sem destaque. O carrossel entra em `content_distribution_packages` como `draft`. A pauta passa para `awaiting_review` e o trabalho para `review_required`. Essa etapa nao chama deploy nem publica em rede social.
 
+Exemplo de devolucao manual no perfil isolado de teste:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/openbot-result-writer.ps1 `
+  -PackageDirectory 'C:\caminho\do\pacote' `
+  -JobId '<job-id>' -TopicId '<topic-id>' `
+  -CategorySlug 'estudos-biblicos' -Profile test
+```
+
