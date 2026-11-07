@@ -10,6 +10,7 @@
     "openbot:check": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/openbot-editorial-worker.ps1 -Check",
     "openbot:next": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/openbot-editorial-worker.ps1",
     "openbot:next:test": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/openbot-editorial-worker.ps1 -Profile test",
+    "openbot:write": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/openbot-result-writer.ps1",
     "dev": "astro dev",
     "build": "astro build",
     "test": "node --test tests/*.test.js",

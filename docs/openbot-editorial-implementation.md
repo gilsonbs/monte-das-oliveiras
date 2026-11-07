@@ -94,3 +94,9 @@ O conector deve guardar credenciais fora do repositório e nunca expô-las ao na
 - `site_settings`: havia um token do GitHub sendo lido no navegador. O código deixou de fazer isso. Aplique `schema-security-hardening.sql`, revogue o token antigo e configure o substituto apenas como secret da Edge Function.
 - o hook de deploy que virava `PUBLIC_VERCEL_DEPLOY_HOOK_URL` foi removido do bundle e do editor.
 
+## Devolucao do pacote local
+
+Depois que os agentes criarem `README.md` e, opcionalmente, `CARROSSEL-DRAFT.md`, o conector executa `scripts/openbot-result-writer.ps1`. Ele valida e converte o artigo, renova a sessao protegida pelo Windows e chama `openbot-editorial-result` com o token do usuario autenticado. A funcao confirma que o trabalho pertence ao usuario antes de usar a chave de servico no servidor.
+
+O artigo sempre entra em `posts` como `draft`, com `published_at` nulo e sem destaque. O carrossel entra em `content_distribution_packages` como `draft`. A pauta passa para `awaiting_review` e o trabalho para `review_required`. Essa etapa nao chama deploy nem publica em rede social.
+
